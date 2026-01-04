@@ -1,0 +1,171 @@
+{
+  "name": "ucbuilder",
+  "exports": {
+    "./extension": "./dist/assets/extension.d.ts",
+     ".": {
+      "types": "./dist/ipc/IpcMainHelper.d.ts",
+      "import": "./dist/ipc/IpcMainHelper.js"
+    },
+    "./ipc/IpcMainHelper": {
+      "types": "./dist/ipc/IpcMainHelper.d.ts",
+      "import": "./dist/ipc/IpcMainHelper.js"
+    },
+    "./build/regs/TemplateMaker": {
+      "types": "./dist/build/regs/TemplateMaker.d.ts",
+      "import": "./dist/build/regs/TemplateMaker.js"
+    },
+    "./enumAndMore": {
+      "types": "./dist/enumAndMore.d.ts",
+      "import": "./dist/enumAndMore.js"
+    },
+    "./nodeFn": {
+      "types": "./dist/nodeFn.d.ts",
+      "import": "./dist/nodeFn.js"
+    },
+    "./lib/TabIndexManager": {
+      "types": "./dist/lib/TabIndexManager.d.ts",
+      "import": "./dist/lib/TabIndexManager.js"
+    },
+    "./build/pathBridge": {
+      "types": "./dist/build/pathBridge.d.ts",
+      "import": "./dist/build/pathBridge.js"
+    },
+    "./global/ucUtil": {
+      "types": "./dist/global/ucUtil.d.ts",
+      "import": "./dist/global/ucUtil.js"
+    },
+    "./StylerRegs": {
+      "types": "./dist/StylerRegs.d.ts",
+      "import": "./dist/StylerRegs.js"
+    },
+    "./Template": {
+      "types": "./dist/Template.d.ts",
+      "import": "./dist/Template.js"
+    },
+    "./global/drawing/shapes": {
+      "types": "./dist/global/drawing/shapes.d.ts",
+      "import": "./dist/global/drawing/shapes.js"
+    },
+    "./Usercontrol": {
+      "types": "./dist/Usercontrol.d.ts",
+      "import": "./dist/Usercontrol.js"
+    },
+    "./intenseGenerator": {
+      "types": "./dist/intenseGenerator.d.ts",
+      "import": "./dist/intenseGenerator.js"
+    },
+    "./build/fileWatcher": {
+      "types": "./dist/build/fileWatcher.d.ts",
+      "import": "./dist/build/fileWatcher.js"
+    },
+    "./build/builder": {
+      "types": "./dist/build/builder.d.ts",
+      "import": "./dist/build/builder.js"
+    },
+    "./global/commonEvent": {
+      "types": "./dist/global/commonEvent.d.ts",
+      "import": "./dist/global/commonEvent.js"
+    },
+    "./lib/hardware": {
+      "types": "./dist/lib/hardware.d.ts",
+      "import": "./dist/lib/hardware.js"
+    },
+    "./ipc/enumAndMore": {
+      "types": "./dist/ipc/enumAndMore.d.ts",
+      "import": "./dist/ipc/enumAndMore.js"
+    },
+    "./ipc/IpcRendererHelper": {
+      "types": "./dist/ipc/IpcRendererHelper.d.ts",
+      "import": "./dist/ipc/IpcRendererHelper.js"
+    },
+    "./build/codeFileInfo": {
+      "types": "./dist/build/codeFileInfo.d.ts",
+      "import": "./dist/build/codeFileInfo.js"
+    },
+    "./lib/WrapperHelper": {
+      "types": "./dist/lib/WrapperHelper.d.ts",
+      "import": "./dist/lib/WrapperHelper.js"
+    },
+    "./lib/WinManager": {
+      "types": "./dist/lib/WinManager.d.ts",
+      "import": "./dist/lib/WinManager.js"
+    },
+    "./lib/SvgHelper": {
+      "types": "./dist/lib/SvgHelper.d.ts",
+      "import": "./dist/lib/SvgHelper.js"
+    },
+    "./global/runtimeOpt": {
+      "types": "./dist/global/runtimeOpt.d.ts",
+      "import": "./dist/global/runtimeOpt.js"
+    },
+    "./global/openCloser": {
+      "types": "./dist/global/openCloser.d.ts",
+      "import": "./dist/global/openCloser.js"
+    },
+    "./ipc/ProjectManage": {
+      "types": "./dist/ipc/ProjectManage.d.ts",
+      "import": "./dist/ipc/ProjectManage.js"
+    },
+    "./build/common": {
+      "types": "./dist/build/common.d.ts",
+      "import": "./dist/build/common.js"
+    },
+    "./lib/StampGenerator": {
+      "types": "./dist/lib/StampGenerator.d.ts",
+      "import": "./dist/lib/StampGenerator.js"
+    },
+    "./global/objectOpt": {
+      "types": "./dist/global/objectOpt.d.ts",
+      "import": "./dist/global/objectOpt.js"
+    }
+  },
+  "main": "./dist/ipc/IpcMainHelper.js",
+  "types": "./dist/ipc/IpcMainHelper.d.ts",
+  "type": "module",
+  "version": "1.0.4",
+  "description": ":Shree Ganeshay Namah: \n new way app design",
+  "scripts": {
+    "viteConfig.main": "vite build --config _viteConfig/viteConfig.main.ts",
+    "viteConfig.initUC": "vite build --config _viteConfig/viteConfig.initUC.ts",
+    "viteConfig.renderer": "vite build --config _viteConfig/viteConfig.renderer.ts",
+    "viteConfig.preload": "vite build --config _viteConfig/viteConfig.preload.ts",
+    "viteConfig.common": "vite build --config _viteConfig/viteConfig.common.ts",
+    "build:vite": "npm run viteConfig.main    && npm run viteConfig.initUC    && npm run viteConfig.preload    &&  npm run  viteConfig.renderer && npm run viteConfig.common && npm run  build:types",
+    "build:types": "tsc -p tsconfig.build.json",
+    "clean": "rimraf out",
+    "build": "tsc",
+    "rebuild": "npm run clean && tsc"
+  },
+  "author": "ap",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "electron": "^31.6.0",
+    "rimraf": "^6.0.1",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.9.3",
+    "vite": "^6.4.1",
+    "vite-plugin-string": "^1.2.3"
+  },
+  "dependencies": {
+    "chokidar": "^4.0.3",
+    "vite-plugin-static-copy": "^3.1.4"
+  },
+  "keywords": [
+    "electron app designer",
+    "app developement",
+    "new way design",
+    "ui design",
+    "winform designer",
+    "software developement"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pratik2201/ucbuilder.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pratik2201/ucbuilder/issues"
+  },
+  "homepage": "https://github.com/pratik2201/ucbuilder#readme"
+}

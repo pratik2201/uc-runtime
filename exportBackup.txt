@@ -1,0 +1,178 @@
+ "exports": {
+    "./out/assets/extension.d.ts": "./out/assets/extension.d.ts",
+    "./extension": "./out/assets/extension.d.ts",
+    "./out/initUC.js": "./out/initUC.js",
+    "./initUC": {
+      "types": "./out/initUC.d.ts",
+      "import": "./out/initUC.js",
+      "browser": "./out/initUC.js"
+    },
+    "./out/ipc/IpcMainHelper.js": "./out/ipc/IpcMainHelper.js",
+    "./ipc/IpcMainHelper": {
+      "types": "./out/ipc/IpcMainHelper.d.ts",
+      "import": "./out/ipc/IpcMainHelper.js",
+      "browser": "./out/ipc/IpcMainHelper.js"
+    },
+    "./out/ipc/preload.js": "./out/ipc/preload.js",
+    "./ipc/preload": {
+      "types": "./out/ipc/preload.d.ts",
+      "import": "./out/ipc/preload.js",
+      "browser": "./out/ipc/preload.js"
+    },
+    "./out/build/regs/TemplateMaker.js": "./out/build/regs/TemplateMaker.js",
+    "./build/regs/TemplateMaker": {
+      "types": "./out/build/regs/TemplateMaker.d.ts",
+      "import": "./out/build/regs/TemplateMaker.js",
+      "browser": "./out/build/regs/TemplateMaker.js"
+    },
+    "./out/enumAndMore.js": "./out/enumAndMore.js",
+    "./enumAndMore": {
+      "types": "./out/enumAndMore.d.ts",
+      "import": "./out/enumAndMore.js",
+      "browser": "./out/enumAndMore.js"
+    },
+    "./out/nodeFn.js": "./out/nodeFn.js",
+    "./nodeFn": {
+      "types": "./out/nodeFn.d.ts",
+      "import": "./out/nodeFn.js",
+      "browser": "./out/nodeFn.js"
+    },
+    "./out/lib/TabIndexManager.js": "./out/lib/TabIndexManager.js",
+    "./lib/TabIndexManager": {
+      "types": "./out/lib/TabIndexManager.d.ts",
+      "import": "./out/lib/TabIndexManager.js",
+      "browser": "./out/lib/TabIndexManager.js"
+    },
+    "./out/build/pathBridge.js": "./out/build/pathBridge.js",
+    "./build/pathBridge": {
+      "types": "./out/build/pathBridge.d.ts",
+      "import": "./out/build/pathBridge.js",
+      "browser": "./out/build/pathBridge.js"
+    },
+    "./out/global/ucUtil.js": "./out/global/ucUtil.js",
+    "./global/ucUtil": {
+      "types": "./out/global/ucUtil.d.ts",
+      "import": "./out/global/ucUtil.js",
+      "browser": "./out/global/ucUtil.js"
+    },
+    "./out/StylerRegs.js": "./out/StylerRegs.js",
+    "./StylerRegs": {
+      "types": "./out/StylerRegs.d.ts",
+      "import": "./out/StylerRegs.js",
+      "browser": "./out/StylerRegs.js"
+    },
+    "./out/Template.js": "./out/Template.js",
+    "./Template": {
+      "types": "./out/Template.d.ts",
+      "import": "./out/Template.js",
+      "browser": "./out/Template.js"
+    },
+    "./out/Usercontrol.js": "./out/Usercontrol.js",
+    "./Usercontrol": {
+      "types": "./out/Usercontrol.d.ts",
+      "import": "./out/Usercontrol.js",
+      "browser": "./out/Usercontrol.js"
+    },
+    "./out/intenseGenerator.js": "./out/intenseGenerator.js",
+    "./intenseGenerator": {
+      "types": "./out/intenseGenerator.d.ts",
+      "import": "./out/intenseGenerator.js",
+      "browser": "./out/intenseGenerator.js"
+    },
+    "./out/build/fileWatcher.js": "./out/build/fileWatcher.js",
+    "./build/fileWatcher": {
+      "types": "./out/build/fileWatcher.d.ts",
+      "import": "./out/build/fileWatcher.js",
+      "browser": "./out/build/fileWatcher.js"
+    },
+    "./out/build/builder.js": "./out/build/builder.js",
+    "./build/builder": {
+      "types": "./out/build/builder.d.ts",
+      "import": "./out/build/builder.js",
+      "browser": "./out/build/builder.js"
+    },
+    "./out/global/commonEvent.js": "./out/global/commonEvent.js",
+    "./global/commonEvent": {
+      "types": "./out/global/commonEvent.d.ts",
+      "import": "./out/global/commonEvent.js",
+      "browser": "./out/global/commonEvent.js"
+    },
+    "./out/lib/hardware.js": "./out/lib/hardware.js",
+    "./lib/hardware": {
+      "types": "./out/lib/hardware.d.ts",
+      "import": "./out/lib/hardware.js",
+      "browser": "./out/lib/hardware.js"
+    },
+    "./out/ipc/enumAndMore.js": "./out/ipc/enumAndMore.js",
+    "./ipc/enumAndMore": {
+      "types": "./out/ipc/enumAndMore.d.ts",
+      "import": "./out/ipc/enumAndMore.js",
+      "browser": "./out/ipc/enumAndMore.js"
+    },
+    "./out/ipc/IpcRendererHelper.js": "./out/ipc/IpcRendererHelper.js",
+    "./ipc/IpcRendererHelper": {
+      "types": "./out/ipc/IpcRendererHelper.d.ts",
+      "import": "./out/ipc/IpcRendererHelper.js",
+      "browser": "./out/ipc/IpcRendererHelper.js"
+    },
+    "./out/build/codeFileInfo.js": "./out/build/codeFileInfo.js",
+    "./build/codeFileInfo": {
+      "types": "./out/build/codeFileInfo.d.ts",
+      "import": "./out/build/codeFileInfo.js",
+      "browser": "./out/build/codeFileInfo.js"
+    },
+    "./out/lib/WrapperHelper.js": "./out/lib/WrapperHelper.js",
+    "./lib/WrapperHelper": {
+      "types": "./out/lib/WrapperHelper.d.ts",
+      "import": "./out/lib/WrapperHelper.js",
+      "browser": "./out/lib/WrapperHelper.js"
+    },
+    "./out/lib/WinManager.js": "./out/lib/WinManager.js",
+    "./lib/WinManager": {
+      "types": "./out/lib/WinManager.d.ts",
+      "import": "./out/lib/WinManager.js",
+      "browser": "./out/lib/WinManager.js"
+    },
+    "./out/lib/SvgHelper.js": "./out/lib/SvgHelper.js",
+    "./lib/SvgHelper": {
+      "types": "./out/lib/SvgHelper.d.ts",
+      "import": "./out/lib/SvgHelper.js",
+      "browser": "./out/lib/SvgHelper.js"
+    },
+    "./out/global/runtimeOpt.js": "./out/global/runtimeOpt.js",
+    "./global/runtimeOpt": {
+      "types": "./out/global/runtimeOpt.d.ts",
+      "import": "./out/global/runtimeOpt.js",
+      "browser": "./out/global/runtimeOpt.js"
+    },
+    "./out/global/openCloser.js": "./out/global/openCloser.js",
+    "./global/openCloser": {
+      "types": "./out/global/openCloser.d.ts",
+      "import": "./out/global/openCloser.js",
+      "browser": "./out/global/openCloser.js"
+    },
+    "./out/ipc/ProjectManage.js": "./out/ipc/ProjectManage.js",
+    "./ipc/ProjectManage": {
+      "types": "./out/ipc/ProjectManage.d.ts",
+      "import": "./out/ipc/ProjectManage.js",
+      "browser": "./out/ipc/ProjectManage.js"
+    },
+    "./out/build/common.js": "./out/build/common.js",
+    "./build/common": {
+      "types": "./out/build/common.d.ts",
+      "import": "./out/build/common.js",
+      "browser": "./out/build/common.js"
+    },
+    "./out/lib/StampGenerator.js": "./out/lib/StampGenerator.js",
+    "./lib/StampGenerator": {
+      "types": "./out/lib/StampGenerator.d.ts",
+      "import": "./out/lib/StampGenerator.js",
+      "browser": "./out/lib/StampGenerator.js"
+    },
+    "./out/global/objectOpt.js": "./out/global/objectOpt.js",
+    "./global/objectOpt": {
+      "types": "./out/global/objectOpt.d.ts",
+      "import": "./out/global/objectOpt.js",
+      "browser": "./out/global/objectOpt.js"
+    }
+  },

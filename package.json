@@ -1,0 +1,47 @@
+{
+  "name": "ucbuilder", 
+  "type": "module",
+  "version": "1.0.4",
+  "description": ":Shree Ganeshay Namah: \n new way app design",
+  "scripts": {
+    "viteConfig.main": "vite build --config vite.config.ts",
+    "build:vite": "npm run viteConfig.main    &&  npm run  build:types",
+    "build:types": "tsc -p tsconfig.types.json",
+    "build:out": "tsc -p tsconfig.out.json",
+    "clean": "rimraf out",
+    "build": "npm run build:types && npm run build:out",
+    "rebuild": "npm run clean && npm run build"
+  },
+  "author": "ap",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "electron": "^31.6.0",
+    "rimraf": "^6.0.1",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.9.3",
+    "vite": "^6.4.1",
+    "vite-plugin-string": "^1.2.3"
+  },
+  "dependencies": {
+    "chokidar": "^4.0.3",
+    "vite-plugin-static-copy": "^3.1.4"
+  },
+  "keywords": [
+    "electron app designer",
+    "app developement",
+    "new way design",
+    "ui design",
+    "winform designer",
+    "software developement"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pratik2201/ucbuilder.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pratik2201/ucbuilder/issues"
+  },
+  "homepage": "https://github.com/pratik2201/ucbuilder#readme"
+}

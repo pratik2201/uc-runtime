@@ -1,0 +1,28 @@
+{
+  "include": [ "src"  ],
+  "exclude": [ "node_modules", "out","types" ],
+  "compilerOptions": {
+    "module": "node16",
+    "moduleResolution": "node16",
+    "target": "ESNext",
+    "baseUrl": "src",
+    "outDir": "out",   
+    "rootDir": "src",       
+   
+    "allowJs": true,
+    "strict": true,
+    "strictNullChecks": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,    
+    "skipLibCheck": true,
+    "noImplicitAny": false,
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "paths": {
+      "ucbuilder/*": [ "./src/*"  ],
+      "@ucbuilder/*": [  "./src/*"  ]
+    }
+  }
+}

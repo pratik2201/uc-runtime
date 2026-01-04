@@ -1,0 +1,18 @@
+import { $$Designer } from "../../../util/dynamic/$$Designer.js";
+
+
+export default function () {
+    const lc = new $$Designer<'ledgerGroup$tbl'>(import.meta.url);
+    let fcontent =
+        lc.WinForm(['ledgerGroup', { "full-size-window": 'true' }, , { "x-tabindex": 0 }],
+            lc.TextBox$Field([0, 'ledgerGroupName', 'Name']),
+            lc.TextArea$Field([1, 'alices[]', 'Alice']),
+            lc.TextBox$Field([2, 'ledgerGroup_id', 'Under']),
+            lc.TextBox$Field([3, 'opositeGroup', 'Opposite Group']),
+            lc.TextBox$Field([4, 'natureOfGroup', 'Group Nature', ',60px']),
+            lc.Checkbox$Field$YesNo([5, 'showInGrossProfit' as any, 'Show in Gross Profit ?','200px']),
+              lc.Checkbox$Field$YesNo([6, 'showMailingDetail' as any, 'Mailing Detail','200px']), 
+            lc.TextBox$Field([7, 'displayIndex', 'Display Index', ',80px']),
+        );
+    return fcontent;
+}
