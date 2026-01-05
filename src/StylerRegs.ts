@@ -1,6 +1,7 @@
 import { GetDeclaration } from "./build/codeFileInfo.js";
 import { openCloser } from "./global/openCloser.js";
 import { ATTR_OF, StyleClassScopeType } from "./global/runtimeOpt.js";
+import { ucUtil } from "./global/ucUtil.js";
 import { ProjectManage } from "./ipc/ProjectManage.js";
 import { GetUniqueId, ProjectRowR } from "./ipc/enumAndMore.js";
 import { OpenCloseHandler } from "./lib/OpenCloseHandler.js";
@@ -71,7 +72,7 @@ export class StylerRegs {
     ProjectManage.projects.forEach((row) => {
       let cssPath = nodeFn.path.resolve(row.projectPath, row.config.projectBaseCssPath);
       let _stylepath: string = nodeFn.path.relativeFilePath(row.projectPath, cssPath);
-      if (nodeFn.fs.existsSync(cssPath, row.importMetaURL)) {
+      if (nodeFn.fs.existsSync(cssPath/*, row.importMetaURL*/)) {
         row.stampSRC = StampNode.registerSoruce({
           key: _stylepath,
           baseType: StyleBaseType.Global,
@@ -412,7 +413,7 @@ export class ThemeCssHandler {
             let themecontents = '';
             if (fspath != undefined) {
               fspath = nodeFn.path.resolveFilePath(fspath, path);
-              themecontents = nodeFn.fs.readFileSync(fspath, undefined, this.main.projectInfo.importMetaURL)["#devEsc"]();
+              themecontents = ucUtil.devEsc(nodeFn.fs.readFileSync(fspath));
             }
             themecontents = StylerRegs.REMOVE_COMMENT(themecontents);
             themecontents = StylerRegs.REMOVE_EXTRASPACE(_this.match(themecontents));

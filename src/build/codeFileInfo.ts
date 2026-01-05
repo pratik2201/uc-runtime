@@ -74,9 +74,9 @@ export function GetDeclaration(filepath: string, projectRows = ProjectManage.pro
 export class codeFileInfo {
     name = "";
     extCode: SpecialExtType;
-    constructor(extCode: SpecialExtType) {
+    /*constructor(extCode: SpecialExtType) {
         this.extCode = extCode;
-    }
+    }*/
     static getExtType(path: string): SpecialExtType {
         let spl = path.split(/[\/\\]/gi);
         let fname = spl.pop();
@@ -102,17 +102,18 @@ export class codeFileInfo {
     callerProject: ProjectRowR; // actualPro
     get projectInfo() { return this.callerProject; /*this.resolvePathResult?.project;*/ }
     parseUrl(_path: string, sourceType: 'out' | 'src' | string, callerMetaUrl: string): boolean {
-         this.callerMetaUrl = callerMetaUrl;
+        this.callerMetaUrl = callerMetaUrl;
         let fullpath = PathBridge.GetFullPath(_path, callerMetaUrl);
 
         let dec = GetDeclaration(fullpath);
         this.callerProject = dec.project as any;
-        _path = fullpath; 
-        if (dec.fileDec == undefined || this.callerProject==undefined)
+        _path = fullpath;
+        if (dec.fileDec == undefined || this.callerProject == undefined)
             throw new Error(`'${_path}' is not valid file type for codeFileInfo.parseUrl`);
         else {
-            this.allPathOf = PathBridge.Convert(_path,dec.dirDec as any,dec.fileDec as any /*sourceType as any, GIVEN_PATH_TYPE*/);
-            this.pathOf = this.allPathOf[dec.dirDec]; 
+            this.allPathOf = PathBridge.Convert(_path, dec.dirDec as any, dec.fileDec as any /*sourceType as any, GIVEN_PATH_TYPE*/);
+            this.pathOf = this.allPathOf[dec.dirDec];
+            this.extCode = codeFileInfo.getExtType(this.pathOf.code);
             if (this.pathOf == undefined) {
                 console.warn(`'${_path}' is not appropriate for codeFileInfo.parseUrl`);
                 return false;

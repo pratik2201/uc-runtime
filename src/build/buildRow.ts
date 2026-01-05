@@ -94,6 +94,7 @@ class TsTptRow {
 }
 export class CommonRow {
     src: codeFileInfo;
+    dynamicFileContent?: string;
     htmlFileContent?: string;
     sources = {
         'ts_uc': new TsUcRow(),

@@ -23,7 +23,7 @@ export class intenseGenerator {
         const prj = GetProject((importMetaURL ?? path) as any, PathBridge.source, nodeFn.url as any);
         const pref = prj.config.preference;
         if (param0.cfInfo == undefined) {
-            param0.cfInfo = new codeFileInfo(codeFileInfo.getExtType(path as string));
+            param0.cfInfo = new codeFileInfo();
             param0.cfInfo.parseUrl(path as string, pref.outDir, importMetaURL);
         }
         const toSend = [];
@@ -40,7 +40,7 @@ export class intenseGenerator {
         const prj = GetProject((importMetaURL ?? path) as any, PathBridge.source, nodeFn.url as any);
         const pref = prj.config.preference;
         if (param0.cfInfo == undefined) {
-            param0.cfInfo = new codeFileInfo(codeFileInfo.getExtType(path as string));
+            param0.cfInfo = new codeFileInfo();
             param0.cfInfo.parseUrl(path as string, pref.outDir, importMetaURL);
         }
         let toSend = [];
@@ -56,7 +56,7 @@ export class intenseGenerator {
     }
     static generateTPT(path: string, classObj: any, callerMetaUrl: string, pera: ITptOptions, ...args: any[]): Template {
         let param0: ITptOptions = Object.assign(pera, TptOptions);
-        param0.cfInfo = new codeFileInfo(codeFileInfo.getExtType(path));
+        param0.cfInfo = new codeFileInfo();
         param0.cfInfo.parseUrl(path, 'out', callerMetaUrl);
         let uc: Template = (new (classObj)());
         uc.extended.initializebase(param0);
@@ -66,7 +66,7 @@ export class intenseGenerator {
     }
     static async generateTPTAsync(path: string, classObj: any, callerMetaUrl: string, pera: ITptOptions, ...args: any[]): Promise<any> {
         let param0: ITptOptions = Object.assign(pera, TptOptions);
-        param0.cfInfo = new codeFileInfo(codeFileInfo.getExtType(path));
+        param0.cfInfo = new codeFileInfo();
         param0.cfInfo.parseUrl(path, 'out', callerMetaUrl);
         args.push(param0);
         let uc: Template = (new (classObj)());

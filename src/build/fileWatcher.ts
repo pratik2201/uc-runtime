@@ -79,7 +79,7 @@ export class fileWatcher {
             if (fileWatcher.isValidFileForPathReplacer(recursive_filepath)) {
                 let ext = recursive_filepath.slice(recursive_filepath.lastIndexOf('.'));
                 if (!nodeFn.fs.existsSync(recursive_filepath)) { console.log(recursive_filepath); return; }
-                let data = nodeFn.fs.readFileSync(recursive_filepath, 'binary', undefined, false);
+                let data = nodeFn.fs.readFileSync(recursive_filepath, 'binary' );
                 let isChanged = false;
                 recursive_filepath = ucUtil.changeExtension(recursive_filepath, '.ts', '.js');
                 let InIndex = update.moved.findIndex(s => {

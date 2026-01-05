@@ -57,10 +57,10 @@ export default function () {
     main.On('fs.existsSync', (event, path: string) => {
         event.returnValue = fs.existsSync(path);
     });
-    main.On('fs.rmSync', (event, path: fs.PathLike, options?: fs.RmOptions, importMetaUrl?: string) => {
+    main.On('fs.rmSync', (event, path: fs.PathLike, options?: fs.RmOptions ) => {
         event.returnValue = fs.rmSync(path, options);
     });
-    main.On('fs.statSync.isDirectory', (event, path: fs.PathLike, options?: fs.StatSyncOptions, importMetaUrl?: string) => {
+    main.On('fs.statSync.isDirectory', (event, path: fs.PathLike, options?: fs.StatSyncOptions) => {
         try {
             event.returnValue = fs.lstatSync(path, options).isDirectory();
         } catch {

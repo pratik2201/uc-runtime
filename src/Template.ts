@@ -62,13 +62,13 @@ export class Template {
       } else return rtrn;
       rtrn.objectKey = csspath;
       rtrn.accessKey = name;
-      rtrn.cssContents = nodeFn.fs.readFileSync(csspath, undefined, cinfo.projectInfo.importMetaURL);
-      rtrn.htmlContents = nodeFn.fs.readFileSync(htmlpath, undefined, cinfo.projectInfo.importMetaURL);
+      rtrn.cssContents = nodeFn.fs.readFileSync(csspath);
+      rtrn.htmlContents = nodeFn.fs.readFileSync(htmlpath);
       if (rtrn.htmlContents == undefined) debugger;
       rtrn.htmlContents = rtrn.htmlContents["#PHP_ADD"]() ?? undefined;
     } else {
       rtrn.objectKey = cinfo.pathOf.scss;
-      rtrn.cssContents = nodeFn.fs.readFileSync(cinfo.pathOf.scss, undefined, cinfo.projectInfo.importMetaURL /* { replaceContentWithKeys: true }*/);
+      rtrn.cssContents = nodeFn.fs.readFileSync(cinfo.pathOf.scss);
       rtrn.htmlContents = iele.outerHTML["#PHP_ADD"]();
     }
 
@@ -146,7 +146,7 @@ export class Template {
           let pth = path["#devEsc"]();
           if (ppath != undefined)
             pth = nodeFn.path.resolve(ppath, pth);
-          let c = nodeFn.fs.readFileSync(pth, 'binary', importMetaUrl)
+          let c = nodeFn.fs.readFileSync(pth, 'binary')
           let prj = GetDeclaration(pth);// ProjectManage.getInfo(pth, importMetaUrl).project;
 
           return useLoader(c, pth, prj.project.importMetaURL);
@@ -154,11 +154,10 @@ export class Template {
       return csscnt;
     }
   }
-  static GetOptionsByContent(htmlcontent: string, cssContent: string, cssFilePath: string, importMetaUrl: string):
-    {
-      outerCSS: string,
-      tptObj: { [key: string]: ITemplatePathOptions }
-    } {
+  static GetOptionsByContent(htmlcontent: string, cssContent: string, cssFilePath: string, importMetaUrl: string): {
+    outerCSS: string,
+    tptObj: { [key: string]: ITemplatePathOptions }
+  } {
     //console.log(htmlcontent["#PHP_REMOVE"]());
     let ele = ucUtil.PHP_REMOVE(htmlcontent)["#$"]();
     let rtrn: { [key: string]: ITemplatePathOptions } = {};
@@ -180,7 +179,7 @@ export class Template {
       rtrn[id] = {
         accessKey: id,
         objectKey: undefined,
-        htmlContents:  ucUtil.PHP_ADD(ele.outerHTML),
+        htmlContents: ucUtil.PHP_ADD(ele.outerHTML),
       };
     }
     let rtrnKeys = Object.keys(rtrn);
@@ -200,9 +199,9 @@ export class Template {
 
   static GetObjectOfTemplate(cinfo: codeFileInfo, htContent?: string, cssdata?: string): { outerCSS: string, tptObj: { [key: string]: ITemplatePathOptions } } {
     let impUrl = cinfo.projectInfo.importMetaURL;
-    htContent = htContent ?? nodeFn.fs.readFileSync(cinfo.pathOf.html, undefined, impUrl );
-    if (cssdata == undefined && nodeFn.fs.existsSync(cinfo.pathOf.scss, impUrl))
-      cssdata = nodeFn.fs.readFileSync(cinfo.pathOf.scss, undefined, impUrl);
+    htContent = htContent ?? nodeFn.fs.readFileSync(cinfo.pathOf.html);
+    if (cssdata == undefined && nodeFn.fs.existsSync(cinfo.pathOf.scss/*, impUrl*/))
+      cssdata = nodeFn.fs.readFileSync(cinfo.pathOf.scss);
     else cssdata = '';
     let robj = this.GetOptionsByContent(htContent,
       cssdata,

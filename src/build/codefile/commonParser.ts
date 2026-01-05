@@ -15,6 +15,7 @@ import { ScopeType, objectOpt } from "../common.js";
 import { TemplateMaker } from "../regs/TemplateMaker.js";
 import { commonGenerator } from "./commonGenerator.js";
 import { ProjectManage } from "../../ipc/ProjectManage.js";
+import { HTMLx, importHTMLts } from "../../lib/WrapperHelper.js";
 export interface PathReplacementNode { findPath: string, replaceWith: string }
 export class commonParser {
 
@@ -86,7 +87,7 @@ export class commonParser {
     //     let _this = this;
 
     //     _row.src = new codeFileInfo(codeFileInfo.getExtType(filePath));
-    //     if (!_row.src.parseUrl(filePath, 'src', this.project.importMetaURL)) return undefined;
+    //     if (!_row.src.parseUrl(filePath, filePref.srcDir, this.project.importMetaURL)) return undefined;
     //     let onSelect_xName = _this.bldr.Event.onSelect_xName;
     //     let projectPath = nodeFn.path.resolve();
 
@@ -249,7 +250,7 @@ export class commonParser {
     //                 let _subpath = element.getAttribute("x-from")["#devEsc"]();
     //                 _subpath = nodeFn.path.resolveFilePath(filePath, _subpath);//["#toFilePath"]();
     //                 let uFInf = new codeFileInfo(codeFileInfo.getExtType(_subpath));
-    //                 uFInf.parseUrl(_subpath, 'src', filePath);
+    //                 uFInf.parseUrl(_subpath, filePref.srcDir, filePath);
     //                 if (nodeFn.fs.existsSync(uFInf.pathOf.code) ||
     //                     nodeFn.fs.existsSync(uFInf.pathOf.html) ||
     //                     nodeFn.fs.existsSync(uFInf.pathOf.designer)) {
@@ -294,12 +295,13 @@ export class commonParser {
             default: return undefined;
         }
         //_row.src = new codeFileInfo(codeFileInfo.getExtType(filePath));
-        //if (!_row.src.parseUrl(filePath, 'src', this.project.importMetaURL)) return undefined;
+        //if (!_row.src.parseUrl(filePath, filePref.srcDir, this.project.importMetaURL)) return undefined;
     }
+
     fillUc = async (filePath: string, htmlContents: string, _row: CommonRow) => {
         let row = _row.sources['ts_uc'];
         let _this = this;
-        _row.src = new codeFileInfo(codeFileInfo.getExtType(filePath));
+        _row.src = new codeFileInfo();
         const finfo = _row.src;
         if (!finfo.parseUrl(filePath, _this.PREFERENCE.srcDir, this.project.importMetaURL)) return undefined;
         let onSelect_xName = _this.bldr.Event.onSelect_xName;
@@ -309,21 +311,16 @@ export class commonParser {
         const filePref = finfo?.projectInfo?.config?.preference;
         if (htmlContents == undefined && pathOf.dynamicDesign != undefined && nodeFn.fs.existsSync(pathOf.dynamicDesign)) {
             row.designer.dynamicName = row.designer.importer.getNameNumber(`${finfo.name}$dynamicHtmlCode`);
-            try {
-                code = (await import(finfo.allPathOf[filePref.outDir].dynamicDesign))?.default();
-            } catch (e) {
-                console.error('ERROR IN :' + finfo.allPathOf[filePref.outDir].dynamicDesign);
-            }
+            code = await importHTMLts(finfo.allPathOf[filePref.outDir].dynamicDesign);
         } else {
             console.warn('DYNAMIC DESIGN NOT LOADED :' + finfo.allPathOf[filePref.outDir].dynamicDesign);
         }
         code = htmlContents ?? code ??
             (nodeFn.fs.existsSync(pathOf.html) ?
                 nodeFn.fs.readFileSync(pathOf.html) : undefined);
-
-
         if (code == undefined) return undefined;
         code = ucUtil.devEsc(code);
+
         // if (finfo.pathOf.code.includes('customView$form.uc')) debugger;
         this.tmaker.mainImportMeta = nodeFn.url.pathToFileURL(filePath);
         let compileedCode = code;
@@ -334,12 +331,14 @@ export class commonParser {
                 this.codeHT = compileedCode["#$"]();
                 _row.htmlFileContent = code;
             } else {
-                code = `
-<wrapper x-caption="${finfo.name}" tabindex="0">
-    <!-- DONT MODIFY "x-at" ATTRIBUTE -->
-</wrapper>`;
+                /*code = `<wrapper x-caption="${finfo.name}" tabindex="0">
+                        <!-- DONT MODIFY "x-at" ATTRIBUTE -->
+                    </wrapper>`;
+                _row.htmlFileContent = code;*/
+
+                code = HTMLx.Wrapper([{ "x-caption": 'Form' }]);
                 this.codeHT = code["#$"]() as HTMLElement;
-                _row.htmlFileContent = code;
+                _row.dynamicFileContent = this.gen.filex('ts', '.uc', '.dynamic');
             }
         } catch (ex) {
             console.log(ex);
@@ -388,8 +387,8 @@ export class commonParser {
             if (element.hasAttribute("x-from")) {
                 let _subpath = ucUtil.devEsc(element.getAttribute("x-from"));
                 _subpath = nodeFn.path.resolveFilePath(filePath, _subpath);//["#toFilePath"]();
-                let uFInf = new codeFileInfo(codeFileInfo.getExtType(_subpath));
-                uFInf.parseUrl(_subpath, 'src', filePath);
+                let uFInf = new codeFileInfo();
+                uFInf.parseUrl(_subpath, filePref.srcDir, filePath);
                 if (_exists(uFInf.pathOf.code) || _exists(uFInf.pathOf.dynamicDesign) ||
                     _exists(uFInf.pathOf.scss) || _exists(uFInf.pathOf.html)) {
                     ctr.type = uFInf.extCode;
@@ -407,47 +406,33 @@ export class commonParser {
 
         row.designer.importer.addImport([finfo.name], row.designer.codeFilePath);
     }
+
     fillTpt = async (filePath: string, htmlContents: string, _row: CommonRow) => {
         let row = _row.sources['ts_tpt'];
         let _this = this;
-        _row.src = new codeFileInfo(codeFileInfo.getExtType(filePath));
+        _row.src = new codeFileInfo();
         const finfo = _row.src;
-        if (!finfo.parseUrl(filePath, 'src', this.project.importMetaURL)) return undefined;
+        if (!finfo.parseUrl(filePath, _this.PREFERENCE.srcDir, this.project.importMetaURL)) return undefined;
+
+        const filePref = finfo?.projectInfo?.config?.preference;
         let onSelect_xName = _this.bldr.Event.onSelect_xName;
         let projectPath = nodeFn.path.resolve();
 
         let code: string;
         const pathOf = finfo.pathOf;
-        const filePref = finfo?.projectInfo?.config?.preference;
         if (htmlContents == undefined && pathOf.dynamicDesign != undefined && nodeFn.fs.existsSync(pathOf.dynamicDesign)) {
             row.designer.dynamicName = row.designer.importer.getNameNumber(`${finfo.name}$dynamicHtmlCode`);
-            try {
-                code = (await import(finfo.allPathOf[filePref.outDir].dynamicDesign))?.default();
-            } catch (e) {
-                console.error('ERROR IN :' + finfo.allPathOf[filePref.outDir].dynamicDesign);
-            }
+            code = await importHTMLts(finfo.allPathOf[filePref.outDir].dynamicDesign);
         } else {
             console.warn('DYNAMIC DESIGN NOT LOADED :' + finfo.allPathOf[filePref.outDir].dynamicDesign);
         }
 
-        /* let tsToDes = nodeFn.path.relativeFilePath(pathOf.code, pathOf.designer);
-         let DestoTs = nodeFn.path.relativeFilePath(pathOf.designer, pathOf.code);
- 
-         row.designer.codeFilePath = ucUtil.changeExtension(DestoTs, this.SRC_CODE_EXT, this.OUT_CODE_EXT)["#toFilePath"]();
-         row.code.designerFilePath = ucUtil.changeExtension(tsToDes, this.SRC_CODE_EXT, this.OUT_CODE_EXT)["#toFilePath"]();*/
-
         code = htmlContents ?? code ??
-            nodeFn.fs.existsSync(pathOf.html, finfo.projectInfo.importMetaURL) ?
-            nodeFn.fs.readFileSync(pathOf.html, undefined, finfo.projectInfo.importMetaURL, false) : undefined;
+            nodeFn.fs.existsSync(pathOf.html) ?
+            nodeFn.fs.readFileSync(pathOf.html) : undefined;
         if (code == undefined) return undefined;
         code = ucUtil.devEsc(code);
-        // console.log('--------------------------');
-        //console.log(filePath);
-
         this.tmaker.mainImportMeta = nodeFn.url.pathToFileURL(filePath);
-        // console.log(this.tmaker.mainImportMeta);
-        //let cccodeCallback = this.tmaker.compileTemplate(code);
-        //code = cccodeCallback();
         let compileedCode = code;
         let rootpath = nodeFn.path.relative(projectPath, filePath);
         try {
@@ -456,15 +441,20 @@ export class commonParser {
                 this.codeHT = compileedCode["#$"]();
                 _row.htmlFileContent = code;
             } else {
-                code = `
-                    <x:template>
-                        <wrapper id="primary"></wrapper>
-                        <wrapper id="header"></wrapper>
-                        <wrapper id="footer"></wrapper>
-                    </x:template>
-                    `;
+                // code = `
+                //     <x:template>
+                //         <wrapper id="primary"></wrapper>
+                //         <wrapper id="header"></wrapper>
+                //         <wrapper id="footer"></wrapper>
+                //     </x:template>
+                //     `;
+                code = HTMLx.Template({
+                    primary: {},
+                    header: {},
+                    footer: {},
+                });
                 this.codeHT = code["#$"]() as HTMLElement;
-
+                _row.dynamicFileContent = this.gen.filex('ts', '.tpt', '.dynamic');
                 _row.htmlFileContent = code;
             }
         } catch (ex) {

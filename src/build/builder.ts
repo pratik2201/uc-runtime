@@ -8,6 +8,7 @@ import { commonParser } from "./codefile/commonParser.js";
 import { codeFileInfo } from "./codeFileInfo.js";
 import { fileWatcher } from "./fileWatcher.js";
 import { PathBridge } from "./pathBridge.js";
+import { importHTMLts } from "../lib/WrapperHelper.js";
 export interface SourceCodeNode {
     designerCode?: string,
     jsFileCode?: string,
@@ -99,13 +100,12 @@ export class builder {
         for (let i = 0; i < demandFiles.length; i++) {
             let dfile = demandFiles[i];
             let outDynamicDesignFile = nodeFn.path.resolve(dfile);
-            //let importUrl = nodeFn.url.pathToFileURL(fullpath);
             if (nodeFn.fs.existsSync(outDynamicDesignFile)) {
                 try {
-                    let content = (await import(outDynamicDesignFile))?.default();// new WrapperHelper(importUrl)
+                    let content = await importHTMLts(outDynamicDesignFile);// new WrapperHelper(importUrl)
                     if (content != undefined) {
                         let cinfo = PathBridge.Convert(outDynamicDesignFile, outDeclareKey as any, 'dynamicDesign', srcDeclareKey as any)[srcDeclareKey];
-                        nodeFn.fs.writeFileSync(cinfo["html"], content, undefined, 'binary');
+                        nodeFn.fs.writeFileSync(cinfo["html"], content, 'binary');
                     }
                 } catch (e) {
                     console.log(e);

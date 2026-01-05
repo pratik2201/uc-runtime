@@ -11,9 +11,9 @@ export class TemplateMaker {
     templateCache = new Map<string, Function>();
     constructor(public mainImportMeta: string) { }
 
-    private loadTemplate(filepath: string, _importMeta: string) {
+    private loadTemplate(filepath: string ) {
         filepath = filepath["#devEsc"]();
-        return nodeFn.fs.readFileSync(filepath, undefined, _importMeta);   /// path.resolve(this.baseDir, filepath), 'utf-8'
+        return nodeFn.fs.readFileSync(filepath );   /// path.resolve(this.baseDir, filepath), 'utf-8'
     }
 
     compileTemplate(template: string/*, filePath = ''*/): Function {
@@ -52,7 +52,7 @@ export class TemplateMaker {
                             return funcName + ';';
                         } else {
                             
-                            let ltpt = _this.loadTemplate(includePath, imprtmta);
+                            let ltpt = _this.loadTemplate(includePath);
                             let fcodes = tptbind(ltpt, imprtmta/* ltpt.info.project.importMetaURL*/);
                             funcName = RuntimeKEY + "_" + (_COUNTER++);
                             incCode += `const ${funcName} = ${fcodes};`;

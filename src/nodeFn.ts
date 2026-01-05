@@ -139,51 +139,51 @@ export class nodeFn {
         intersectAndReplacePath: (basePath: string, targetPath: string): boolean => {
             return this.renderer.sendSync('path.intersectAndReplacePath', [basePath, targetPath]);
         },
-        ProjectResolve: (path: string, importMetaUrl: string) => {
-            return ProjectManage.resolve(path as any, importMetaUrl);
-        }
+        // ProjectResolve: (path: string, importMetaUrl: string) => {
+        //     return ProjectManage.resolve(path as any, importMetaUrl);
+        // }
     }
     private static readFileSyncStorage = new Map<string, string>();
     private static readFileSyncStorageCounter = 0;
     static fs = {
-        openSync: (path: fs.PathLike, flags: fs.OpenMode, mode?: fs.Mode | null, importMetaUrl?: string) => {
-            return this.renderer.sendSync('fs.openSync', [ProjectManage.resolve(path as any, importMetaUrl), flags, mode]);
+        openSync: (path: fs.PathLike, flags: fs.OpenMode, mode?: fs.Mode | null) => {
+            return this.renderer.sendSync('fs.openSync', [path, flags, mode]);
         },
-        existsSync: (path: string, importMetaUrl?: string): boolean => {
-            let _path = ProjectManage.resolve(path, importMetaUrl);
-            return this.renderer.sendSync('fs.existsSync', [_path]);
+        existsSync: (path: string): boolean => {
+
+            return this.renderer.sendSync('fs.existsSync', [path]);
         },
-        rename: (from: string, to: string, importMetaUrl?: string) => {
+        rename: (from: string, to: string) => {
             return this.renderer.sendSync('fs.rename', [from, to]);
         },
 
 
-        rmSync: (path: fs.PathLike, options?: fs.RmOptions, importMetaUrl?: string) => {
-            return this.renderer.sendSync('fs.rmSync', [ProjectManage.resolve(path as any, importMetaUrl), options]);
+        rmSync: (path: fs.PathLike, options?: fs.RmOptions) => {
+            return this.renderer.sendSync('fs.rmSync', [path, options]);
         },
-        isDirectory: (path: fs.PathLike, options?: fs.StatSyncOptions, importMetaUrl?: string): boolean => {
-            return this.renderer.sendSync('fs.statSync.isDirectory', [ProjectManage.resolve(path as any, importMetaUrl), options]);
+        isDirectory: (path: fs.PathLike, options?: fs.StatSyncOptions): boolean => {
+            return this.renderer.sendSync('fs.statSync.isDirectory', [path, options]);
         },
 
-        mkdirSync: (path: string, options: fs.MakeDirectoryOptions, importMetaUrl?: string): string => {
-            return this.renderer.sendSync('fs.mkdirSync', [ProjectManage.resolve(path, importMetaUrl), options]);
+        mkdirSync: (path: string, options: fs.MakeDirectoryOptions): string => {
+            return this.renderer.sendSync('fs.mkdirSync', [path, options]);
         },
 
         copyFileSync: (fromPath: string, toPath: string, option?: number): string => {
             return this.renderer.sendSync('fs.copyFileSync', [fromPath, toPath, option]);
         },
-        readFile: (path: string, encode: import('fs').WriteFileOptions = 'binary',
-            importMetaUrl?: string) => {
+        readFile: (path: string, encode: import('fs').WriteFileOptions = 'binary') => {
             return this.renderer.Invoke('fs.readFile', [{
-                path: ProjectManage.resolve(path, importMetaUrl)['#toFilePath'](),
+                path: path,
                 encode: encode,
                 doCache: false,
             } as I_ReadFileSyncPerameters]);
         },
-        readFileSync: (path: string, encode: import('fs').WriteFileOptions = 'binary',
-            importMetaUrl?: string, doCache = false): string | null => {
+        readFileSync: (path: string, encode: import('fs').WriteFileOptions = 'binary', doCache = false): string | null => {
+
+
             //if (path.includes('editorCommon.scss')) { return 'editorCommon.scss called...'; }
-            let _finalpath = ProjectManage.resolve(path, importMetaUrl)['#toFilePath']();
+            let _finalpath = nodeFn.path.normalize(path);
             if (doCache) {
 
                 let rtrn = this.readFileSyncStorage.get(_finalpath);
@@ -209,28 +209,16 @@ export class nodeFn {
             }
 
         },
-        // readFileSyncDetail: (path: string,
-        //     encode: import('fs').WriteFileOptions = 'binary',
-        //     importMetaUrl?: string,
-        //     doCache = false) => {
-        //     // if (path.includes('editorCommon.scss')) {    return 'editorCommon.scss called...'; }
-        //     importMetaUrl = importMetaUrl ?? ProjectManage.getMetaUrl(path);
-        //     let rtrn = {
-        //         info: ProjectManage.resolve4PathObject(path, importMetaUrl),
-        //         result: '',
-        //     }
-        //     rtrn.result = this.rende.sendSync('fs.readFileSync', [{ path: rtrn.info.result, encode: encode, doCache: doCache } as I_ReadFileSyncPerameters]);
-        //     return rtrn;
-        // },
-        readdirSync: (path: string, encode: import('fs').WriteFileOptions = 'binary', importMetaUrl?: string): string[] => {
-            return this.renderer.sendSync('fs.readdirSync', [ProjectManage.resolve(path, importMetaUrl), encode]);
+         
+        readdirSync: (path: string, encode: import('fs').WriteFileOptions = 'binary'): string[] => {
+            return this.renderer.sendSync('fs.readdirSync', [path, encode]);
         },
-        readdirSyncDirent: (path: string, recursive?: boolean, importMetaUrl?: string)
+        readdirSyncDirent: (path: string, recursive?: boolean)
             : { name: string, isDir: boolean, isFile: boolean }[] => {
-            return this.renderer.sendSync('fs.readdirSyncDirent', [ProjectManage.resolve(path, importMetaUrl), recursive]);
+            return this.renderer.sendSync('fs.readdirSyncDirent', [path, recursive]);
         },
-        writeFileSync: (path: string, data: string, importMetaUrl?: string, encode: import('fs').WriteFileOptions = 'binary') => {
-            return this.renderer.sendSync('fs.writeFileSync', [{ path: ProjectManage.resolve(path, importMetaUrl), data: data, encode: encode } as I_WriteFileSyncPerameters]);
+        writeFileSync: (path: string, data: string, encode: import('fs').WriteFileOptions = 'binary') => {
+            return this.renderer.sendSync('fs.writeFileSync', [{ path: path, data: data, encode: encode } as I_WriteFileSyncPerameters]);
         }
     }
 

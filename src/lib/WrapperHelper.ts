@@ -119,10 +119,10 @@ export class HTMLx<S = any> {
         }
         return htCode;
     };
-    Wrapper = ([wrapperProps]: [Partial<PreDefinedPropertiesHTML<S>>?,Partial<PreDefinedPropertiesHTML<S>>?], ...childs: string[]) => {
+    static Wrapper = <S>([wrapperProps]: [Partial<PreDefinedPropertiesHTML<S>>?, Partial<PreDefinedPropertiesHTML<S>>?], ...childs: string[]) => {
         return HTMLx.Tag(['wrapper', wrapperProps]);
     };
-    Template = (templates: { [id: string]: Partial<PreDefinedPropertiesHTML<S>> }) => {
+    static Template = <S>(templates: { [id: string]: Partial<PreDefinedPropertiesHTML<S>> }) => {
         let cntnt: string[] = [];
         for (const [id, template] of Object.entries(templates)) {
             cntnt.push(this.Wrapper([Object.assign({ id: id }, template)]))
@@ -139,6 +139,11 @@ export class HTMLx<S = any> {
         ucProps["x-from"] = `{:${relpath}}`;
         return HTMLx.Tag([obj.name, ucProps], ...childs);
     };
-
-
-} 
+}
+export async function importHTMLts(fpath: string) {
+    try {
+        return (await import(fpath))?.default();
+    } catch (e) {
+        console.error('ERROR IN :' + fpath);
+    }
+}

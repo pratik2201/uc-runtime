@@ -40,9 +40,9 @@ interface SourceTypeNode {
 export class commonGenerator {
     rows: CommonRow[] = [];
     //DEFAULT_TEMPLEATES: SourceTypeNode;
-    getfile(pth: string) {
-        return nodeFn.fs.readFileSync(nodeFn.path.resolveFilePath(import.meta.url, ucUtil.devEsc(pth)), undefined, import.meta.url, false);
-    }
+    // getfile(pth: string) {
+    //     return nodeFn.fs.readFileSync(nodeFn.path.resolveFilePath(import.meta.url, ucUtil.devEsc(pth)));
+    // }
     //getFileX()
     /* private initTemplates() {
          this.DEFAULT_TEMPLEATES = {
@@ -126,7 +126,7 @@ export class commonGenerator {
         nodeFn.fs.mkdirSync(dirname);*/
     }
     static templateUnMapped = new Map<string, string>();
-    filex(type: 'js' | 'ts' | string, extType: SpecialExtType, fileType: '.designer' | '.code' | '.style') {
+    filex(type: 'js' | 'ts' | string, extType: SpecialExtType, fileType: '.designer' | '.code'| '.dynamic' | '.style') {
         let tptFileName = `${type}${extType}${fileType}`;
         if (commonGenerator.templateUnMapped.has(tptFileName))
             return commonGenerator.templateUnMapped.get(tptFileName);
@@ -137,7 +137,7 @@ export class commonGenerator {
             }*/
             const tptDirpath = ucUtil.devEsc(`{:../../../assets/ucbuilder/templates}`);
             fpath = nodeFn.path.resolveFilePath(import.meta.url, nodeFn.path.join(tptDirpath, tptFileName));
-            const data = nodeFn.fs.readFileSync(fpath, 'binary', import.meta.url);
+            const data = nodeFn.fs.readFileSync(fpath, 'binary');
             commonGenerator.templateUnMapped.set(tptFileName, data);
             return data;
         }
@@ -145,7 +145,7 @@ export class commonGenerator {
     generateFiles(rows: CommonRow[] = []) {
         let _this = this;
         console.log(rows);
-        
+
         if (rows == undefined || rows.length == 0) return;
         this.rows = rows;
         let _data = "";
@@ -181,6 +181,10 @@ export class commonGenerator {
 
                 if (row.htmlFileContent != undefined)
                     nodeFn.fs.writeFileSync(`${row.src.pathOf.html}`, row.htmlFileContent);
+
+                if (row.dynamicFileContent != undefined)
+                    nodeFn.fs.writeFileSync(`${row.src.pathOf.dynamicDesign}`, row.dynamicFileContent);
+
 
                 if (!nodeFn.fs.existsSync(row.src.pathOf[codeFileSrctype])) {
                     _data = _this.tMaker.compileTemplate(this.filex(srctype, uctype, '.code'))(row);

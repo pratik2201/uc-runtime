@@ -122,7 +122,7 @@ export class SourceNode {
         importMetaUrl = importMetaUrl ?? getMetaUrl(cssFilePath, ProjectManage.projects);
         let cssContent = '';
         if (nodeFn.fs.existsSync(cssFilePath))
-            cssContent = nodeFn.fs.readFileSync(cssFilePath, undefined, importMetaUrl);
+            cssContent = nodeFn.fs.readFileSync(cssFilePath );
         this.pushCSSByContent(
             cssFilePath,
             cssContent,
@@ -134,7 +134,7 @@ export class SourceNode {
         importMetaUrl = importMetaUrl ?? getMetaUrl(cssFilePath, ProjectManage.projects);
         let cssContent = '';
         if (nodeFn.fs.existsSync(cssFilePath))
-            cssContent = nodeFn.fs.readFileSync(cssFilePath, undefined, importMetaUrl);
+            cssContent = nodeFn.fs.readFileSync(cssFilePath, undefined);
         this.pushCSSByContent(
             cssFilePath,
             cssContent,
