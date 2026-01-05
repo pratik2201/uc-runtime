@@ -1,10 +1,11 @@
-import { codeFileInfo } from "./build/codeFileInfo.js";
+import { codeFileInfo, GetDeclaration } from "./build/codeFileInfo.js";
 import { regsManage } from "./build/regs/regsManage.js";
 import { TemplateMaker } from "./build/regs/TemplateMaker.js";
 import { ITemplatePathOptions, TptOptions, ITptOptions, ExtractArguments } from "./enumAndMore.js";
 import { FilterContent } from "./global/filterContent.js";
 import { newObjectOpt } from "./global/objectOpt.js";
 import { ATTR_OF } from "./global/runtimeOpt.js";
+import { ucUtil } from "./global/ucUtil.js";
 import { ProjectManage } from "./ipc/ProjectManage.js";
 import { StampNode, SourceNode, STYLER_SELECTOR_TYPE } from "./lib/StampGenerator.js";
 import { nodeFn } from "./nodeFn.js";
@@ -146,15 +147,20 @@ export class Template {
           if (ppath != undefined)
             pth = nodeFn.path.resolve(ppath, pth);
           let c = nodeFn.fs.readFileSync(pth, 'binary', importMetaUrl)
-          let prj = ProjectManage.getInfo(pth, importMetaUrl).project;
-          return useLoader(c, pth, prj.importMetaURL);
+          let prj = GetDeclaration(pth);// ProjectManage.getInfo(pth, importMetaUrl).project;
+
+          return useLoader(c, pth, prj.project.importMetaURL);
         });
       return csscnt;
     }
   }
-  static GetOptionsByContent(htmlcontent: string, cssContent: string, cssFilePath: string, importMetaUrl: string): { outerCSS: string, tptObj: { [key: string]: ITemplatePathOptions } } {
+  static GetOptionsByContent(htmlcontent: string, cssContent: string, cssFilePath: string, importMetaUrl: string):
+    {
+      outerCSS: string,
+      tptObj: { [key: string]: ITemplatePathOptions }
+    } {
     //console.log(htmlcontent["#PHP_REMOVE"]());
-    let ele = htmlcontent["#PHP_REMOVE"]()["#$"]();
+    let ele = ucUtil.PHP_REMOVE(htmlcontent)["#$"]();
     let rtrn: { [key: string]: ITemplatePathOptions } = {};
     let hasMultipleNode = !ele.hasAttribute('id');
     if (hasMultipleNode) {
@@ -165,7 +171,7 @@ export class Template {
           rtrn[id] = {
             accessKey: id,
             objectKey: undefined,
-            htmlContents: ichild.outerHTML["#PHP_ADD"](),
+            htmlContents: ucUtil.PHP_ADD(ichild.outerHTML),
           };
         }
       }
@@ -174,7 +180,7 @@ export class Template {
       rtrn[id] = {
         accessKey: id,
         objectKey: undefined,
-        htmlContents: ele.outerHTML["#PHP_ADD"](),
+        htmlContents:  ucUtil.PHP_ADD(ele.outerHTML),
       };
     }
     let rtrnKeys = Object.keys(rtrn);
@@ -183,7 +189,7 @@ export class Template {
       rtrn["primary"] = {
         accessKey: "primary",
         objectKey: undefined,
-        htmlContents: ele.outerHTML["#PHP_ADD"](),
+        htmlContents: ucUtil.PHP_ADD(ele.outerHTML),
       };
       rtrnKeys = ["primary"];
       isSimpleMode = true;
@@ -192,9 +198,9 @@ export class Template {
     return { outerCSS: outerCSS, tptObj: rtrn };
   }
 
-   static GetObjectOfTemplate(cinfo: codeFileInfo, htContent?: string, cssdata?: string): { outerCSS: string, tptObj: { [key: string]: ITemplatePathOptions } } {
+  static GetObjectOfTemplate(cinfo: codeFileInfo, htContent?: string, cssdata?: string): { outerCSS: string, tptObj: { [key: string]: ITemplatePathOptions } } {
     let impUrl = cinfo.projectInfo.importMetaURL;
-    htContent = htContent ?? nodeFn.fs.readFileSync(cinfo.pathOf.html, undefined, impUrl /* {} */);
+    htContent = htContent ?? nodeFn.fs.readFileSync(cinfo.pathOf.html, undefined, impUrl );
     if (cssdata == undefined && nodeFn.fs.existsSync(cinfo.pathOf.scss, impUrl))
       cssdata = nodeFn.fs.readFileSync(cinfo.pathOf.scss, undefined, impUrl);
     else cssdata = '';
@@ -207,35 +213,8 @@ export class Template {
       irow.objectKey = _mainFile_RootPath + "#" + irow.accessKey;
     }
     return robj;
-    /*let ele = data.PHP_ADD().async $();
-    let rtrn: ITemplatePathOptions[] = [];
-    if (ele.length != undefined) {
-      for (let i = 0, iObj = ele, ilen = iObj.length; i < ilen; i++) {
-        const iele = iObj[i];
-        let rs = Template.getTemplateOptionByElement(iele, cinfo);
-        rtrn.push(rs);
-      }
-    } else {
-      let rs: ITemplatePathOptions = {
-        accessKey: 'primary',
-        objectKey: cinfo.style.rootPath,
-        cssContents: FileDataBank.readFile(cinfo.style.fullPath, { replaceContentWithKeys: true }),
-        htmlContents: data,
-      };
-      rtrn.push(rs);
-    }
-    return rtrn;*/
   }
-  // static GetObjectOfTemplate(cinfo: codeFileInfo): { outerCSS: string, tptObj: { [key: string]: ITemplatePathOptions } } {
-  //   return Template.GetObjectOfTemplate(cinfo);
-  //   /*let ar = Template.GetTemplatePathOptionsObject(cinfo);
-  //   let robj: { [key: string]: ITemplatePathOptions } = {};
-  //   for (let i = 0, iObj = ar, ilen = iObj.length; i < ilen; i++) {
-  //     const itpt = iObj[i];
-  //     robj[itpt.accessKey] = itpt;
-  //   }
-  //   return robj;*/
-  // }
+
   static GetArrayOfTemplate(cinfo: codeFileInfo): ITemplatePathOptions[] {
     let ar = [] as ITemplatePathOptions[];
     let objs = Template.GetObjectOfTemplate(cinfo).tptObj;
@@ -282,13 +261,7 @@ export class Template {
       snode.release();
     });
   }
-  //static COUNTER = 0;
-  //nodeCounter = Template.COUNTER;
-  // constructor(pera: ITptOptions) {
-  //   StylerRegs.templateID++;
-  //   this.extended.parentUc = pera.parentUc;
-  //   this.extended.cfInfo = pera.cfInfo;
-  // }
+
 
   extended = {
     initializebase: (pera: ITptOptions) => {

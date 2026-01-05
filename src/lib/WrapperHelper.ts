@@ -51,26 +51,26 @@ const VOID_SVG_ELEMENTS = [
     "SET"
 ];
 const NON_VOID_SVG_ELEMENTS = [
-  "SVG",
-  "G",
-  "DEFS",
-  "SYMBOL",
-  "MASK",
-  "PATTERN",
-  "MARKER",
-  "TEXT",
-  "TSPAN",
-  "TEXTPATH",
-  "A",
-  "SWITCH",
-  "CLIPPATH",
-  "LINEARGRADIENT",
-  "RADIALGRADIENT",
-  "FILTER",
-  "FOREIGNOBJECT",
-  "DESC",
-  "METADATA",
-  "TITLE"
+    "SVG",
+    "G",
+    "DEFS",
+    "SYMBOL",
+    "MASK",
+    "PATTERN",
+    "MARKER",
+    "TEXT",
+    "TSPAN",
+    "TEXTPATH",
+    "A",
+    "SWITCH",
+    "CLIPPATH",
+    "LINEARGRADIENT",
+    "RADIALGRADIENT",
+    "FILTER",
+    "FOREIGNOBJECT",
+    "DESC",
+    "METADATA",
+    "TITLE"
 ];
 
 export interface PreDefinedPropertiesHTML<S = any> {
@@ -119,13 +119,19 @@ export class HTMLx<S = any> {
         }
         return htCode;
     };
-    Wrapper = ([wrapperProps]: [Partial<PreDefinedPropertiesHTML<S>>?, Partial<PreDefinedPropertiesHTML<S>>?], ...childs: string[]) => {
+    Wrapper = ([wrapperProps]: [Partial<PreDefinedPropertiesHTML<S>>?,Partial<PreDefinedPropertiesHTML<S>>?], ...childs: string[]) => {
         return HTMLx.Tag(['wrapper', wrapperProps]);
     };
-
+    Template = (templates: { [id: string]: Partial<PreDefinedPropertiesHTML<S>> }) => {
+        let cntnt: string[] = [];
+        for (const [id, template] of Object.entries(templates)) {
+            cntnt.push(this.Wrapper([Object.assign({ id: id }, template)]))
+        }
+        return HTMLx.Tag(['x:template', {}], ...cntnt);
+    }
     static Usercontrol = ([name, obj, htmlFilePath, ucProps]: [string?, (typeof Usercontrol)?, string?, Partial<PreDefinedPropertiesHTML<any>>?], ...childs: string[]) => {
-        
-        let relpath = nodeFn.path.relativeFilePath(htmlFilePath, obj['AbsolutePath']);
+        let relpath: string;
+        relpath = nodeFn.path.relativeFilePath(htmlFilePath, obj['AbsolutePath']);
         ucProps = ucProps ?? {};
         if (name != undefined)
             ucProps["x-name"] = name as any;
@@ -134,5 +140,5 @@ export class HTMLx<S = any> {
         return HTMLx.Tag([obj.name, ucProps], ...childs);
     };
 
-     
+
 } 

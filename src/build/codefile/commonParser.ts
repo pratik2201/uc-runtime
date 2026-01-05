@@ -72,7 +72,6 @@ export class commonParser {
     project: ProjectRowR;
     PROJECT_PATH_LENGTH = 0;
     async init(filePath: string, htmlContents: string | undefined = undefined) {
-        // debugger;
         let row = await this.fill(filePath, htmlContents);
         if (row != undefined)
             this.rows.push(row);
@@ -304,29 +303,34 @@ export class commonParser {
         const finfo = _row.src;
         if (!finfo.parseUrl(filePath, _this.PREFERENCE.srcDir, this.project.importMetaURL)) return undefined;
         let onSelect_xName = _this.bldr.Event.onSelect_xName;
-        const pathOf = finfo.pathOf;
-        if (pathOf.dynamicDesign != undefined && nodeFn.fs.existsSync(pathOf.dynamicDesign)) {
-            row.designer.dynamicName = row.designer.importer.getNameNumber(`${finfo.name}$dynamicHtmlCode`);
-        }
+
         let code: string;
-        code = htmlContents ??
-            nodeFn.fs.existsSync(pathOf.html) ?
-            nodeFn.fs.readFileSync(pathOf.html) : undefined;
+        const pathOf = finfo.pathOf;
+        const filePref = finfo?.projectInfo?.config?.preference;
+        if (htmlContents == undefined && pathOf.dynamicDesign != undefined && nodeFn.fs.existsSync(pathOf.dynamicDesign)) {
+            row.designer.dynamicName = row.designer.importer.getNameNumber(`${finfo.name}$dynamicHtmlCode`);
+            try {
+                code = (await import(finfo.allPathOf[filePref.outDir].dynamicDesign))?.default();
+            } catch (e) {
+                console.error('ERROR IN :' + finfo.allPathOf[filePref.outDir].dynamicDesign);
+            }
+        } else {
+            console.warn('DYNAMIC DESIGN NOT LOADED :' + finfo.allPathOf[filePref.outDir].dynamicDesign);
+        }
+        code = htmlContents ?? code ??
+            (nodeFn.fs.existsSync(pathOf.html) ?
+                nodeFn.fs.readFileSync(pathOf.html) : undefined);
 
 
         if (code == undefined) return undefined;
-        code = code["#devEsc"]();
+        code = ucUtil.devEsc(code);
+        // if (finfo.pathOf.code.includes('customView$form.uc')) debugger;
         this.tmaker.mainImportMeta = nodeFn.url.pathToFileURL(filePath);
-        // console.log(this.tmaker.mainImportMeta);
-        //let cccodeCallback = this.tmaker.compileTemplate(code);
-        //code = cccodeCallback();
         let compileedCode = code;
-        //let rootpath = nodeFn.path.relative(projectPath, filePath);
-        //let isUserControl = finfo.extCode == SpecialExtEnum.uc;
         try {
             if (compileedCode.trim() != '') {
                 let cccodeCallback = this.tmaker.compileTemplate(compileedCode);
-                compileedCode = ucUtil.PHP_REMOVE(cccodeCallback());
+                compileedCode = ucUtil.PHP_REMOVE(cccodeCallback({}));
                 this.codeHT = compileedCode["#$"]();
                 _row.htmlFileContent = code;
             } else {
@@ -408,31 +412,35 @@ export class commonParser {
         let _this = this;
         _row.src = new codeFileInfo(codeFileInfo.getExtType(filePath));
         const finfo = _row.src;
-        /* 
-        let _row = new CommonRow();
-        let _this = this; 
-        finfo = new codeFileInfo(codeFileInfo.getExtType(filePath));
-        */
         if (!finfo.parseUrl(filePath, 'src', this.project.importMetaURL)) return undefined;
         let onSelect_xName = _this.bldr.Event.onSelect_xName;
         let projectPath = nodeFn.path.resolve();
+
+        let code: string;
         const pathOf = finfo.pathOf;
-
-
-        if (pathOf.dynamicDesign != undefined && nodeFn.fs.existsSync(pathOf.dynamicDesign)) {
+        const filePref = finfo?.projectInfo?.config?.preference;
+        if (htmlContents == undefined && pathOf.dynamicDesign != undefined && nodeFn.fs.existsSync(pathOf.dynamicDesign)) {
             row.designer.dynamicName = row.designer.importer.getNameNumber(`${finfo.name}$dynamicHtmlCode`);
+            try {
+                code = (await import(finfo.allPathOf[filePref.outDir].dynamicDesign))?.default();
+            } catch (e) {
+                console.error('ERROR IN :' + finfo.allPathOf[filePref.outDir].dynamicDesign);
+            }
+        } else {
+            console.warn('DYNAMIC DESIGN NOT LOADED :' + finfo.allPathOf[filePref.outDir].dynamicDesign);
         }
+
         /* let tsToDes = nodeFn.path.relativeFilePath(pathOf.code, pathOf.designer);
          let DestoTs = nodeFn.path.relativeFilePath(pathOf.designer, pathOf.code);
  
          row.designer.codeFilePath = ucUtil.changeExtension(DestoTs, this.SRC_CODE_EXT, this.OUT_CODE_EXT)["#toFilePath"]();
          row.code.designerFilePath = ucUtil.changeExtension(tsToDes, this.SRC_CODE_EXT, this.OUT_CODE_EXT)["#toFilePath"]();*/
 
-        let code = htmlContents ??
+        code = htmlContents ?? code ??
             nodeFn.fs.existsSync(pathOf.html, finfo.projectInfo.importMetaURL) ?
             nodeFn.fs.readFileSync(pathOf.html, undefined, finfo.projectInfo.importMetaURL, false) : undefined;
         if (code == undefined) return undefined;
-        code = code["#devEsc"]();
+        code = ucUtil.devEsc(code);
         // console.log('--------------------------');
         //console.log(filePath);
 
@@ -442,22 +450,19 @@ export class commonParser {
         //code = cccodeCallback();
         let compileedCode = code;
         let rootpath = nodeFn.path.relative(projectPath, filePath);
-        // let isUserControl = finfo.extCode == SpecialExtEnum.uc;
         try {
             if (compileedCode.trim() != '') {
-                // if (isUserControl) {
-                //     let cccodeCallback = this.tmaker.compileTemplate(compileedCode);
-                //     compileedCode = cccodeCallback();
-                // }
                 compileedCode = ucUtil.PHP_REMOVE(code);
                 this.codeHT = compileedCode["#$"]();
                 _row.htmlFileContent = code;
             } else {
-                code = `<x:template>
+                code = `
+                    <x:template>
                         <wrapper id="primary"></wrapper>
                         <wrapper id="header"></wrapper>
                         <wrapper id="footer"></wrapper>
-                    </x:template>`;
+                    </x:template>
+                    `;
                 this.codeHT = code["#$"]() as HTMLElement;
 
                 _row.htmlFileContent = code;
@@ -469,7 +474,7 @@ export class commonParser {
         }
         this.common1(row.designer, row.code, _row.src);
         row.designer.baseClassName = Template.name;
-        //if (!isUserControl) {
+
         switch (this.UC_CONFIG?.exports ?? this.CONFIG.exports) {
             case "import":
                 row.designer.importer.addImport(['Template', 'TemplateNode'], this.nc('./node_modules/ucbuilder/out/Template.js', pathOf.designer));
@@ -503,9 +508,11 @@ export class commonParser {
             let controls: Control[] = [];
             if (template.htmlContents == '' || template.htmlContents == undefined) {
                 //debugger;
-                template.htmlContents = `<wrapper   x-at="${rootpath}"  >
+                template.htmlContents = `
+                <wrapper   x-at="${rootpath}"  >
                     <!-- DONT MODIFY "x-at" ATTRIBUTE FROM PRIMARY FILE -->
-                    </wrapper>`;
+                </wrapper>
+                    `;
             }
             let cntHT = template.htmlContents["#PHP_REMOVE"]()["#$"]() as HTMLElement;
             if (cntHT['length'] != undefined) cntHT = cntHT[0];
@@ -534,9 +541,6 @@ export class commonParser {
         });
         //}
         row.designer.importer.addImport([finfo.name], row.designer.codeFilePath);
-
-
-
     }
     common1 = (des: DesignerOptionsBase, code: codeOptionsBase, finfo: codeFileInfo) => {
         const pathOf = finfo.pathOf;

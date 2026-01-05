@@ -111,7 +111,7 @@ export class builder {
                     console.log(e);
                 }
             } else {
-                
+
             }
         }
 
@@ -146,16 +146,6 @@ export class builder {
                 await callback(_path);
             }
         }
-        // DirectoryContents.forEach(async (file: string) => {
-        //     //let _path = pathInfo.cleanPath(parentDir + '/' + file);
-        //     let _path = nodeFn.path.join(parentDir, file);//["#toFilePath"]();
-        //     if (nodeFn.fs.isDirectory(_path)) {
-        //         if (ignoreThis(_path) == false)
-        //             await this.recursive(_path, ignoreThis, callback);
-        //     } else {
-        //         await callback(_path);
-        //     }
-        // });
     }
 
     /** @param {codeFileInfo} fInfo */

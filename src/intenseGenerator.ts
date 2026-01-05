@@ -1,4 +1,4 @@
-import { codeFileInfo } from "./build/codeFileInfo.js";
+import { codeFileInfo, GetDeclaration } from "./build/codeFileInfo.js";
 import { PathBridge } from "./build/pathBridge.js";
 import { IUcOptions, UcOptions, ITptOptions, TptOptions } from "./enumAndMore.js";
 import { newObjectOpt } from "./global/objectOpt.js";
@@ -11,12 +11,14 @@ import { Usercontrol } from "./Usercontrol.js";
 
 export class intenseGenerator {
     static setCSS_globalVar(varList: VariableList, _path: string): void {
-        let rt = ProjectManage.getInfo(_path, getMetaUrl(_path, ProjectManage.projects));
-        CssVariableHandler.SetCSSVarValue(varList, '' + rt.project.id, 'g');
+        let rt = GetDeclaration(_path);//ProjectManage.getInfo(_path, getMetaUrl(_path, ProjectManage.projects));
+        //console.log(rt);
+        
+        CssVariableHandler.SetCSSVarValue(varList, '' + rt.project['id'], 'g');
     }
     static generateUC<T = string>(path: T, classObj: any, importMetaURL: string, pera: IUcOptions, ...args: any[]): Usercontrol {
         const param0: IUcOptions = newObjectOpt.copyProps(pera, UcOptions);
-       console.log(path);
+       ///console.log(path);
        
         const prj = GetProject((importMetaURL ?? path) as any, PathBridge.source, nodeFn.url as any);
         const pref = prj.config.preference;
@@ -33,7 +35,7 @@ export class intenseGenerator {
     }
     static async generateUCAsync<T = string>(path: T, classObj: any, importMetaURL: string, pera: IUcOptions, ...args: any[]): Promise<Usercontrol> {
         let param0: IUcOptions = newObjectOpt.copyProps(pera, UcOptions);
-        console.log(path);
+       // console.log(path);
        // debugger;
         const prj = GetProject((importMetaURL ?? path) as any, PathBridge.source, nodeFn.url as any);
         const pref = prj.config.preference;

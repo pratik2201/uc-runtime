@@ -70,16 +70,7 @@ export function GetDeclaration(filepath: string, projectRows = ProjectManage.pro
     }
     return rtrn;
 }
-// export function GiveSourceFileTypeFeedBack(path: string, codeFileExt: string): SourceFileType {
-//     if (path.endsWith('.html')) return 'html';
-//     else if (path.endsWith('.scss')) return 'scss';
-//     else if (path.endsWith(`.html.${codeFileExt}`)) return 'dynamicDesign';
-//     else if (path.endsWith(codeFileExt)) return 'code';
-//     else if (path.endsWith(`.designer${codeFileExt}`)) return 'designer';
-//     // else if (path.endsWith('.js')) return '.js';
-//     // else if (path.endsWith('.designer.js')) return '.designer.js';
-//     else undefined;
-// }
+
 export class codeFileInfo {
     name = "";
     extCode: SpecialExtType;
@@ -87,8 +78,6 @@ export class codeFileInfo {
         this.extCode = extCode;
     }
     static getExtType(path: string): SpecialExtType {
-        //console.log(path);
-
         let spl = path.split(/[\/\\]/gi);
         let fname = spl.pop();
         let far = fname.split('.');
@@ -118,50 +107,17 @@ export class codeFileInfo {
 
         let dec = GetDeclaration(fullpath);
         this.callerProject = dec.project as any;
-        _path = fullpath;
-  /*      console.log(dec);
-        console.log(sourceType);
-
-
-        _path = fullpath;
-        if (!callerMetaUrl.startsWith('file://')) callerMetaUrl = nodeFn.url.pathToFileURL(callerMetaUrl);
-        callerMetaUrl = callerMetaUrl ?? getMetaUrl(_path, ProjectManage.projects);
-        let pathPera = _path["#toFilePath"]();
-
-        let _resolveRes = this.resolvePathResult = ProjectManage.getInfo(pathPera, callerMetaUrl);
-        this.callerProject = _resolveRes.callerProject;
-        const cfhg = this.callerProject.config.preference;
-        cfhg.dirDeclaration[cfhg.srcDir]
-        let GIVEN_PATH_TYPE = GiveSourceFileTypeFeedBack(_path, cfhg.dirDeclaration[cfhg.srcDir]?.fileWisePath.code?.extension);
-        console.log(GIVEN_PATH_TYPE);*/
-
+        _path = fullpath; 
         if (dec.fileDec == undefined || this.callerProject==undefined)
             throw new Error(`'${_path}' is not valid file type for codeFileInfo.parseUrl`);
         else {
             this.allPathOf = PathBridge.Convert(_path,dec.dirDec as any,dec.fileDec as any /*sourceType as any, GIVEN_PATH_TYPE*/);
-            this.pathOf = this.allPathOf[dec.dirDec];
-            // if (_path.includes('.tpt')) {
-            //     console.log(this.extCode);                
-            //     console.log(_path);
-            //     console.log(this.pathOf);
-            // }
+            this.pathOf = this.allPathOf[dec.dirDec]; 
             if (this.pathOf == undefined) {
                 console.warn(`'${_path}' is not appropriate for codeFileInfo.parseUrl`);
                 return false;
             }
         }
-
-
-        /*if (_resolveRes.alias != undefined) {
-            let pathProjectDir = this.callerProject.aliceToPath[_resolveRes.alias];
-            if (!ucUtil.equalIgnoreCase(this.callerProject.projectPath, pathProjectDir)) {
-                this.callerProject = ProjectManage.getInfoByProjectPath(pathProjectDir);
-            }
-        }
-        if (this.callerProject == undefined) {
-            console.log(`"${_path}" at codeFileInfo`);
-            return false;
-        }*/
         this.name = codeFileInfo.GetFileName(this.pathOf.html);
         return true;
     }
