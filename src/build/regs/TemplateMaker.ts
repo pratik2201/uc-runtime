@@ -24,7 +24,7 @@ export class TemplateMaker {
         let incCode = '';
         let fileCodeDict = new Map<string, string>();
         let _COUNTER = 0;
-        let jsCode = `let $$$=context; with (context) {\n`;
+        let jsCode = ` with (this) {\n`;
         // let includedFiles: string[] = [];
         // let ksCode: string[] = [];
         const regex = /([\s\S]*?)(<\?php|<\?=|<\?)([\s\S]*?)\?>/g;
@@ -79,12 +79,18 @@ export class TemplateMaker {
         jsCode += `\n} // end with`;
 
         jsCode = incCode + ' ' + jsCode;
-        const renderFn = new Function('context', /*'include',*/ 'output', jsCode);
+        let renderFn: Function;
+        try {
+             renderFn = new Function('output', jsCode);
+        } catch (ex) {
+            console.log(jsCode); 
+            console.log(ex); 
+        }
 
         const finalFn = (ctx: any = {}) => {
             const output: string[] = [];
- 
-            renderFn(ctx, /*include,*/ output);
+            renderFn.call(ctx, output);
+            //renderFn(ctx, /*include,*/ output);
             return output.join('').replace(/&nbsp;/g, ' ');
         };
 

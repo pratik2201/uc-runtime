@@ -217,7 +217,7 @@ export class nodeFn {
             : { name: string, isDir: boolean, isFile: boolean }[] => {
             return this.renderer.sendSync('fs.readdirSyncDirent', [path, recursive]);
         },
-        writeFileSync: (path: string, data: string, encode: import('fs').WriteFileOptions = 'binary') => {
+        writeFileSync: (path: string, data: string, encode: import('fs').WriteFileOptions = 'utf-8') => {
             return this.renderer.sendSync('fs.writeFileSync', [{ path: path, data: data, encode: encode } as I_WriteFileSyncPerameters]);
         }
     }

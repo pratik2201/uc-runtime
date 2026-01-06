@@ -125,21 +125,29 @@ export class commonGenerator {
         this.ensureDirectoryExistence(dirname);
         nodeFn.fs.mkdirSync(dirname);*/
     }
-    static templateUnMapped = new Map<string, string>();
-    filex(type: 'js' | 'ts' | string, extType: SpecialExtType, fileType: '.designer' | '.code'| '.dynamic' | '.style') {
+    static readTemplate(type: 'js' | 'ts' | string, extType: SpecialExtType, fileType: '.designer' | '.code' |
+        '.dynamic' | '.dynamicByHtml' | '.style') {
+        let tptFileName = `${type}${extType}${fileType}`;
+        const tptDirpath = ucUtil.devEsc(`{:../../../assets/ucbuilder/templates}`);
+        let fpath = nodeFn.path.resolve(`assets/ucbuilder/templates/${tptFileName}`);
+        fpath = nodeFn.path.resolveFilePath(import.meta.url, nodeFn.path.join(tptDirpath, tptFileName));
+        const data = nodeFn.fs.readFileSync(fpath, 'binary');
+        return data;
+    }
+    static templateUnMapped = new Map<string, Function>();
+    filex(type: 'js' | 'ts' | string, extType: SpecialExtType, fileType: '.designer' | '.code' |
+        '.dynamic' | '.dynamicByHtml' | '.style') {
         let tptFileName = `${type}${extType}${fileType}`;
         if (commonGenerator.templateUnMapped.has(tptFileName))
             return commonGenerator.templateUnMapped.get(tptFileName);
         else {
-            let fpath = nodeFn.path.resolve(`assets/ucbuilder/templates/${tptFileName}`);
             /*if (!nodeFn.fs.existsSync(fpath)) {
                 return ASSETS[tptFileName];
             }*/
-            const tptDirpath = ucUtil.devEsc(`{:../../../assets/ucbuilder/templates}`);
-            fpath = nodeFn.path.resolveFilePath(import.meta.url, nodeFn.path.join(tptDirpath, tptFileName));
-            const data = nodeFn.fs.readFileSync(fpath, 'binary');
-            commonGenerator.templateUnMapped.set(tptFileName, data);
-            return data;
+            const data = commonGenerator.readTemplate(type, extType, fileType);
+            const _fn = this.tMaker.compileTemplate(data);
+            commonGenerator.templateUnMapped.set(tptFileName, _fn);
+            return _fn;
         }
     }
     generateFiles(rows: CommonRow[] = []) {
@@ -176,7 +184,7 @@ export class commonGenerator {
                 let srctype = 'ts';//fTypeInfo.fileWisePath.code.extension["#_trim"]('.');
 
                 commonGenerator.ensureDirectoryExistence(row.src.pathOf[designerFileSrctype]);
-                _data = _this.tMaker.compileTemplate(this.filex(srctype, uctype, '.designer'))(row);
+                _data = this.filex(srctype, uctype, '.designer')(row);
                 nodeFn.fs.writeFileSync(row.src.pathOf[designerFileSrctype], _data);
 
                 if (row.htmlFileContent != undefined)
@@ -184,14 +192,16 @@ export class commonGenerator {
 
                 if (row.dynamicFileContent != undefined)
                     nodeFn.fs.writeFileSync(`${row.src.pathOf.dynamicDesign}`, row.dynamicFileContent);
+                if (row.dynamicFileContentx != undefined)
+                    nodeFn.fs.writeFileSync(`${row.src.pathOf.dynamicDesign}c`, row.dynamicFileContentx);
 
 
                 if (!nodeFn.fs.existsSync(row.src.pathOf[codeFileSrctype])) {
-                    _data = _this.tMaker.compileTemplate(this.filex(srctype, uctype, '.code'))(row);
+                    _data = this.filex(srctype, uctype, '.code')(row);
                     nodeFn.fs.writeFileSync(row.src.pathOf[codeFileSrctype], _data);
                 }
                 if (!nodeFn.fs.existsSync(row.src.pathOf.scss)) {
-                    _data = _this.tMaker.compileTemplate(this.filex(srctype, uctype, '.style'))(row);
+                    _data = this.filex(srctype, uctype, '.style')(row);
                     nodeFn.fs.writeFileSync(row.src.pathOf.scss, _data);
                 }
 

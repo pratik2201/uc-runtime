@@ -76,6 +76,13 @@ class ucDesigner extends DesignerOptionsBase {
 class tptDesigner extends DesignerOptionsBase {
     templetes = [] as Template[];
 }
+export class dynamicDesignerElementTree {
+    type: 'text' | 'element' = 'element';
+    value: string;
+    nodeName: string;
+    props: { [prop: string]: string } = {};
+    children: dynamicDesignerElementTree[] = [];
+}
 export class codeOptionsBase {
     className = "";
     designerClassName = "";
@@ -95,6 +102,8 @@ class TsTptRow {
 export class CommonRow {
     src: codeFileInfo;
     dynamicFileContent?: string;
+    dynamicFileContentx?: string;
+     
     htmlFileContent?: string;
     sources = {
         'ts_uc': new TsUcRow(),

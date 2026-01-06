@@ -9,7 +9,7 @@ import { nodeFn } from "../../nodeFn.js";
 import { Template } from "../../Template.js";
 import { Usercontrol } from "../../Usercontrol.js";
 import { builder } from "../builder.js";
-import { codeOptionsBase, CommonRow, Control, DesignerOptionsBase, ImportClassNode } from "../buildRow.js";
+import { codeOptionsBase, CommonRow, Control, DesignerOptionsBase, dynamicDesignerElementTree, ImportClassNode } from "../buildRow.js";
 import { codeFileInfo } from "../codeFileInfo.js";
 import { ScopeType, objectOpt } from "../common.js";
 import { TemplateMaker } from "../regs/TemplateMaker.js";
@@ -17,8 +17,55 @@ import { commonGenerator } from "./commonGenerator.js";
 import { ProjectManage } from "../../ipc/ProjectManage.js";
 import { HTMLx, importHTMLts } from "../../lib/WrapperHelper.js";
 export interface PathReplacementNode { findPath: string, replaceWith: string }
-export class commonParser {
 
+export class commonParser {
+    generateNodes(htContent: string): string {
+        let rtrn = '';
+        const source = new dynamicDesignerElementTree();
+
+        function walk(node: HTMLElement, src: dynamicDesignerElementTree, depth = 0) {
+            // nodeType:
+            // 1 = Element
+            // 3 = Text
+            // 8 = Comment
+            if (node.nodeType === Node.ELEMENT_NODE) {
+                src.nodeName = node.tagName;
+                src.type = 'element';
+                for (let attr of node.attributes) {
+                    src.props[attr.name] = attr.value;
+                }
+
+                for (let child of node.childNodes) {
+                    let childTree = new dynamicDesignerElementTree();
+                    if (walk(child as HTMLElement, childTree, depth + 1) == true) {
+                        src.children.push(childTree);
+                    }
+                }
+                return true;
+            }
+            else if (node.nodeType === Node.TEXT_NODE) {
+                let text = node.nodeValue?.trim() ?? '';
+                src.type = 'text';
+                src.value = text;
+                return text.length > 0;
+            } else if (node.nodeType === Node.COMMENT_NODE) {
+                let comment = node.nodeValue.trim();
+                // console.log("Comment:", comment);
+                src.type = 'text';
+                if (comment.endsWith('?')) {
+                    src.value = (comment.startsWith('?=') || comment.startsWith("?php")) ?
+                        `<${comment}>` : `<!--${comment}-->`;
+                } else src.value = `<!--${comment}-->`;
+                return true;
+            }
+
+            return false;
+        }
+        let mainele = htContent["#$"]();
+        walk(mainele, source);
+        let c = this.gen.filex('ts', '.uc', '.dynamicByHtml')(source);
+        return c;
+    }
     reset() {
         this.rows.length = 0;
         this.pathReplacement.length = 0;
@@ -48,6 +95,7 @@ export class commonParser {
     }> = {};
     SRC_CODE_EXT: string;
     OUT_CODE_EXT: string;
+    dynamicTemplate: Function;
     constructor(bldr: builder) {
         this.bldr = bldr;
         this.gen = new commonGenerator();
@@ -309,36 +357,50 @@ export class commonParser {
         let code: string;
         const pathOf = finfo.pathOf;
         const filePref = finfo?.projectInfo?.config?.preference;
-        if (htmlContents == undefined && pathOf.dynamicDesign != undefined && nodeFn.fs.existsSync(pathOf.dynamicDesign)) {
-            row.designer.dynamicName = row.designer.importer.getNameNumber(`${finfo.name}$dynamicHtmlCode`);
-            code = await importHTMLts(finfo.allPathOf[filePref.outDir].dynamicDesign);
+        /*if (nodeFn.fs.existsSync(pathOf.dynamicDesign + 'c') == true) {
+            nodeFn.fs.rmSync(pathOf.dynamicDesign);
+            nodeFn.fs.rmSync(pathOf.dynamicDesign + 'c'); 
+            return undefined;
+        }*/
+        if (htmlContents == undefined && pathOf.dynamicDesign != undefined) {
+            if (nodeFn.fs.existsSync(pathOf.dynamicDesign)) {
+                row.designer.dynamicName = row.designer.importer.getNameNumber(`${finfo.name}$dynamicHtmlCode`);
+                code = await importHTMLts(finfo.allPathOf[filePref.outDir].dynamicDesign);
+            } else {
+                if (nodeFn.fs.existsSync(pathOf.html)) {
+                    let htcontent = nodeFn.fs.readFileSync(pathOf.html);
+                    const dynamicCode = this.generateNodes(htcontent);
+                    if (dynamicCode != undefined && dynamicCode.length > 0) {
+                        code = htcontent;
+                        _row.dynamicFileContentx = dynamicCode;
+                    }
+
+                }
+            }
         } else {
             console.warn('DYNAMIC DESIGN NOT LOADED :' + finfo.allPathOf[filePref.outDir].dynamicDesign);
         }
+
+
         code = htmlContents ?? code ??
             (nodeFn.fs.existsSync(pathOf.html) ?
                 nodeFn.fs.readFileSync(pathOf.html) : undefined);
         if (code == undefined) return undefined;
         code = ucUtil.devEsc(code);
 
-        // if (finfo.pathOf.code.includes('customView$form.uc')) debugger;
         this.tmaker.mainImportMeta = nodeFn.url.pathToFileURL(filePath);
         let compileedCode = code;
         try {
+
             if (compileedCode.trim() != '') {
                 let cccodeCallback = this.tmaker.compileTemplate(compileedCode);
                 compileedCode = ucUtil.PHP_REMOVE(cccodeCallback({}));
                 this.codeHT = compileedCode["#$"]();
                 _row.htmlFileContent = code;
             } else {
-                /*code = `<wrapper x-caption="${finfo.name}" tabindex="0">
-                        <!-- DONT MODIFY "x-at" ATTRIBUTE -->
-                    </wrapper>`;
-                _row.htmlFileContent = code;*/
-
                 code = HTMLx.Wrapper([{ "x-caption": 'Form' }]);
                 this.codeHT = code["#$"]() as HTMLElement;
-                _row.dynamicFileContent = this.gen.filex('ts', '.uc', '.dynamic');
+                _row.dynamicFileContent = commonGenerator.readTemplate('ts', '.uc', '.dynamic');
             }
         } catch (ex) {
             console.log(ex);
@@ -454,7 +516,7 @@ export class commonParser {
                     footer: {},
                 });
                 this.codeHT = code["#$"]() as HTMLElement;
-                _row.dynamicFileContent = this.gen.filex('ts', '.tpt', '.dynamic');
+                _row.dynamicFileContent = commonGenerator.readTemplate('ts', '.tpt', '.dynamic');
                 _row.htmlFileContent = code;
             }
         } catch (ex) {
@@ -487,7 +549,7 @@ export class commonParser {
             subTemplates = Template.GetArrayOfTemplate(finfo);
         else {
             let tob = Template.GetOptionsByContent(_row.htmlFileContent,
-                _this.gen.filex('ts', '.tpt', '.style'),
+                commonGenerator.readTemplate('ts', '.tpt', '.style'),
                 undefined, nodeFn.url.pathToFileURL(pathOf.scss));
             subTemplates = Object.values(tob.tptObj);
         }
