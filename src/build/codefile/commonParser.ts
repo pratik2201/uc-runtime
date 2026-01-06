@@ -372,7 +372,7 @@ export class commonParser {
                     const dynamicCode = this.generateNodes(htcontent);
                     if (dynamicCode != undefined && dynamicCode.length > 0) {
                         code = htcontent;
-                        _row.dynamicFileContentx = dynamicCode;
+                        _row.dynamicFileContent  = dynamicCode;
                     }
 
                 }
