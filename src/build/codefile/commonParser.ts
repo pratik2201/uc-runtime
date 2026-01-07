@@ -2,7 +2,7 @@ import { ITemplatePathOptions } from "../../enumAndMore.js";
 import { FilterContent } from "../../global/filterContent.js";
 import { ATTR_OF } from "../../global/runtimeOpt.js";
 import { SpecialExtEnum, ucUtil } from "../../global/ucUtil.js";
-import { IBuildDirectory, IFileDeclaration, IUCConfigPreference } from "ipc/enumAndMore.js";
+import { IBuildDirectory, IFileDeclaration, ISourceFileTypeMap, IUCConfigPreference } from "ipc/enumAndMore.js";
 import { UserUCConfig } from "ipc/enumAndMore.js";
 import { ProjectRowR } from "../../ipc/enumAndMore.js";
 import { nodeFn } from "../../nodeFn.js";
@@ -345,7 +345,40 @@ export class commonParser {
         //_row.src = new codeFileInfo(codeFileInfo.getExtType(filePath));
         //if (!_row.src.parseUrl(filePath, filePref.srcDir, this.project.importMetaURL)) return undefined;
     }
+    common0 = async (htmlContents: string, _row: CommonRow, designer: DesignerOptionsBase) => {
+        let code: string;
+        const finfo = _row.src;
+        const pathOf = finfo.pathOf;
+        if (nodeFn.fs.existsSync(pathOf.dynamicDesign + 'c') == true) {
+            nodeFn.fs.rmSync(pathOf.dynamicDesign);
+            //nodeFn.fs.rmSync(pathOf.dynamicDesign + 'c'); 
+            return undefined;
+        }
 
+        const filePref = finfo?.projectInfo?.config?.preference;
+        if (htmlContents == undefined && pathOf.dynamicDesign != undefined) {
+            if (nodeFn.fs.existsSync(pathOf.dynamicDesign)) {
+                designer.dynamicName = designer.importer.getNameNumber(`${finfo.name}$dynamicHtmlCode`);
+                code = await importHTMLts(finfo.allPathOf[filePref.outDir].dynamicDesign);
+            } else {
+                if (nodeFn.fs.existsSync(pathOf.html)) {
+                    let htcontent = nodeFn.fs.readFileSync(pathOf.html);
+                    const dynamicCode = this.generateNodes(htcontent);
+                    if (dynamicCode != undefined && dynamicCode.length > 0) {
+                        code = htcontent;
+                        _row.dynamicFileContent = dynamicCode;
+                    }
+
+                }
+            }
+        } else {
+            console.warn('DYNAMIC DESIGN NOT LOADED :' + finfo.allPathOf[filePref.outDir].dynamicDesign);
+        }
+        code = htmlContents ?? code ??
+            (nodeFn.fs.existsSync(pathOf.html) ?
+                nodeFn.fs.readFileSync(pathOf.html) : undefined);
+        return code;
+    }
     fillUc = async (filePath: string, htmlContents: string, _row: CommonRow) => {
         let row = _row.sources['ts_uc'];
         let _this = this;
@@ -357,34 +390,11 @@ export class commonParser {
         let code: string;
         const pathOf = finfo.pathOf;
         const filePref = finfo?.projectInfo?.config?.preference;
-        /*if (nodeFn.fs.existsSync(pathOf.dynamicDesign + 'c') == true) {
-            nodeFn.fs.rmSync(pathOf.dynamicDesign);
-            nodeFn.fs.rmSync(pathOf.dynamicDesign + 'c'); 
-            return undefined;
-        }*/
-        if (htmlContents == undefined && pathOf.dynamicDesign != undefined) {
-            if (nodeFn.fs.existsSync(pathOf.dynamicDesign)) {
-                row.designer.dynamicName = row.designer.importer.getNameNumber(`${finfo.name}$dynamicHtmlCode`);
-                code = await importHTMLts(finfo.allPathOf[filePref.outDir].dynamicDesign);
-            } else {
-                if (nodeFn.fs.existsSync(pathOf.html)) {
-                    let htcontent = nodeFn.fs.readFileSync(pathOf.html);
-                    const dynamicCode = this.generateNodes(htcontent);
-                    if (dynamicCode != undefined && dynamicCode.length > 0) {
-                        code = htcontent;
-                        _row.dynamicFileContent  = dynamicCode;
-                    }
 
-                }
-            }
-        } else {
-            console.warn('DYNAMIC DESIGN NOT LOADED :' + finfo.allPathOf[filePref.outDir].dynamicDesign);
-        }
+        code = await this.common0(htmlContents, _row, row.designer);
 
 
-        code = htmlContents ?? code ??
-            (nodeFn.fs.existsSync(pathOf.html) ?
-                nodeFn.fs.readFileSync(pathOf.html) : undefined);
+
         if (code == undefined) return undefined;
         code = ucUtil.devEsc(code);
 
@@ -482,16 +492,42 @@ export class commonParser {
 
         let code: string;
         const pathOf = finfo.pathOf;
-        if (htmlContents == undefined && pathOf.dynamicDesign != undefined && nodeFn.fs.existsSync(pathOf.dynamicDesign)) {
-            row.designer.dynamicName = row.designer.importer.getNameNumber(`${finfo.name}$dynamicHtmlCode`);
-            code = await importHTMLts(finfo.allPathOf[filePref.outDir].dynamicDesign);
-        } else {
-            console.warn('DYNAMIC DESIGN NOT LOADED :' + finfo.allPathOf[filePref.outDir].dynamicDesign);
-        }
+        // // if (htmlContents == undefined && pathOf.dynamicDesign != undefined && nodeFn.fs.existsSync(pathOf.dynamicDesign)) {
+        // //     row.designer.dynamicName = row.designer.importer.getNameNumber(`${finfo.name}$dynamicHtmlCode`);
+        // //     code = await importHTMLts(finfo.allPathOf[filePref.outDir].dynamicDesign);
+        // // } else {
+        // //     console.warn('DYNAMIC DESIGN NOT LOADED :' + finfo.allPathOf[filePref.outDir].dynamicDesign);
+        // // }
 
-        code = htmlContents ?? code ??
-            nodeFn.fs.existsSync(pathOf.html) ?
-            nodeFn.fs.readFileSync(pathOf.html) : undefined;
+        // /*if (nodeFn.fs.existsSync(pathOf.dynamicDesign + 'c') == true) {
+        //     nodeFn.fs.rmSync(pathOf.dynamicDesign);
+        //     //nodeFn.fs.rmSync(pathOf.dynamicDesign + 'c'); 
+        //     return undefined;
+        // }*/
+        // // if (htmlContents == undefined && pathOf.dynamicDesign != undefined) {
+        // //     if (nodeFn.fs.existsSync(pathOf.dynamicDesign)) {
+        // //         row.designer.dynamicName = row.designer.importer.getNameNumber(`${finfo.name}$dynamicHtmlCode`);
+        // //         code = await importHTMLts(finfo.allPathOf[filePref.outDir].dynamicDesign);
+        // //     } else {
+        // //         if (nodeFn.fs.existsSync(pathOf.html)) {
+        // //             let htcontent = nodeFn.fs.readFileSync(pathOf.html);
+        // //             const dynamicCode = this.generateNodes(htcontent);
+        // //             if (dynamicCode != undefined && dynamicCode.length > 0) {
+        // //                 code = htcontent;
+        // //                 _row.dynamicFileContent = dynamicCode;
+        // //             }
+
+        // //         }
+        // //     }
+        // // } else {
+        // //     console.warn('DYNAMIC DESIGN NOT LOADED :' + finfo.allPathOf[filePref.outDir].dynamicDesign);
+        // // }
+
+        // // code = htmlContents ?? code ??
+        // //     nodeFn.fs.existsSync(pathOf.html) ?
+        // //     nodeFn.fs.readFileSync(pathOf.html) : undefined;
+        code = await this.common0(htmlContents, _row, row.designer);
+
         if (code == undefined) return undefined;
         code = ucUtil.devEsc(code);
         this.tmaker.mainImportMeta = nodeFn.url.pathToFileURL(filePath);
