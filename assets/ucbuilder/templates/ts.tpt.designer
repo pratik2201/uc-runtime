@@ -43,6 +43,7 @@ export class <?=designer.className ?> extends <?= designer.baseClassName ?> {
    
      async initializecomponentAsync(fargs:ITptOptions){ 
         if(fargs.MakeEmptyTemplate)return;        
+        let htmlContents = undefined;
         <?php if(designer.dynamicName!=undefined){ ?>
         htmlContents =  <?= designer.dynamicName ?>() ?? undefined;
         <?php } ?>

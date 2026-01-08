@@ -190,10 +190,7 @@ export class commonGenerator {
                 if (row.htmlFileContent != undefined)
                     nodeFn.fs.writeFileSync(`${row.src.pathOf.html}`, row.htmlFileContent);
 
-                if (row.dynamicFileContent != undefined)
-                    nodeFn.fs.writeFileSync(`${row.src.pathOf.dynamicDesign}`, row.dynamicFileContent);
-                if (row.dynamicFileContentx != undefined)
-                    nodeFn.fs.writeFileSync(`${row.src.pathOf.dynamicDesign}c`, row.dynamicFileContentx);
+               
 
 
                 if (!nodeFn.fs.existsSync(row.src.pathOf[codeFileSrctype])) {

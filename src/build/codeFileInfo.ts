@@ -101,15 +101,17 @@ export class codeFileInfo {
     callerMetaUrl: string;
     callerProject: ProjectRowR; // actualPro
     get projectInfo() { return this.callerProject; /*this.resolvePathResult?.project;*/ }
-    parseUrl(_path: string, sourceType: 'out' | 'src' | string, callerMetaUrl: string): boolean {
+    parseUrl(_path: string, sourceType: 'out' | 'src' | string, callerMetaUrl?: string): boolean {
         this.callerMetaUrl = callerMetaUrl;
         let fullpath = PathBridge.GetFullPath(_path, callerMetaUrl);
 
         let dec = GetDeclaration(fullpath);
         this.callerProject = dec.project as any;
         _path = fullpath;
-        if (dec.fileDec == undefined || this.callerProject == undefined)
-            throw new Error(`'${_path}' is not valid file type for codeFileInfo.parseUrl`);
+        if (dec.fileDec == undefined || this.callerProject == undefined) {
+            console.info(`'${_path}' is not valid file type for codeFileInfo.parseUrl`);
+            return false;
+        }
         else {
             this.allPathOf = PathBridge.Convert(_path, dec.dirDec as any, dec.fileDec as any /*sourceType as any, GIVEN_PATH_TYPE*/);
             this.pathOf = this.allPathOf[dec.dirDec];

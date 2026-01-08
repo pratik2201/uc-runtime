@@ -331,11 +331,11 @@ export interface PreDefinedPropertiesHTML extends HTMLBaseAttributes {
     // '<childs>': string[];
 };
 
-export class HTMLx { 
+export class HTMLx {
     static Tag = <S extends string>([tagName, prefDefinedProps]: [S?, HTMLTagMapper<S>?], ...childs: string[]) => {
         tagName = tagName ?? 'div' as any;
         tagName = tagName.toUpperCase() as any;
-        let htCode = `<${tagName} `; 
+        let htCode = `<${tagName} `;
         childs = childs ?? [];
         if (prefDefinedProps != undefined) {
             if (prefDefinedProps["<childs>"] != undefined) {
@@ -381,10 +381,11 @@ export class HTMLx {
         return HTMLx.Tag([obj.name, ucProps], ...childs);
     };
 }
-export async function importHTMLts(fpath: string) {
+export async function DynamicToHtml(fpath: string): Promise<string> {
     try {
-        return (await import(fpath))?.default();
+        return await (await import(fpath))?.default();
     } catch (e) {
-        console.error('ERROR IN :' + fpath);
+        //console.warn('at WrapperHelper > DynamicToHtml \n ERROR IN :' + fpath);
+        return undefined;
     }
 }

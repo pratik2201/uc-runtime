@@ -172,14 +172,14 @@ export class nodeFn {
         copyFileSync: (fromPath: string, toPath: string, option?: number): string => {
             return this.renderer.sendSync('fs.copyFileSync', [fromPath, toPath, option]);
         },
-        readFile: (path: string, encode: import('fs').WriteFileOptions = 'binary') => {
+        readFile: (path: string, encode: import('fs').WriteFileOptions = 'utf-8') => {
             return this.renderer.Invoke('fs.readFile', [{
                 path: path,
                 encode: encode,
                 doCache: false,
             } as I_ReadFileSyncPerameters]);
         },
-        readFileSync: (path: string, encode: import('fs').WriteFileOptions = 'binary', doCache = false): string | null => {
+        readFileSync: (path: string, encode: import('fs').WriteFileOptions = 'utf-8', doCache = false): string | null => {
 
 
             //if (path.includes('editorCommon.scss')) { return 'editorCommon.scss called...'; }
