@@ -45,7 +45,7 @@ export class <?=designer.className ?> extends <?= designer.baseClassName ?> {
         if(fargs.MakeEmptyTemplate)return;        
         let htmlContents = undefined;
         <?php if(designer.dynamicName!=undefined){ ?>
-        htmlContents =  <?= designer.dynamicName ?>() ?? undefined;
+        htmlContents =  <?= designer.dynamicName ?>?.htmlSource() ?? undefined;
         <?php } ?>
         let oot = Template.GetObjectOfTemplate(fargs.cfInfo);
         let tpts = oot.tptObj;
@@ -65,7 +65,7 @@ export class <?=designer.className ?> extends <?= designer.baseClassName ?> {
         if(fargs.MakeEmptyTemplate)return;
         let htmlContents = undefined;
         <?php if(designer.dynamicName!=undefined){ ?>
-        htmlContents =  <?= designer.dynamicName ?>() ?? undefined;
+        htmlContents =  <?= designer.dynamicName ?>?.htmlSource() ?? undefined;
         <?php } ?>
         let oot = Template.GetObjectOfTemplate(fargs.cfInfo,htmlContents);
         let tpts = oot.tptObj;

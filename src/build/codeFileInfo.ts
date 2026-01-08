@@ -101,11 +101,12 @@ export class codeFileInfo {
     callerMetaUrl: string;
     callerProject: ProjectRowR; // actualPro
     get projectInfo() { return this.callerProject; /*this.resolvePathResult?.project;*/ }
-    parseUrl(_path: string, sourceType: 'out' | 'src' | string, callerMetaUrl?: string): boolean {
+    parseUrl(_path: string, demandType: SourceType | string, callerMetaUrl?: string): boolean {
         this.callerMetaUrl = callerMetaUrl;
         let fullpath = PathBridge.GetFullPath(_path, callerMetaUrl);
 
         let dec = GetDeclaration(fullpath);
+        const dirDec = demandType ?? dec.dirDec;
         this.callerProject = dec.project as any;
         _path = fullpath;
         if (dec.fileDec == undefined || this.callerProject == undefined) {
@@ -113,8 +114,8 @@ export class codeFileInfo {
             return false;
         }
         else {
-            this.allPathOf = PathBridge.Convert(_path, dec.dirDec as any, dec.fileDec as any /*sourceType as any, GIVEN_PATH_TYPE*/);
-            this.pathOf = this.allPathOf[dec.dirDec];
+            this.allPathOf = PathBridge.Convert(_path, dec.dirDec as any, dec.fileDec as any, dirDec as any/*sourceType as any, GIVEN_PATH_TYPE*/);
+            this.pathOf = this.allPathOf[dirDec];
             this.extCode = codeFileInfo.getExtType(this.pathOf.code);
             if (this.pathOf == undefined) {
                 console.warn(`'${_path}' is not appropriate for codeFileInfo.parseUrl`);

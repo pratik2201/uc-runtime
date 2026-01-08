@@ -18,14 +18,17 @@ export type ucVisibility = 'inherit' | 'visible' | 'hidden';
 export class Usercontrol {
 
     static parse(node: HTMLElement): Usercontrol { return node["#data"](ATTR_OF.BASE_OBJECT); }
-    static Resolver = (absFileUrl: string, relPath: string) => {
-        let fp = nodeFn.url.fileURLToPath(absFileUrl); // `absFileUrl` designer js path
-        return nodeFn.path.resolveFilePath(fp, relPath);
+    static Resolver = (outDesignerImportMetaUrl: string, relPathOfOutHtml: string) => {
+        let fp = nodeFn.url.fileURLToPath(outDesignerImportMetaUrl); // `absFileUrl` designer js path
+        return nodeFn.path.resolveFilePath(fp, relPathOfOutHtml);
     }
     static async GenerateControls(mainUc: Usercontrol, args?: IUcOptions, htmlCodePath?: string) {
-        const mainFilePath = htmlCodePath; 
-        async function _tpt(xname: string, xfrom: string, targetEle: HTMLElement) {
-            let jsPath = ucUtil.changeExtension(nodeFn.path.resolveFilePath(mainFilePath, xfrom), '.html', 'js');
+        const mainFilePath = htmlCodePath;
+        async function _tpt(xname: string, finfo: codeFileInfo, targetEle: HTMLElement) {
+            //let jsPath = ucUtil.changeExtension(nodeFn.path.resolveFilePath(mainFilePath, xfrom), '.html', 'js');
+            let jsPath: string;
+
+            jsPath = finfo.pathOf.code;
             let className = nodeFn.path.basename(jsPath).split('.')[0];
             let frmType = await import(jsPath)[className] as Usercontrol;
             mainUc[xname] = await frmType['CreateAsync']({
@@ -34,8 +37,10 @@ export class Usercontrol {
                 elementHT: targetEle,
             } as ITptOptions);
         }
-        async function _uc(xname: string, xfrom: string, targetEle: HTMLElement) {
-            let jsPath = ucUtil.changeExtension(nodeFn.path.resolveFilePath(mainFilePath, xfrom), '.html', '.js');
+        async function _uc(xname: string, finfo: codeFileInfo, targetEle: HTMLElement) {
+            let jsPath: string;
+
+            jsPath = finfo.pathOf.code; //ucUtil.changeExtension(nodeFn.path.resolveFilePath(mainFilePath, xfrom), '.html', '.js');
             let className = nodeFn.path.basename(jsPath).split('.')[0];
             let ft = await import(jsPath);
             let frmType = ft[className] as Usercontrol;
@@ -55,14 +60,20 @@ export class Usercontrol {
             const uc = mainUc[xname] as Usercontrol;
             uc.ucExtends.show({ decision: 'replace' });
         }
+
+        const mainFinfo = args.cfInfo;
+        const pref = args.cfInfo.projectInfo.config.preference;
         for (const [xname, htAr] of Object.entries(mainUc.ucExtends.controls)) {
             let ele = htAr as HTMLElement;
             if (ele.hasAttribute('x-from')) {
-                let pth = ele.getAttribute(ATTR_OF.X_FROM);
-                if (pth.endsWith('.uc.html'))
-                    await _uc(xname, pth, ele);
+                let xfrom = ele.getAttribute(ATTR_OF.X_FROM);
+                let targetPath = nodeFn.path.resolveFilePath(mainFinfo.pathOf.html, xfrom);
+                let finfo = new codeFileInfo();
+                finfo.parseUrl(targetPath, pref.outDir, mainFinfo.pathOf.html);
+                if (xfrom.endsWith('.uc.html'))
+                    await _uc(xname, finfo, ele);
                 else
-                    await _tpt(xname, pth, ele);
+                    await _tpt(xname, finfo, ele);
             } else mainUc[xname] = htAr;
         }
         // console.log(importMeta);
@@ -76,7 +87,7 @@ export class Usercontrol {
     static UcOptionsStc: IUcOptions;
 
     static extractArgs = (args: IArguments) => ExtractArguments(args);
-    
+
     constructor() {
         //Usercontrol._CSS_VAR_STAMP++;
         //this.ucExtends.cssVarStampKey = 'u' + Usercontrol._CSS_VAR_STAMP;
@@ -266,6 +277,8 @@ export class Usercontrol {
                 console.log(htContent);
                 
             }*/
+            console.log(htPathToRead);
+            
             let tmkr = Usercontrol.templateMkr.get(htPathToRead);
             if (tmkr == undefined) {
                 if (htContent == undefined)

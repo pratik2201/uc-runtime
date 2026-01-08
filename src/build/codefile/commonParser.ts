@@ -193,7 +193,7 @@ export class commonParser {
         let row = _row.sources['ts_uc'];
         let _this = this;
         _row.src = finfo;
-      //  if (finfo.pathOf['html'].includes('voucherType$xform.uc')) debugger;
+       // if (finfo.pathOf['html'].includes('ledger$form.uc')) debugger;
         let onSelect_xName = _this.bldr.Event.onSelect_xName;
 
         const srcDec = _row.src.allPathOf[this.PREFERENCE.srcDir];
@@ -266,10 +266,12 @@ export class commonParser {
             ctr.generic = ctr.generic == null ? undefined : `<${ctr.generic}>`;
             ctr.type = 'none';
             if (element.hasAttribute("x-from")) {
-                let _subpath = ucUtil.devEsc(element.getAttribute("x-from"));
-                _subpath = nodeFn.path.resolveFilePath(srcDec.html, _subpath);//["#toFilePath"]();
+               // debugger;
+                let _sspath = ucUtil.devEsc(element.getAttribute("x-from"));
+                let _subpath = nodeFn.path.resolveFilePath(srcDec.html, _sspath);//["#toFilePath"]();
                 let uFInf = new codeFileInfo();
                 uFInf.parseUrl(_subpath, filePref.srcDir, srcDec.html);
+                if (uFInf.pathOf == undefined) debugger;
                 if (_exists(uFInf.pathOf.code) || _exists(uFInf.pathOf.dynamicDesign) ||
                     _exists(uFInf.pathOf.scss) || _exists(uFInf.pathOf.html)) {
                     ctr.type = uFInf.extCode;

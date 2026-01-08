@@ -12,7 +12,7 @@ export class <?=designer.className ?> extends <?= designer.baseClassName ?> {
         return FILE_PATH;
     }
     public static get AbsolutePath() {
-        return Usercontrol.Resolver(import.meta.url, this.FILE_PATH);
+        return import.meta.url;//Usercontrol.Resolver(import.meta.url, this.FILE_PATH);
     }
      
     static setCSS_globalVar (varList:VariableList): void  {
@@ -48,7 +48,7 @@ export class <?=designer.className ?> extends <?= designer.baseClassName ?> {
     async initializecomponentAsync(args: IUcOptions, form: <?=src.name?>) {
         let ucExt = this.ucExtends;
         <?php if(designer.dynamicName!=undefined){ ?>
-        args.source.htmlContents = args?.source?.htmlContents ?? <?= designer.dynamicName ?>() ?? undefined;
+        args.source.htmlContents = args?.source?.htmlContents ?? <?= designer.dynamicName ?>?.htmlSource() ?? undefined;
         <?php } ?>
         ucExt.initializecomponent(args);                
         let CONTROLS = ucExt.controls;
@@ -65,7 +65,7 @@ export class <?=designer.className ?> extends <?= designer.baseClassName ?> {
     initializecomponent(args: IUcOptions, form: <?=src.name?>) {        
         let ucExt = this.ucExtends;
         <?php if(designer.dynamicName!=undefined){ ?>
-        args.source.htmlContents = args?.source?.htmlContents ?? <?= designer.dynamicName ?>() ?? undefined;
+        args.source.htmlContents = args?.source?.htmlContents ?? <?= designer.dynamicName ?>?.htmlSource() ?? undefined;
         <?php } ?>
         ucExt.initializecomponent(args);          
         let CONTROLS = ucExt.controls;

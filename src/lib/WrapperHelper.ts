@@ -1,3 +1,4 @@
+import { codeFileInfo } from "../build/codeFileInfo.js";
 import { nodeFn } from "../nodeFn.js";
 import { Usercontrol } from "../Usercontrol.js";
 const VOID_HTML_NODE_NAMES = [
@@ -330,8 +331,14 @@ export interface PreDefinedPropertiesHTML extends HTMLBaseAttributes {
 
     // '<childs>': string[];
 };
-
-export class HTMLx {
+export interface IHTMLxSource {
+    htmlSource: () => string;
+    dynamicFilePath: string
+}
+export abstract class HTMLx {
+    static readonly htmlSource: () => string;
+    /** out dynamic js file path */
+    static readonly dynamicFilePath: string;
     static Tag = <S extends string>([tagName, prefDefinedProps]: [S?, HTMLTagMapper<S>?], ...childs: string[]) => {
         tagName = tagName ?? 'div' as any;
         tagName = tagName.toUpperCase() as any;
@@ -371,19 +378,33 @@ export class HTMLx {
             "<childs>": cntnt
         }]);
     }
-    static Usercontrol = ([name, obj, htmlFilePath, ucProps]: [string?, (typeof Usercontrol)?, string?, HTMLTagMapper<'WRAPPER'>?], ...childs: string[]) => {
+    static Usercontrol = ([name, targetUc, outDynamicJsPath, ucProps]: [string?, (IHTMLxSource)?, string?, HTMLTagMapper<'WRAPPER'>?], ...childs: string[]) => {
         let relpath: string;
-        relpath = nodeFn.path.relativeFilePath(htmlFilePath, obj['AbsolutePath']);
-        ucProps = ucProps ?? {};
-        if (name != undefined)
-            ucProps["x-name"] = name as any;
-        ucProps["x-from"] = `{:${relpath}}`;
-        return HTMLx.Tag([obj.name, ucProps], ...childs);
+        const targetCinfo = new codeFileInfo();
+        targetCinfo.parseUrl(nodeFn.url.fileURLToPath(targetUc.dynamicFilePath), undefined, undefined);  // DESIGNER OUT
+        const outDynamicCinfo = new codeFileInfo();
+        outDynamicCinfo.parseUrl(nodeFn.url.fileURLToPath(outDynamicJsPath), undefined, undefined);  // DESIGNER OUT
+
+        const pref = targetCinfo.projectInfo?.config?.preference;
+        if (targetCinfo.pathOf != undefined) {
+            relpath = nodeFn.path.relativeFilePath(outDynamicCinfo.pathOf.html, targetCinfo.pathOf.html);
+            ucProps = ucProps ?? {};
+            if (name != undefined)
+                ucProps["x-name"] = name as any;
+            ucProps["x-from"] = `{:${relpath}}`;
+            return HTMLx.Tag([targetCinfo.name, ucProps], ...childs);
+        }
+        return undefined;
+        //console.log(['Absolute', obj['AbsolutePath']]);
+        // relpath = nodeFn.path.relativeFilePath(htmlFilePath, targetUc['AbsolutePath']);
+        //console.log(relpath);
+
+
     };
 }
-export async function DynamicToHtml(fpath: string): Promise<string> {
+export async function DynamicToHtml(fpath: string): Promise<IHTMLxSource> {
     try {
-        return await (await import(fpath))?.default();
+        return await (await import(fpath))?.default;
     } catch (e) {
         //console.warn('at WrapperHelper > DynamicToHtml \n ERROR IN :' + fpath);
         return undefined;

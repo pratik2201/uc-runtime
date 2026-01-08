@@ -8,7 +8,7 @@ import { commonParser } from "./codefile/commonParser.js";
 import { codeFileInfo } from "./codeFileInfo.js";
 import { fileWatcher } from "./fileWatcher.js";
 import { PathBridge } from "./pathBridge.js";
-import { DynamicToHtml } from "../lib/WrapperHelper.js";
+import { DynamicToHtml, IHTMLxSource } from "../lib/WrapperHelper.js";
 import { commonGenerator } from "./codefile/commonGenerator.js";
 export interface SourceCodeNode {
     designerCode?: string,
@@ -137,7 +137,7 @@ export class builder {
         let c = this.commonMng.gen.filex('ts', '.uc', '.dynamicByHtml')(source);
         return c;
     }
-    async DynamicToHtml(dynamicPath: string): Promise<string> {
+    async DynamicToHtml(dynamicPath: string): Promise<IHTMLxSource> {
         return await DynamicToHtml(dynamicPath);
     }
     counter = 0;
@@ -160,17 +160,20 @@ export class builder {
 
         for (let index = 0; index < cInfos.length; index++) {
             const cinfo = cInfos[index];
+            if (cinfo.pathOf.html.includes('ledger$form')) debugger;
             const info = {
                 dynamicOutputPath: cinfo.allPathOf[outDeclareKey].dynamicDesign,
                 hasDynamicOutput: false,
-                dynamicOutputData: undefined as string
+                dynamicOutputData: undefined as string,
+               
             };
             info.hasDynamicOutput = nodeFn.fs.existsSync(info.dynamicOutputPath);
             if (info.hasDynamicOutput) {
 
                 // this.counter++;
                 // if (this.counter == 73) debugger;
-                info.dynamicOutputData = (await this.DynamicToHtml(info.dynamicOutputPath));
+                const dtodata = (await this.DynamicToHtml(info.dynamicOutputPath));
+                info.dynamicOutputData = dtodata?.htmlSource();
 
                 info.dynamicOutputData = info.dynamicOutputData?.trim() ?? '';
                 if (info.dynamicOutputData.length > 0)
