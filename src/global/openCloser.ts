@@ -3,8 +3,7 @@ interface OpenCloseCharNode {
     closingChar: string,
 }
 export class openCloser {
-    ignoreList: OpenCloseCharNode[] = [];
-
+    ignoreList: OpenCloseCharNode[] = []; 
     doTask(
         openTxt: string,
         closeTxt: string,
@@ -25,8 +24,7 @@ export class openCloser {
             let fcntnt = '';
             let oLEN = openTxt.length;
             let cLEN = closeTxt.length;
-            for (let index = 0, len = contents.length; index <= len; index++) {
-                
+            for (let index = 0, len = contents.length; index <= len; index++) { 
                 if (opened == closed && index > 0 && opened > 0) {
                     let selector = contents.substring(lastoutIndex, lastinIndex-oLEN+1);
                     let cssStyle = contents.substring(lastinIndex + 1, index - cLEN);
@@ -35,28 +33,16 @@ export class openCloser {
                     opened = closed = 0;
                 }
                 let cnt = contents.charAt(index);
-                if (index == len) {
-                    //console.log([cnt,contents.substring(lastoutIndex)]);
-                 
+                if (index == len) { 
                     rtrn += contents.substring(lastoutIndex);
                 }
-                fcntnt += cnt;
-                //console.log();
+                fcntnt += cnt; 
                 if (fcntnt.slice(-oLEN) == openTxt) {
                     if (opened == 0) lastinIndex = index;
                     opened++;
                 } else if (fcntnt.slice(-cLEN) == closeTxt){
                     closed++;
-                }
-                /*switch (cnt) {
-                    case openTxt:
-                        if (opened == 0) lastinIndex = index;
-                        opened++;
-                        break;
-                    case closeTxt:
-                        closed++;
-                        break;
-                }*/
+                } 
             }
         } else {
             let charNode: OpenCloseCharNode;

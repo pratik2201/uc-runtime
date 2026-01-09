@@ -160,24 +160,19 @@ export class builder {
 
         for (let index = 0; index < cInfos.length; index++) {
             const cinfo = cInfos[index];
-            if (cinfo.pathOf.html.includes('ledger$form')) debugger;
-            const info = {
-                dynamicOutputPath: cinfo.allPathOf[outDeclareKey].dynamicDesign,
-                hasDynamicOutput: false,
-                dynamicOutputData: undefined as string,
-               
-            };
-            info.hasDynamicOutput = nodeFn.fs.existsSync(info.dynamicOutputPath);
-            if (info.hasDynamicOutput) {
+            //if (cinfo.pathOf.html.includes('ledger$form')) debugger;
 
+            let dynamicOutputPath = cinfo.allPathOf[outDeclareKey].dynamicDesign;
+            let dynamicOutputData = undefined as string;
+            let hasDynamicOutput = nodeFn.fs.existsSync(dynamicOutputPath);
+            if (hasDynamicOutput) {
                 // this.counter++;
                 // if (this.counter == 73) debugger;
-                const dtodata = (await this.DynamicToHtml(info.dynamicOutputPath));
-                info.dynamicOutputData = dtodata?.htmlSource();
-
-                info.dynamicOutputData = info.dynamicOutputData?.trim() ?? '';
-                if (info.dynamicOutputData.length > 0)
-                    nodeFn.fs.writeFileSync(cinfo.pathOf.html, info.dynamicOutputData);
+                const dtodata = (await this.DynamicToHtml(dynamicOutputPath));
+                dynamicOutputData = dtodata?.htmlSource();
+                dynamicOutputData = dynamicOutputData?.trim() ?? '';
+                if (dynamicOutputData.length > 0)
+                    nodeFn.fs.writeFileSync(cinfo.pathOf.html, dynamicOutputData);
 
                 await this.commonMng.init(cinfo);
             } else {

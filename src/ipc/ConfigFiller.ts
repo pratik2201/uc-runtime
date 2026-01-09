@@ -3,18 +3,15 @@ import path from "node:path";
 import url from "node:url";
 import { buildOptions } from "../build/common.js";
 import { ucUtil } from "../global/ucUtil.js";
-import { correctpath, deepAssign, GetProjectName, IImportMap, ProjectRowM, resolvePathObject, subtractPath } from "./enumAndMore.js";
+import { correctpath, deepAssign, GetProjectName, IDeveloperOptions, IImportMap, IUCConfigPreference, ProjectRowBase, resolvePathObject, subtractPath, UserUCConfig } from "./enumAndMore.js";
 import { ImportUserConfig } from "./userConfigManage.js";
-import { IUCConfigPreference } from "./enumAndMore.js";
-import { IDeveloperOptions } from "./enumAndMore.js";
-import { UserUCConfig } from "./enumAndMore.js";
 
 export class ConfigFiller {
-    MAIN_CONFIG: ProjectRowM;
+    MAIN_CONFIG: ProjectRowBase;
     PREELOAD_IMPORT: string[] = [];
-    ucConfigList: ProjectRowM[] = [];
+    ucConfigList: ProjectRowBase[] = [];
 
-    _setRootDirecory(row: ProjectRowM, projPath: string) {
+    _setRootDirecory(row: ProjectRowBase, projPath: string) {
         row.projectPath = projPath;
         const cfg = row.config;
         let mainProjPath = path.resolve();
@@ -52,13 +49,13 @@ export class ConfigFiller {
 
         }
     };
-    GetByImportMeta(fileimportMeta: string): ProjectRowM {
+    GetByImportMeta(fileimportMeta: string): ProjectRowBase {
         return this.ucConfigList.find(cfg => fileimportMeta.startsWith(cfg.importMetaURL)) || null;
     }
-    GetByAlias(primaryAlicePath: string): ProjectRowM {
+    GetByAlias(primaryAlicePath: string): ProjectRowBase {
         return this.ucConfigList.find(cfg => primaryAlicePath.startsWith(cfg.projectPrimaryAlice)) || null;
     }
-    Fill_ImportMap(_config: ProjectRowM) {
+    Fill_ImportMap(_config: ProjectRowBase) {
         const aliases = {};
         const pathAlias = _config.config?.browser?.importmap ?? {};
         for (let [als, relPath] of Object.entries(pathAlias)) {
@@ -73,9 +70,11 @@ export class ConfigFiller {
             this.Fill_ImportMap(iItem);
         }
     }
-    ucConfig = new ProjectRowM();
-    async fill(mainDirPath: string) {
+    ucConfig = new ProjectRowBase();
+    fill = async (mainDirPath: string) => {
+
         let projectDir = this.getProjectDir(mainDirPath);
+
         await this.Fill_UCConfig(projectDir, this.ucConfig);
 
         const cfg = this.MAIN_CONFIG.config;
@@ -88,23 +87,22 @@ export class ConfigFiller {
 
         this.PREELOAD_IMPORT = ucUtil.distinct(this.PREELOAD_IMPORT);
         this.ucConfigList.sort((a, b) => b.importMetaURL.length - a.importMetaURL.length);
-        this.updateAliceToPath(this.ucConfigList); 
+        this.updateAliceToPath(this.ucConfigList);
         this.generateResource();
-        this.Fill_ImportMap(this.ucConfig);
-
+        this.Fill_ImportMap(this.ucConfig); 
     }
     generateResource = () => {
         const cfg = this.MAIN_CONFIG.config;
-        
+
         if (cfg.env == 'release') return;
         const pref = cfg.preference;
         const dirDeclaration = pref.dirDeclaration;
         const runtimeRes = cfg?.developer?.RuntimeResources ?? [];
         // const dirDeclaration = pref.dirDeclaration;
-        
+
         runtimeRes.forEach(res => {
             const SRC_DIR = pref.dirDeclaration[res.fromDeclare].dirPath;
-            function copyAssets(fromDir:string) {
+            function copyAssets(fromDir: string) {
                 const dirContents = fs.readdirSync(fromDir);
                 for (const file of dirContents) {
                     const full = path.join(fromDir, file);
@@ -114,7 +112,7 @@ export class ConfigFiller {
                     if (isDirectory) {
                         copyAssets(full);
                     } else if (res.includeExtensions.includes(fileExt)) {
-                        const commonPath = path.relative(SRC_DIR,full);
+                        const commonPath = path.relative(SRC_DIR, full);
                         res.toDeclares.forEach(ot => {
                             let OUT_DIR = dirDeclaration[pref.outDir].dirPath;
                             const dest = path.join(OUT_DIR, commonPath);
@@ -127,7 +125,7 @@ export class ConfigFiller {
             copyAssets(SRC_DIR);
         });
     }
-    updateAliceToPath(linearPushAr: ProjectRowM[]) {
+    updateAliceToPath(linearPushAr: ProjectRowBase[]) {
         let p_path = this.MAIN_CONFIG.projectPath;
         for (let i = 0, iObj = linearPushAr, ilen = iObj.length; i < ilen; i++) {
             const iUc = iObj[i];
@@ -139,7 +137,7 @@ export class ConfigFiller {
             }
         }
     }
-    private async Fill_UCConfig(projectDirPath: string, row: ProjectRowM) {
+    private async Fill_UCConfig(projectDirPath: string, row: ProjectRowBase) {
         if (projectDirPath != undefined) {
             let projectName = GetProjectName(projectDirPath, path, fs);
             let ucConfigPath = path.join(projectDirPath, 'ucconfig.js');
@@ -154,17 +152,12 @@ export class ConfigFiller {
                 this.ucConfigList.push(row);
                 row.importMetaURL = url.pathToFileURL(projectDirPath).href;
                 let dirs = this.listProjectPath(projectDirPath);
-                for(let i=0,ilen=dirs.length   ;   i < ilen   ;   i++){ 
+                for (let i = 0, ilen = dirs.length; i < ilen; i++) {
                     const child_project_dir = dirs[i];
-                    let nchild = new ProjectRowM();
+                    let nchild = new ProjectRowBase();
                     await this.Fill_UCConfig(child_project_dir, nchild);
                     row.children.push(nchild);
                 }
-                // dirs.forEach(async child_project_dir => {
-                //     let nchild = new ProjectRowM();
-                //     await this.Fill_UCConfig(child_project_dir, nchild);
-                //     row.children.push(nchild);
-                // });
             }
         }
     }

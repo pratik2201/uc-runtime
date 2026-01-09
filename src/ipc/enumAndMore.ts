@@ -212,6 +212,7 @@ export class ProjectRowBase<K = any> {
     projectName?: string = "";
     importMetaURL: string = "";
     projectPath?: string = "";
+    rootPath?: string = "";
 
     // pathToAlice?: { [projectPath: string]: string; } = {};
     aliceToPath?: { [alice: string]: string; } = {};
@@ -227,12 +228,11 @@ export class ProjectRowR extends ProjectRowBase<ProjectRowR> {
     id: number;
     defaultLoadAt: HTMLElement = undefined;
     stampSRC: import("../lib/StampGenerator.js").SourceNode = undefined;
-    children?: ProjectRowR[] = [];
+    //children?: ProjectRowR[] = [];
 }
-export class ProjectRowM extends ProjectRowBase<ProjectRowM> {
-    rootPath?: string = "";
-    children?: ProjectRowM[] = [];
-}
+// export class ProjectRowM extends ProjectRowBase<ProjectRowM> {
+//     //children?: ProjectRowM[] = [];
+// }
 export function getMetaUrl<K>(fullPath: string, ar: ProjectRowBase<K>[]): string {
     fullPath = correctpath(fullPath);
     return ar.find((row: ProjectRowBase<K>) => fullPath.startsWith(row.projectPath))?.importMetaURL;
@@ -361,7 +361,7 @@ export class UcBuildOptions {
     //watcher = new projectWatcher();
 
 }
-class RuntimeFileManage {   
+class RuntimeFileManage {
     includeCallback = undefined as (filepath: string) => boolean;
     includeExtensions = [] as string[];
     fromDeclare: string;

@@ -1,4 +1,4 @@
-import { BridgeAPI, getCloneableObject, IPC_API_KEY, IPC_GET_KEY, IPC_REGISTER_KEY, IpcRendererCallBack, ProjectRowM, UC_ACCESS_KEY } from "./enumAndMore.js";
+import { BridgeAPI, getCloneableObject, IPC_API_KEY, IPC_GET_KEY, IPC_REGISTER_KEY, IpcRendererCallBack, ProjectRowBase,   UC_ACCESS_KEY } from "./enumAndMore.js";
 export interface IRelativeRendere {
     sendSync: (key: string, args: any[]) => any;
     send: (key: string, args: any[]) => void;
@@ -20,7 +20,7 @@ export class  IpcRendererHelper {
         }
         return undefined;
     }
-    static ucConfigList: ProjectRowM[] = [];
+    static ucConfigList: ProjectRowBase[] = [];
     static Group(ukey: string) { // donedanadonerootpath
         if (typeof window === "undefined") return;
         let donedanadonerootpath = ukey; //GetRootPathByUrl_M(ukey, this.ucConfigList);  // IpcRendererHelper.getRelativeURL(ukey)
@@ -103,7 +103,7 @@ export class  IpcRendererHelper {
         return apk.invoke(IPC_API_KEY, IPC_GET_KEY(key, importMetaUrl), ...args);
     }
 
-    static get ucConfig(): ProjectRowM {
+    static get ucConfig(): ProjectRowBase {
        // debugger;
         return this.sendSync('ucConfig', [{}],UC_ACCESS_KEY);
     }
