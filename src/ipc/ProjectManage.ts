@@ -22,6 +22,7 @@ export class ProjectManage {
         let newProject = Object.assign(new ProjectRowR(), _project);
         newProject.id = ProjectManage.PROJECT_COUNTER++;
         ProjectManage.projects.push(newProject);
+        ProjectManage.projects.sort((a, b) => b.importMetaURL.length - a.importMetaURL.length);
         let childs: ProjectRowR[] = [];
         for (let i = 0, iObj = _project.children, ilen = iObj.length; i < ilen; i++) {
             childs.push(ProjectManage.FILL_PROJECTS(iObj[i]));

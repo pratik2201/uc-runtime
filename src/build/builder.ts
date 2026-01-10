@@ -297,14 +297,14 @@ export class builder {
         }, 1);
     }
 
-    async getOutputCode(fInfo: codeFileInfo, htmlContents: string): Promise<SourceCodeNode> {
-        await this.checkFileState(fInfo.pathOf.html, htmlContents);
-        let row = this.commonMng.rows[0];
-        return {
-            designerCode: this.commonMng.gen.getDesignerCode(row),
-            jsFileCode: this.commonMng.gen.getJsFileCode(row)
-        };
-    }
+    // async getOutputCode(fInfo: codeFileInfo, htmlContents: string): Promise<SourceCodeNode> {
+    //     await this.checkFileState(fInfo.pathOf.html, htmlContents);
+    //     let row = this.commonMng.rows[0];
+    //     return {
+    //         designerCode: this.commonMng.gen.getDesignerCode(row),
+    //         jsFileCode: this.commonMng.gen.getJsFileCode(row)
+    //     };
+    // }
 
     async checkFileState(filePath: string, htmlContents?: string) {
         // if (filePath.endsWith('uc.html')) { //  IF USER CONTROL

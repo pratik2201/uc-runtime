@@ -1,6 +1,5 @@
 import { SpecialExtType } from "../global/ucUtil.js";
 import { codeFileInfo } from "./codeFileInfo.js";
-import { ScopeType } from "./common.js";
 
 
 
@@ -196,3 +195,12 @@ export const templeteControl: TempleteControl = {
     scope: "public",
     proto: "",
 };
+
+/*export enum ExtensionType {
+    none = "none",
+    Usercontrol = ".uc",
+    template = ".tpt",
+}*/
+
+
+export type ScopeType = "private" | "protected"  | "public";

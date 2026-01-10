@@ -1,8 +1,7 @@
 import { SpecialExtType, ucUtil } from "../../global/ucUtil.js";
-import { IBuildDirectory, ISourceFileTypeMap } from "../../ipc/enumAndMore.js";
+import { ISourceFileTypeMap } from "../../ipc/enumAndMore.js";
 import { nodeFn } from "../../nodeFn.js";
 import { CommonRow } from "../buildRow.js";
-import { regsManage } from "../regs/regsManage.js";
 import { TemplateMaker } from "../regs/TemplateMaker.js";
 
 interface CodeFilesNode {
@@ -95,7 +94,7 @@ export class commonGenerator {
     constructor() {
 
         //this.initTemplates();
-        this.rgxManage = new regsManage();
+        //this.rgxManage = new regsManage();
         //  this.dTpt = 
         //console.log(this.DEFAULT_TEMPLEATES);        
     }
@@ -111,7 +110,7 @@ export class commonGenerator {
             return this._CodeFilesNode(type, extType).STYLE;
         }
     }*/
-    rgxManage: regsManage;
+    //rgxManage: regsManage;
     static ensureDirectoryExistence(filePath: string) {
 
         const dirname = nodeFn.path.dirname(filePath);
@@ -224,7 +223,7 @@ export class commonGenerator {
 
     }
 
-    getDesignerCode(rw: CommonRow) {
+   /*getDesignerCode(rw: CommonRow) {
         return this.generateNew(rw, this.designerTMPLT[rw.src.extCode]);
     }
 
@@ -236,5 +235,5 @@ export class commonGenerator {
         let dta = templateText;
         dta = this.rgxManage.parse(node, dta);
         return dta;
-    }
+    }*/
 }

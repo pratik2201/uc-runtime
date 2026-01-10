@@ -1,16 +1,13 @@
 import { codeFileInfo, GetDeclaration } from "./build/codeFileInfo.js";
-import { regsManage } from "./build/regs/regsManage.js";
 import { TemplateMaker } from "./build/regs/TemplateMaker.js";
-import { ITemplatePathOptions, TptOptions, ITptOptions, ExtractArguments } from "./enumAndMore.js";
-import { FilterContent } from "./global/filterContent.js";
-import { newObjectOpt } from "./global/objectOpt.js";
+import { ExtractArguments, ITemplatePathOptions, ITptOptions, TptOptions } from "./enumAndMore.js";
+import { FilterContent } from "./lib/StampGenerator.js";
 import { ATTR_OF } from "./global/runtimeOpt.js";
 import { ucUtil } from "./global/ucUtil.js";
-import { ProjectManage } from "./ipc/ProjectManage.js";
-import { StampNode, SourceNode, STYLER_SELECTOR_TYPE } from "./lib/StampGenerator.js";
+import { SourceNode, StampNode, STYLER_SELECTOR_TYPE } from "./lib/StampGenerator.js";
 import { nodeFn } from "./nodeFn.js";
-import { StylerRegs, StyleBaseType, CSSSearchAttributeCondition, VariableList, CSSVariableScope, CssVariableHandler } from "./StylerRegs.js";
-import { Usercontrol, ITransferDataNode } from "./Usercontrol.js";
+import { CSSSearchAttributeCondition, CssVariableHandler, CSSVariableScope, StyleBaseType, StylerRegs, VariableList } from "./StylerRegs.js";
+import { ITransferDataNode, Usercontrol } from "./Usercontrol.js";
 
 
 interface TptTextObjectNode<K> {
@@ -293,7 +290,7 @@ export class TemplateNode {
     parentUc: undefined as Usercontrol,
     // wrapper: undefined as HTMLElement,
     //  size: new Size(),
-    regsMng: new regsManage(),
+    //regsMng: new regsManage(),
     setCssVariable: (varList: VariableList, scope: CSSVariableScope) => {
       let styler = this.extended.srcNode.styler;
       switch (scope) {

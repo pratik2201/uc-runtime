@@ -1,5 +1,5 @@
 import { codeFileInfo } from "./build/codeFileInfo.js";
-import { newObjectOpt } from "./global/objectOpt.js";
+import { objectOpt } from "./global/objectOpt.js";
 import { SourceNode } from "./lib/StampGenerator.js";
 import { IKeyStampNode } from "./StylerRegs.js";
 import { Usercontrol } from "./Usercontrol.js";
@@ -8,16 +8,16 @@ export type UcStates = "normal" | "dock" | "minimize" | "maximize";
 
 
 
-export interface SessionOptions {
-    addNodeToParentSession?: boolean;
-    loadBySession?: boolean;
-    uniqueIdentity?: string;
-}
-export const sessionOptions: SessionOptions = {
-    addNodeToParentSession: false,
-    loadBySession: false,
-    uniqueIdentity: "",
-};
+// export interface SessionOptions {
+//     addNodeToParentSession?: boolean;
+//     loadBySession?: boolean;
+//     uniqueIdentity?: string;
+// }
+// export const sessionOptions: SessionOptions = {
+//     addNodeToParentSession: false,
+//     loadBySession: false,
+//     uniqueIdentity: "",
+// };
 
 
 export type WrapperNodeNameAs = "wrapper" | "targetElement" | "random";
@@ -74,7 +74,7 @@ export const UcOptions: IUcOptions = {
     mode: 'client',
     accessName: '',
     //session: newObjectOpt.clone<SessionOptions>(sessionOptions),
-    source: newObjectOpt.clone<ISourceOptions>(SourceOptions),
+    source: objectOpt.clone<ISourceOptions>(SourceOptions),
     //loadAt: document.body,
     // decisionForTargerElement: 'append',  // waitForDecision
     events: {

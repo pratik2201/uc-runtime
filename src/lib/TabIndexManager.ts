@@ -1,7 +1,6 @@
-import { controlOpt } from "../build/common.js";
 import { ucUtil } from "../global/ucUtil.js";
-import { KeyboardKey, KeyboardKeyEnum } from "./hardware.js";
-import { ShortcutNode, WinManager } from "./WinManager.js";
+import { KeyboardKey } from "./hardware.js";
+import { WinManager } from "./WinManager.js";
 
 // try {
 //     if (module != undefined)
@@ -518,7 +517,7 @@ class TabIndexManager {
             return;
         }
         htele.focus();
-        controlOpt.selectAllText(htele);
+        ucUtil.selectAllText(htele);
     }
 
     static getTindex(target: HTMLElement): number | null {

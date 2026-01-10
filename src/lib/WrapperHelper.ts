@@ -385,6 +385,7 @@ export class HTMLx {
     static Usercontrol = (name: string, targetUc: IHTMLxSource, outDynamicJsPath: string, ucProps: HTMLTagMapper<'WRAPPER'>, ...childs: string[]) => {
         let relpath: string;
         const targetCinfo = new codeFileInfo();
+     //   debugger;
         targetCinfo.parseUrl(nodeFn.url.fileURLToPath(targetUc.dynamicFilePath), undefined, undefined);  // DESIGNER OUT
         const outDynamicCinfo = new codeFileInfo();
         outDynamicCinfo.parseUrl(nodeFn.url.fileURLToPath(outDynamicJsPath), undefined, undefined);  // DESIGNER OUT

@@ -8,7 +8,104 @@ export interface FILE_WARCHER_FILE_ROW {
     moved: { from: string, to: string }[],
     renamed: { from: string, to: string }[],
 }
+
+
 export class ucUtil {
+    /** old one
+     selectAllText(elem: HTMLElement): void {
+        if ((elem as HTMLInputElement).select) (elem as HTMLInputElement).select();
+        else selectElementContents(elem);
+        function selectElementContents(el: HTMLElement) {
+            if (!el.isContentEditable) return;
+            var range = document.createRange();
+            range.selectNodeContents(el);
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            try {
+                sel.addRange(range);
+            } catch (exp) {
+                console.log(exp);
+            }
+        }
+    }
+     */
+    //
+    static selectAllText(elem: HTMLElement): void {
+        if (!elem) return;
+
+        // Input & textarea
+        if (
+            elem instanceof HTMLInputElement ||
+            elem instanceof HTMLTextAreaElement
+        ) {
+            elem.select();
+            return;
+        }
+
+        // Contenteditable or normal elements
+        if (elem.isContentEditable) {
+            const range = document.createRange();
+            range.selectNodeContents(elem);
+
+            const sel = window.getSelection();
+            if (!sel) return;
+
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+    }
+
+    static getArray(obj: any): any[] {
+        if (obj == null) return [];
+
+        // Single DOM element (HTML or SVG)
+        if (obj instanceof Element) {
+            return [obj];
+        }
+
+        // DOM collections
+        if (
+            obj instanceof HTMLCollection ||
+            obj instanceof NodeList
+        ) {
+            return Array.from(obj);
+        }
+
+        // Already an array
+        if (Array.isArray(obj)) {
+            return obj;
+        }
+
+        // Any other iterable (Map, Set, arguments, etc.)
+        if (typeof obj[Symbol.iterator] === "function") {
+            return Array.from(obj);
+        }
+
+        // Fallback: wrap single value
+        return [obj];
+    }
+    static setProp = function <K>(obj: Object, path: string, value: K) {
+        try {
+            const keys = path.split('.');
+            let o = obj;
+            for (let i = 0; i < keys.length - 1; i++) {
+                o = o[keys[i]] ||= {}; // Create nested object if missing
+            }
+            o[keys.at(-1)] = value;
+            return true;
+        } catch (ex) {
+            return false;
+        }
+    };
+    static getProp = (obj: Object, path: string | any): any => {
+        const keys = path.split('.');
+        let o = obj;
+        for (let key of keys) {
+            if (o == null) return undefined;
+            o = o[key];
+        }
+        return o;
+    };
     static _getSelectedValuee = (_txt: HTMLInputElement | HTMLTextAreaElement): string => {
         let child = _txt as HTMLInputElement;
         if (child.tagName === "TEXTAREA" ||

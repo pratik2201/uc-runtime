@@ -1,10 +1,9 @@
 import { codeFileInfo } from "./build/codeFileInfo.js";
-import { objectOpt } from "./build/common.js";
 import { TemplateMaker } from "./build/regs/TemplateMaker.js";
 import { ExtractArguments, ITptOptions, IUcOptions, UCGenerateMode, UcStates, WhatToDoWithTargetElement } from "./enumAndMore.js";
 import { CommonEvent } from "./global/commonEvent.js";
-import { FilterContent } from "./global/filterContent.js";
-import { newObjectOpt } from "./global/objectOpt.js";
+import { FilterContent } from "./lib/StampGenerator.js";
+import { objectOpt } from "./global/objectOpt.js";
 import { ATTR_OF } from "./global/runtimeOpt.js";
 import { ucUtil } from "./global/ucUtil.js";
 import { GetUniqueId } from "./ipc/enumAndMore.js";
@@ -277,7 +276,7 @@ export class Usercontrol {
                 console.log(htContent);
                 
             }*/
-            console.log(htPathToRead);
+            //console.log(htPathToRead);
             
             let tmkr = Usercontrol.templateMkr.get(htPathToRead);
             if (tmkr == undefined) {
@@ -334,7 +333,7 @@ export class Usercontrol {
 
                 if (param0.targetElement) {
                     ucExt.initalComponents.elements = param0.targetElement.children;
-                    newObjectOpt.copyAttr(param0.targetElement, ucExt.wrapperHT);
+                    objectOpt.copyAttr(param0.targetElement, ucExt.wrapperHT);
 
                     Usercontrol.HiddenSpace.append(ucExt.wrapperHT);
                 } else {

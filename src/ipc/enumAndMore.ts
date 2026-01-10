@@ -1,7 +1,6 @@
 import { IpcRendererEvent } from "electron"
 import { ImportUserConfig } from "./userConfigManage.js";
 import { KeyboardKey } from "../lib/hardware.js";
-import { PathReplacer } from "../build/fileWatcher.enums.js";
 export const UC_ACCESS_KEY = '_____UC____';
 export interface ProjectPrimaryAlias { alice?: string; aliceValue?: string; projectPath?: string; }
 export class PreloadFullFill {
@@ -353,9 +352,9 @@ export class UserUCConfig<K = IBuildDirectory> {
     //type?: "ts" | "js";
 }
 
-export class projectWatcher {
-    pathRelacer?: { [pattern: string]: PathReplacer } = {};
-}
+// export class projectWatcher {
+//     pathRelacer?: { [pattern: string]: PathReplacer } = {};
+// }
 export class UcBuildOptions<K = IBuildDirectory> {
     keyBind?: KeyboardKey[] = [];
     ignorePath?: string[] = [];

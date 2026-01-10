@@ -1,7 +1,7 @@
 import { codeFileInfo, GetDeclaration } from "./build/codeFileInfo.js";
 import { PathBridge } from "./build/pathBridge.js";
 import { IUcOptions, UcOptions, ITptOptions, TptOptions } from "./enumAndMore.js";
-import { newObjectOpt } from "./global/objectOpt.js";
+import { objectOpt } from "./global/objectOpt.js";
 import { getMetaUrl, GetProject } from "./ipc/enumAndMore.js";
 import { ProjectManage } from "./ipc/ProjectManage.js";
 import { nodeFn } from "./nodeFn.js";
@@ -17,7 +17,7 @@ export class intenseGenerator {
         CssVariableHandler.SetCSSVarValue(varList, '' + rt.project['id'], 'g');
     }
     static generateUC<T = string>(path: T, classObj: any, importMetaURL: string, pera: IUcOptions, ...args: any[]): Usercontrol {
-        const param0: IUcOptions = newObjectOpt.copyProps(pera, UcOptions);
+        const param0: IUcOptions = objectOpt.copyProps(pera, UcOptions);
        ///console.log(path);
        
         const prj = GetProject((importMetaURL ?? path) as any, PathBridge.source, nodeFn.url as any);
@@ -34,7 +34,7 @@ export class intenseGenerator {
         return uc;
     }
     static async generateUCAsync<T = string>(path: T, classObj: any, importMetaURL: string, pera: IUcOptions, ...args: any[]): Promise<Usercontrol> {
-        let param0: IUcOptions = newObjectOpt.copyProps(pera, UcOptions);
+        let param0: IUcOptions = objectOpt.copyProps(pera, UcOptions);
        // console.log(path);
        // debugger;
         const prj = GetProject((importMetaURL ?? path) as any, PathBridge.source, nodeFn.url as any);

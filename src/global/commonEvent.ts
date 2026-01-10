@@ -1,4 +1,3 @@
-import { arrayOpt } from "../build/common.js";
 import { GetUniqueId } from "../ipc/enumAndMore.js";
 import { Usercontrol } from "../Usercontrol.js";
 
@@ -70,7 +69,8 @@ export class CommonEvent<F extends (...arg: any) => void> {
     removeByStamp(stamp: string): void {
         let fIndex: number = this._eventList.findIndex(s => s.stamp === stamp);
         if (fIndex != -1) {
-            arrayOpt.removeAt(this._eventList, fIndex);
+           // arrayOpt.removeAt(this._eventList, fIndex);
+            this._eventList.splice(fIndex,1);
             this.Events.onChangeEventList();
         }
     }

@@ -1,10 +1,9 @@
-import { controlOpt } from "../build/common.js";
 import { ATTR_OF } from "../global/runtimeOpt.js";
 import { ucUtil } from "../global/ucUtil.js";
 import { ProjectRowR, getMetaUrl } from "../ipc/enumAndMore.js";
 import { ProjectManage } from "../ipc/ProjectManage.js";
 import { nodeFn } from "../nodeFn.js";
-import { StylerRegs, WRAPPER_TAG_NAME, IKeyStampNode, StyleBaseType, CSSSearchAttributeCondition } from "../StylerRegs.js";
+import { CSSSearchAttributeCondition, IKeyStampNode, StyleBaseType, StylerRegs, WRAPPER_TAG_NAME } from "../StylerRegs.js";
 import { Usercontrol } from "../Usercontrol.js";
 
 
@@ -180,7 +179,7 @@ export class SourceNode {
         let h: HTMLElement;
         let stmpUnq: string = this.localStamp;
         let stmpRt = '' + this.project.id;//this.root.id;
-        let ar = controlOpt.getArray(ele);
+        let ar = ucUtil.getArray(ele);
         if (StampNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
             let keyToSet = options.groupKey != undefined ?
                 stmpUnq + "_" + options.groupKey + "_" + stmpRt
@@ -331,6 +330,36 @@ export class StampNode {
             result = (rtrn.counter <= 0);
         }
         return result; //{ result: result, count: rtrn.counter };
+    }
+}
+
+export class FilterContent {
+    static select_inline_Pattern: RegExp = /(["=> \w\[\]-^|#~$*.+]*)(::|:)([-\w\(\)]+)/g;
+
+    static select_inline_filter(data: string, _guid: string = ""): string {
+        let rtrn: string = "";
+        let isReplaced: boolean = false;
+        rtrn = data.replace(this.select_inline_Pattern, function (
+            match: string,
+            selector: string,
+            seperator: string,
+            pseudo: string,
+            offset: number,
+            input_string: string
+        ): string {
+            isReplaced = true;
+            return (StampNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) ?
+                data.trim() + `[${ATTR_OF.UC.ALL}^='${_guid}_']`
+                :
+                data.trim() + `.${ATTR_OF.__CLASS(_guid, 'l')}`;
+            //return `${selector.trim()}.${ATTR_OF.__CLASS(_guid, 'l')}${seperator}${pseudo}`;
+        });
+        if (isReplaced) return rtrn;
+        return (StampNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) ?
+            data.trim() + `[${ATTR_OF.UC.ALL}^='${_guid}_']`
+            :
+            data.trim() + `.${ATTR_OF.__CLASS(_guid, 'l')}`;
+        return; // old one `[${ATTR_OF.UC.UNIQUE_STAMP}='${_guid}']`
     }
 }
 

@@ -4,7 +4,7 @@ const getC = (c: any): string | undefined => {
   return Object.getPrototypeOf(c).constructor.name;
 }
 
-export class newObjectOpt {
+export class objectOpt {
   /**
    * this will read `package.json` file from project's root directory and return project name
    * @param dirpath pass project's root directory path

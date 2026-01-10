@@ -4,11 +4,7 @@
   "main": "./out/main/index.js",
   "type": "module",
   "description": ":Shree Ganeshay Namah: \n new way app design",
-  "scripts": {
-    "viteConfig.main": "vite build --config vite.config.ts",
-    "build:vite": "npm run viteConfig.main    &&  npm run  build:types",
-    "build:types": "tsc -p tsconfig.types.json",
-    "build:out": "tsc -p tsconfig.out.json",
+  "scripts": {    
     "clean": "rimraf out",
     "start": "electron .",
     "build:dts": "tsc --emitDeclarationOnly",
@@ -19,18 +15,14 @@
   "author": "ap",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^20.11.0",
-    "@vitejs/plugin-vue": "^5.2.4",
+    "@types/node": "^20.11.0", 
     "electron": "^39.1.1",
     "rimraf": "^6.0.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.9.3",
-    "vite": "^6.4.1",
-    "vite-plugin-string": "^1.2.3"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
-    "chokidar": "^4.0.3",
-    "vite-plugin-static-copy": "^3.1.4"
+    "chokidar": "^4.0.3"
   },
   "keywords": [
     "electron app designer",
