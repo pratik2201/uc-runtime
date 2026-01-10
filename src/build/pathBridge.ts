@@ -18,6 +18,8 @@ export class PathBridge {
             function givaAll(givenType: SourceFileType, path: string, fromSrcType: SourceType = 'src', toSrcType: SourceType = 'src') {
                 let rtrn: IBuildDirectoryResult = {};
                 //debugger;
+                //console.log(PathBridge.source);
+                
                 let prj = GetProject(path, PathBridge.source as any, PathBridge.url as any);
                 if (givenType == undefined || prj == undefined) { console.log(path); return undefined; }
                 const pref = prj.config.preference;

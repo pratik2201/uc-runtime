@@ -69,7 +69,7 @@ export class Usercontrol {
                 let xfrom = ele.getAttribute(ATTR_OF.X_FROM);
                 let targetPath = nodeFn.path.resolveFilePath(mainFinfo.pathOf.html, xfrom);
                 let finfo = new codeFileInfo();
-                finfo.parseUrl(targetPath, pref.outDir, mainFinfo.pathOf.html);
+                finfo.parseUrl(targetPath, pref.outDir as any, mainFinfo.pathOf.html);
                 if (xfrom.endsWith('.uc.html'))
                     await _uc(xname, finfo, ele);
                 else

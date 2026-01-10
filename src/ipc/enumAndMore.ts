@@ -265,6 +265,7 @@ export function GetProjectName(projectdir: string, path: typeof import('path'), 
     return undefined;
 }
 export function GetProject<K>(_path: string, projectsArray: ProjectRowBase<K>[], url: typeof import('url')) {
+
     let callerFilePath = _path.startsWith('file:///') ? url.fileURLToPath(_path) : _path;
     callerFilePath = correctpath(callerFilePath);
     return projectsArray.find(proj => callerFilePath.startsWith(proj.projectPath));
@@ -332,7 +333,7 @@ export type IResolvePathResult<K = ProjectRowR> = {
     alias?: string;
     aliasPath?: string;
 };
-export class UserUCConfig {
+export class UserUCConfig<K = IBuildDirectory> {
     env: 'developer' | 'release' = 'developer';
     exports: 'types' | 'import' = 'import';
     preloadMain: string[] = [];
@@ -340,38 +341,37 @@ export class UserUCConfig {
         importmap: {} as { [alice: string]: string; },
         globalAlias: {} as { [alice: string]: string; },
     };
-    preference?: IUCConfigPreference = {
-        dirDeclaration: {},
+    preference?: IUCConfigPreference<K> = {
+        build: new UcBuildOptions<K>(),
+        dirDeclaration: {} as any,
         fileWisePath: {},
-        srcDir: "",
-        outDir: "",
+        srcDir: "" as any,
+        outDir: "" as any,
     };
     projectBaseCssPath?: string = "styles.scss";
-    developer = new IDeveloperOptions();
+    //developer = new UcBuildOptions<K>();
     //type?: "ts" | "js";
 }
 
 export class projectWatcher {
     pathRelacer?: { [pattern: string]: PathReplacer } = {};
 }
-export class UcBuildOptions {
+export class UcBuildOptions<K = IBuildDirectory> {
     keyBind?: KeyboardKey[] = [];
-    ignorePath?: string[];
-    buildPath?: string;
+    ignorePath?: string[] = [];
+    buildPath?: keyof K;
+    RuntimeResources: RuntimeFileManage<K>[] = [];
     //watcher = new projectWatcher();
 
 }
-class RuntimeFileManage {
+ 
+class RuntimeFileManage<K = IBuildDirectory> {
     includeCallback = undefined as (filepath: string) => boolean;
     includeExtensions = [] as string[];
-    fromDeclare: string;
-    toDeclares: string[];
+    fromDeclare: keyof K;
+    toDeclares: Array<keyof K>;
 }
-export class IDeveloperOptions {
-    build = new UcBuildOptions();
-    RuntimeResources: RuntimeFileManage[] = [];
 
-}
 export class IFileTypeInfo {
     dirPath: string;
     /**
@@ -402,18 +402,20 @@ export class IFileDeclaration {
     
    directoryExtendor: string; */
 }
-export class IUCConfigPreference {
-    dirDeclaration?: IBuildDirectory = {
+export class IUCConfigPreference<K = IBuildDirectory> {
+    build = new UcBuildOptions<K>();
 
-    };
+    dirDeclaration?: K = {
+
+    } as any;
     fileWisePath?: Partial<{ [s in SourceFileType]: IFileDeclaration }> = {};
     /**
      * specify dirDeclaration key
      */
-    outDir?: string = '';
+    outDir?: keyof K = '' as any;
     /**
     * specify dirDeclaration key
     */
-    srcDir?: string = '';
+    srcDir?: keyof K = '' as any;
 }
 

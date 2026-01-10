@@ -1,7 +1,8 @@
 {
   "name": "ucbuilder", 
+  "version": "1.0.4", 
+  "main": "./out/main/index.js",
   "type": "module",
-  "version": "1.0.4",
   "description": ":Shree Ganeshay Namah: \n new way app design",
   "scripts": {
     "viteConfig.main": "vite build --config vite.config.ts",
@@ -9,15 +10,18 @@
     "build:types": "tsc -p tsconfig.types.json",
     "build:out": "tsc -p tsconfig.out.json",
     "clean": "rimraf out",
-    "build": "npm run build:types && npm run build:out",
-    "rebuild": "npm run clean && npm run build"
+    "start": "electron .",
+    "build:dts": "tsc --emitDeclarationOnly",
+    "build": "tsc",
+    "rebuild": "npm run clean && npm run build && npm run build:dts",
+    "test": "node out/main.js"
   },
   "author": "ap",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.11.0",
     "@vitejs/plugin-vue": "^5.2.4",
-    "electron": "^31.6.0",
+    "electron": "^39.1.1",
     "rimraf": "^6.0.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3",

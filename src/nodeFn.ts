@@ -179,13 +179,11 @@ export class nodeFn {
                 doCache: false,
             } as I_ReadFileSyncPerameters]);
         },
+
         readFileSync: (path: string, encode: import('fs').WriteFileOptions = 'utf-8', doCache = false): string | null => {
 
-
-            //if (path.includes('editorCommon.scss')) { return 'editorCommon.scss called...'; }
             let _finalpath = nodeFn.path.normalize(path);
             if (doCache) {
-
                 let rtrn = this.readFileSyncStorage.get(_finalpath);
                 if (rtrn != undefined) return rtrn;
                 else {
@@ -196,7 +194,8 @@ export class nodeFn {
                         encode: encode,
                         doCache: doCache,
                     } as I_ReadFileSyncPerameters]);
-                    this.readFileSyncStorage.set(_finalpath, rtrn);
+                    if (rtrn != undefined)
+                        this.readFileSyncStorage.set(_finalpath, rtrn);
                     return rtrn;
                 }
             } else {
@@ -209,7 +208,7 @@ export class nodeFn {
             }
 
         },
-         
+
         readdirSync: (path: string, encode: import('fs').WriteFileOptions = 'binary'): string[] => {
             return this.renderer.sendSync('fs.readdirSync', [path, encode]);
         },

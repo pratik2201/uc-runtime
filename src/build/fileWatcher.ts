@@ -73,7 +73,7 @@ export class fileWatcher {
 
         const _this = this;
         const changedFiles = new Map<string, string>();
-        let bpath = nodeFn.path.join(_this.main.project.projectPath, _this.main.project.config.developer.build.buildPath);
+        let bpath = nodeFn.path.join(_this.main.project.projectPath, _this.main.project.config.preference.build.buildPath as any);
         //console.log(update);
         _builder.recursive(bpath, undefined, async (recursive_filepath) => {
             if (fileWatcher.isValidFileForPathReplacer(recursive_filepath)) {
@@ -159,7 +159,7 @@ export class fileWatcher {
     static isSCSSFile(filePath: string) { return filePath.match(/\.scss$/i) != null; }
     static isValidFileForPathReplacer(filePath: string) { return filePath.match(/\.ts$|\.scss$|\.html$/i) != null; }
     startWatch() {
-        let bpath = nodeFn.path.join(this.main.project.projectPath, this.main.project.config.developer.build.buildPath);
+        let bpath = nodeFn.path.join(this.main.project.projectPath, this.main.project.config.preference.build.buildPath as any);
         fileWatcher.renderer.send("startWatch", [bpath]);
     }
     async stopWatch() {

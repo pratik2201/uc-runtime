@@ -1,5 +1,5 @@
 import fs, { Mode, OpenMode, PathLike } from "node:fs";
-import path from "node:path"; 
+import path from "node:path";
 import { IpcMainGroup, IpcMainHelper } from "./ipc/IpcMainHelper.js";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { I_PathBaseName, I_PathRelative, I_ReadFileSyncPerameters, I_WriteFileSyncPerameters } from "./nodeFn.js";
@@ -8,7 +8,7 @@ import { ucUtil } from "./global/ucUtil.js";
 import { TSPathResolver } from "./global/TSPathResolver.js";
 
 export default function () {
-   
+
     const cryptInfo = {
         algorithm: "aes-256-gcm" as crypto.CipherGCMTypes,
         key: 'prat' as string, //crypto.randomBytes(32);
@@ -57,7 +57,7 @@ export default function () {
     main.On('fs.existsSync', (event, path: string) => {
         event.returnValue = fs.existsSync(path);
     });
-    main.On('fs.rmSync', (event, path: fs.PathLike, options?: fs.RmOptions ) => {
+    main.On('fs.rmSync', (event, path: fs.PathLike, options?: fs.RmOptions) => {
         event.returnValue = fs.rmSync(path, options);
     });
     main.On('fs.statSync.isDirectory', (event, path: fs.PathLike, options?: fs.StatSyncOptions) => {
@@ -82,23 +82,25 @@ export default function () {
     main.On('fs.mkdirSync', (event, path: string, options: fs.MakeDirectoryOptions) => {
         event.returnValue = fs.mkdirSync(path, options);
     });
-    main.On('fs.copyFileSync', (event, src: fs.PathLike, dest: fs.PathLike, mode:number) => {
+    main.On('fs.copyFileSync', (event, src: fs.PathLike, dest: fs.PathLike, mode: number) => {
         event.returnValue = fs.copyFileSync(src, dest, mode);
     });
 
     main.Handle('fs.readFile', async (e, args: I_ReadFileSyncPerameters) => {
-        return await fs.readFile(args.path, args.encode as any);
+        return fs.readFile(args.path, args.encode as any);
     })
     const _readFileCache = new Map<string, string>();
     main.On('fs.readFileSync', (event, args: I_ReadFileSyncPerameters) => {
         let fileContent: string;
-    /*if (args.doCache) {
-        if (_readFileCache.has(args.path)) fileContent = _readFileCache.get(args.path);
-        else {
+        /*if (args.doCache) {
+            if (_readFileCache.has(args.path)) fileContent = _readFileCache.get(args.path);
+            else {
+                fileContent = fs.readFileSync(args.path, args.encode) as any;
+                _readFileCache.set(args.path, fileContent);
+            }
+        } else */
+        if (fs.existsSync(args.path))
             fileContent = fs.readFileSync(args.path, args.encode) as any;
-            _readFileCache.set(args.path, fileContent);
-        }
-    } else */fileContent = fs.readFileSync(args.path, args.encode) as any;
 
         event.returnValue = fileContent;
     });

@@ -1,9 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
-import { buildOptions } from "../build/common.js";
 import { ucUtil } from "../global/ucUtil.js";
-import { correctpath, deepAssign, GetProjectName, IDeveloperOptions, IImportMap, IUCConfigPreference, ProjectRowBase, resolvePathObject, subtractPath, UserUCConfig } from "./enumAndMore.js";
+import { correctpath, deepAssign, GetProjectName, IImportMap, IUCConfigPreference, ProjectRowBase, UcBuildOptions, UserUCConfig } from "./enumAndMore.js";
 import { ImportUserConfig } from "./userConfigManage.js";
 
 export class ConfigFiller {
@@ -17,7 +16,7 @@ export class ConfigFiller {
         let mainProjPath = path.resolve();
         row.rootPath = correctpath(path.normalize(path.relative(mainProjPath, row.projectPath)));
         row.rootPath = row.rootPath == '.' ? '.' : `./${row.rootPath}/`;
-        if (row.rootPath == '.') {
+        /*if (row.rootPath == '.') {
             let kys = Object.keys(cfg.browser.globalAlias);
             for (let i = 0, iObj = kys, ilen = iObj.length; i < ilen; i++) {
                 const iKey = iObj[i];
@@ -26,11 +25,11 @@ export class ConfigFiller {
                 const trimedPath = correctpath(subtractPath(mainProjPath, custResolve, path));
                 cfg.browser.globalAlias[iKey] = trimedPath;
             }
-        }
+        }*/
         let pref = cfg.preference = cfg.preference ?? {} as IUCConfigPreference;
         row.projectPrimaryAlice = row.projectName;
-        pref.srcDir = (pref.srcDir ?? "");
-        pref.outDir = (pref.outDir ?? "");
+        pref.srcDir = (pref.srcDir ?? "") as any;
+        pref.outDir = (pref.outDir ?? "") as any;
         cfg.projectBaseCssPath = (cfg.projectBaseCssPath ?? "");
 
 
@@ -78,18 +77,18 @@ export class ConfigFiller {
         await this.Fill_UCConfig(projectDir, this.ucConfig);
 
         const cfg = this.MAIN_CONFIG.config;
-        cfg.developer = cfg.developer ?? new IDeveloperOptions();
-        cfg.developer.build = cfg.developer.build ?? Object.assign({}, buildOptions) as any;
-        cfg.developer.build.keyBind = cfg.developer.build.keyBind ?? [];
-        const bld = cfg.developer.build;
+        const pref = cfg.preference;
+        pref.build = Object.assign(new UcBuildOptions(), pref.build);
+
+        const bld = pref.build;
         if (bld.keyBind == undefined || bld.keyBind.length == 0)
-            bld.keyBind = ['ControlLeft', 'F12'];
+            bld.keyBind = ['ControlRight', 'F12'];
 
         this.PREELOAD_IMPORT = ucUtil.distinct(this.PREELOAD_IMPORT);
         this.ucConfigList.sort((a, b) => b.importMetaURL.length - a.importMetaURL.length);
         this.updateAliceToPath(this.ucConfigList);
         this.generateResource();
-        this.Fill_ImportMap(this.ucConfig); 
+        this.Fill_ImportMap(this.ucConfig);
     }
     generateResource = () => {
         const cfg = this.MAIN_CONFIG.config;
@@ -97,7 +96,7 @@ export class ConfigFiller {
         if (cfg.env == 'release') return;
         const pref = cfg.preference;
         const dirDeclaration = pref.dirDeclaration;
-        const runtimeRes = cfg?.developer?.RuntimeResources ?? [];
+        const runtimeRes = pref.build?.RuntimeResources ?? [];
         // const dirDeclaration = pref.dirDeclaration;
 
         runtimeRes.forEach(res => {

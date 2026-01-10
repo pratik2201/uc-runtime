@@ -477,10 +477,3 @@ export const objectOpt = {
 }*/
 
 export type ScopeType = "private" | "protected" /*| "package"*/ | "public";
-export const buildOptions = {
-
-    ignoreDirs: [
-        'ucbuilder/node_modules',
-        'ucbuilder/.vscode',
-    ],
-}

@@ -24,7 +24,7 @@ export class intenseGenerator {
         const pref = prj.config.preference;
         if (param0.cfInfo == undefined) {
             param0.cfInfo = new codeFileInfo();
-            param0.cfInfo.parseUrl(path as string, pref.outDir, importMetaURL);
+            param0.cfInfo.parseUrl(path as string, pref.outDir as any, importMetaURL);
         }
         const toSend = [];
         toSend.push(...args, param0);
@@ -41,7 +41,7 @@ export class intenseGenerator {
         const pref = prj.config.preference;
         if (param0.cfInfo == undefined) {
             param0.cfInfo = new codeFileInfo();
-            param0.cfInfo.parseUrl(path as string, pref.outDir, importMetaURL);
+            param0.cfInfo.parseUrl(path as string, pref.outDir as any, importMetaURL);
         }
         let toSend = [];
         toSend.push(...args, param0);

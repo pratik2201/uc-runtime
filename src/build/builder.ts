@@ -32,7 +32,7 @@ export class builder {
         this.filewatcher = new fileWatcher(this);
         this.filewatcher.init();
         const _this = this;
-        this.project.config.developer.build.ignorePath.forEach(pth => {
+        this.project.config.preference.build.ignorePath.forEach(pth => {
             _this.addToIgnore(pth);
         });
     }
@@ -70,8 +70,8 @@ export class builder {
                     const isDynamicFile = fullpath.endsWith(srcDynamicExt);
                     const isHtmlFile = fullpath.endsWith(srcHtmlExt);
                     if (isDynamicFile || isHtmlFile) {
-                        cInfo.parseUrl(fullpath, pref.srcDir);
-                        if (cInfo.pathOf == undefined || !nodeFn.fs.existsSync(cInfo.pathOf.code)) return;
+                        cInfo.parseUrl(fullpath, pref.srcDir as any );
+                        if (cInfo.pathOf == undefined /*|| !nodeFn.fs.existsSync(cInfo.pathOf.html)*/) return;
                         if (rtrn.cinfo.findIndex(s => (
                             (isHtmlFile && s.pathOf.html == cInfo.pathOf.html) ||
                             (isDynamicFile && s.pathOf.dynamicDesign == cInfo.pathOf.dynamicDesign)
@@ -152,7 +152,7 @@ export class builder {
         const outDeclareKey = pref.outDir;
         const designerFileDeclaration = fileWisePath.designer;
         let designerPath = nodeFn.path.join(prj.projectPath, srcdirDeclaration.dirPath ?? '', designerFileDeclaration?.dirPath ?? '');
-        console.log(designerPath);
+        //console.log(designerPath);
         let cInfos = ((await _this.getAllDesignerXfiles())).cinfo;
         const messages = {
             generateOutputAndRetry: false
@@ -161,19 +161,26 @@ export class builder {
         for (let index = 0; index < cInfos.length; index++) {
             const cinfo = cInfos[index];
             //if (cinfo.pathOf.html.includes('ledger$form')) debugger;
-
+           
             let dynamicOutputPath = cinfo.allPathOf[outDeclareKey].dynamicDesign;
             let dynamicOutputData = undefined as string;
             let hasDynamicOutput = nodeFn.fs.existsSync(dynamicOutputPath);
-            if (hasDynamicOutput) {
-                // this.counter++;
-                // if (this.counter == 73) debugger;
+            if (hasDynamicOutput) { 
                 const dtodata = (await this.DynamicToHtml(dynamicOutputPath));
                 dynamicOutputData = dtodata?.htmlSource();
+                
                 dynamicOutputData = dynamicOutputData?.trim() ?? '';
-                if (dynamicOutputData.length > 0)
-                    nodeFn.fs.writeFileSync(cinfo.pathOf.html, dynamicOutputData);
-
+                if (dynamicOutputData.length > 0) {
+                    const htnode = dynamicOutputData["#$"]();                    
+                    if (htnode?.nodeName != undefined && htnode?.nodeType != undefined) {
+                        commonGenerator.ensureDirectoryExistence(cinfo.pathOf.html);
+                        try {
+                            nodeFn.fs.writeFileSync(cinfo.pathOf.html, dynamicOutputData);
+                        } catch (eee) {
+                            console.warn(eee);
+                        }
+                    }
+                }
                 await this.commonMng.init(cinfo);
             } else {
                 if (nodeFn.fs.existsSync(cinfo.pathOf.dynamicDesign)) {
@@ -190,7 +197,7 @@ export class builder {
             await this.recursive(designerPath, undefined, async (pth) => {
                 if (pth.endsWith(designerExt)) {
                     let _pthObj = PathBridge.Convert(pth, pref.srcDir as any, 'designer')[pref.srcDir];
-                    let bothExist = nodeFn.fs.existsSync(_pthObj.code) && (nodeFn.fs.existsSync(_pthObj.html) || nodeFn.fs.existsSync(_pthObj.dynamicDesign));
+                    let bothExist = /*nodeFn.fs.existsSync(_pthObj.code) &&*/ (nodeFn.fs.existsSync(_pthObj.html) || nodeFn.fs.existsSync(_pthObj.dynamicDesign));
                     if (!bothExist) {
                         console.log(`${_pthObj.designer} file deleted...`);
                         nodeFn.fs.rmSync(_pthObj.designer)

@@ -1,28 +1,25 @@
 import { ITemplatePathOptions } from "../../enumAndMore.js";
 import { FilterContent } from "../../global/filterContent.js";
 import { ATTR_OF } from "../../global/runtimeOpt.js";
-import { SpecialExtEnum, ucUtil } from "../../global/ucUtil.js";
-import { IBuildDirectory, IFileDeclaration, ISourceFileTypeMap, IUCConfigPreference } from "ipc/enumAndMore.js";
-import { UserUCConfig } from "ipc/enumAndMore.js";
-import { ProjectRowR } from "../../ipc/enumAndMore.js";
+import { ucUtil } from "../../global/ucUtil.js";
+import { ProjectRowR, IFileDeclaration, IUCConfigPreference, UserUCConfig } from "../../ipc/enumAndMore.js";
+import { ProjectManage } from "../../ipc/ProjectManage.js";
+import { HTMLx } from "../../lib/WrapperHelper.js";
 import { nodeFn } from "../../nodeFn.js";
 import { Template } from "../../Template.js";
 import { Usercontrol } from "../../Usercontrol.js";
 import { builder } from "../builder.js";
 import { codeOptionsBase, CommonRow, Control, DesignerOptionsBase, dynamicDesignerElementTree, ImportClassNode } from "../buildRow.js";
 import { codeFileInfo } from "../codeFileInfo.js";
-import { ScopeType, objectOpt } from "../common.js";
+import { objectOpt, ScopeType } from "../common.js";
 import { TemplateMaker } from "../regs/TemplateMaker.js";
 import { commonGenerator } from "./commonGenerator.js";
-import { ProjectManage } from "../../ipc/ProjectManage.js";
-import { HTMLx, DynamicToHtml } from "../../lib/WrapperHelper.js";
 export interface PathReplacementNode { findPath: string, replaceWith: string }
 
 export class commonParser {
     generateNodes(htContent: string): string {
         let rtrn = '';
         const source = new dynamicDesignerElementTree();
-
         function walk(node: HTMLElement, src: dynamicDesignerElementTree, depth = 0) {
             // nodeType:
             // 1 = Element
@@ -147,7 +144,9 @@ export class commonParser {
         const pathOf = finfo.pathOf;
         const filePref = finfo?.projectInfo?.config?.preference;
         const srcDec = filePref.srcDir;
-        code = htmlContents ?? nodeFn.fs.readFileSync(finfo.allPathOf[srcDec].html);
+        code = htmlContents ??
+            nodeFn.fs.readFileSync(finfo.allPathOf[srcDec].html) /*??
+            nodeFn.fs.readFileSync(finfo.allPathOf[filePref.outDir].html)*/;
         if (nodeFn.fs.existsSync(finfo.allPathOf[srcDec].dynamicDesign)) {
             designer.dynamicName = designer.importer.getNameNumber(`${finfo.name}$dynamicHtmlCode`);
         }
@@ -193,7 +192,7 @@ export class commonParser {
         let row = _row.sources['ts_uc'];
         let _this = this;
         _row.src = finfo;
-       // if (finfo.pathOf['html'].includes('ledger$form.uc')) debugger;
+        // if (finfo.pathOf['html'].includes('ledger$form.uc')) debugger;
         let onSelect_xName = _this.bldr.Event.onSelect_xName;
 
         const srcDec = _row.src.allPathOf[this.PREFERENCE.srcDir];
@@ -202,7 +201,7 @@ export class commonParser {
         const filePref = finfo?.projectInfo?.config?.preference;
         code = await this.common0(htmlContents, _row, row.designer);
 
-       
+
 
         if (code == undefined) return undefined;
         code = ucUtil.devEsc(code);
@@ -217,7 +216,7 @@ export class commonParser {
                 this.codeHT = compileedCode["#$"]();
                 _row.htmlFileContent = code;
             } else {
-                code = HTMLx.Wrapper([{ "x-caption": 'Form' }]);
+                code = HTMLx.Wrapper({ "x-caption": 'Form' });
                 this.codeHT = code["#$"]() as HTMLElement;
                 _row.dynamicFileContent = commonGenerator.readTemplate('ts', '.uc', '.dynamic');
             }
@@ -241,10 +240,11 @@ export class commonParser {
         const _importer = row.designer.importer;
         switch (this.UC_CONFIG?.exports ?? this.CONFIG.exports) {
             case "import":
-                _importer.addImport(['Usercontrol'], this.nc('./node_modules/ucbuilder/out/Usercontrol.js', pathOf.designer));
-                _importer.addImport(['intenseGenerator'], this.nc('./node_modules/ucbuilder/out/intenseGenerator.js', pathOf.designer));
-                _importer.addImport(['IUcOptions'], this.nc('./node_modules/ucbuilder/out/enumAndMore.js', pathOf.designer));
-                _importer.addImport(['VariableList'], this.nc('./node_modules/ucbuilder/out/StylerRegs.js', pathOf.designer));
+                const prePath = (this.project.projectName == 'ucbuilder') ? `.` : `./node_modules/ucbuilder`;
+                _importer.addImport(['Usercontrol'], this.nc(`${prePath}/out/Usercontrol.js`, pathOf.designer));
+                _importer.addImport(['intenseGenerator'], this.nc(`${prePath}/out/intenseGenerator.js`, pathOf.designer));
+                _importer.addImport(['IUcOptions'], this.nc(`${prePath}/out/enumAndMore.js`, pathOf.designer));
+                _importer.addImport(['VariableList'], this.nc(`${prePath}/out/StylerRegs.js`, pathOf.designer));
                 break;
             case "types":
                 _importer.addImport(['Usercontrol'], 'ucbuilder/Usercontrol');
@@ -266,11 +266,11 @@ export class commonParser {
             ctr.generic = ctr.generic == null ? undefined : `<${ctr.generic}>`;
             ctr.type = 'none';
             if (element.hasAttribute("x-from")) {
-               // debugger;
+                // debugger;
                 let _sspath = ucUtil.devEsc(element.getAttribute("x-from"));
                 let _subpath = nodeFn.path.resolveFilePath(srcDec.html, _sspath);//["#toFilePath"]();
                 let uFInf = new codeFileInfo();
-                uFInf.parseUrl(_subpath, filePref.srcDir, srcDec.html);
+                uFInf.parseUrl(_subpath, filePref.srcDir as any, srcDec.html);
                 if (uFInf.pathOf == undefined) debugger;
                 if (_exists(uFInf.pathOf.code) || _exists(uFInf.pathOf.dynamicDesign) ||
                     _exists(uFInf.pathOf.scss) || _exists(uFInf.pathOf.html)) {
@@ -299,7 +299,7 @@ export class commonParser {
         /*const finfo = _row.src;
         if (!finfo.parseUrl(filePath, _this.PREFERENCE.srcDir, this.project.importMetaURL)) return undefined;
         */
-       // const filePref = finfo?.projectInfo?.config?.preference;
+        // const filePref = finfo?.projectInfo?.config?.preference;
         let onSelect_xName = _this.bldr.Event.onSelect_xName;
         let projectPath = nodeFn.path.resolve();
 
@@ -378,10 +378,12 @@ export class commonParser {
 
         switch (this.UC_CONFIG?.exports ?? this.CONFIG.exports) {
             case "import":
-                row.designer.importer.addImport(['Template', 'TemplateNode'], this.nc('./node_modules/ucbuilder/out/Template.js', pathOf.designer));
-                row.designer.importer.addImport(['intenseGenerator'], this.nc('./node_modules/ucbuilder/out/intenseGenerator.js', pathOf.designer));
-                row.designer.importer.addImport(['ITptOptions'], this.nc('./node_modules/ucbuilder/out/enumAndMore.js', pathOf.designer));
-                row.designer.importer.addImport(['VariableList'], this.nc('./node_modules/ucbuilder/out/StylerRegs.js', pathOf.designer));
+                const prePath = (this.project.projectName == 'ucbuilder') ? `.` : `./node_modules/ucbuilder`;
+
+                row.designer.importer.addImport(['Template', 'TemplateNode'], this.nc(`${prePath}/out/Template.js`, pathOf.designer));
+                row.designer.importer.addImport(['intenseGenerator'], this.nc(`${prePath}/out/intenseGenerator.js`, pathOf.designer));
+                row.designer.importer.addImport(['ITptOptions'], this.nc(`${prePath}/out/enumAndMore.js`, pathOf.designer));
+                row.designer.importer.addImport(['VariableList'], this.nc(`${prePath}/out/StylerRegs.js`, pathOf.designer));
                 break;
             case "types":
                 row.designer.importer.addImport(['Template', 'TemplateNode'], 'ucbuilder/Template');

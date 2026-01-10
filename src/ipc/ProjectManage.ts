@@ -44,12 +44,12 @@ export class ProjectManage {
         if (findex == -1) return undefined;
         return this.projects[findex];
     }
-    static getInfo(_path: string, callerMetaUrl: string): IResolvePathResult | undefined {
-        return resolvePathObject(_path, callerMetaUrl, ProjectManage.projects,undefined, nodeFn.path as any, nodeFn.url as any);
-    }
-    static resolve(filePath: string, importMetaUrl: string): string {
-        importMetaUrl = importMetaUrl ?? getMetaUrl<ProjectRowR>(filePath, this.projects);
-        return resolvePathObject(filePath, importMetaUrl, ProjectManage.projects,undefined, nodeFn.path as any, nodeFn.url as any)?.result;
-    }
+    // static getInfo(_path: string, callerMetaUrl: string): IResolvePathResult | undefined {
+    //     return resolvePathObject(_path, callerMetaUrl, ProjectManage.projects,undefined, nodeFn.path as any, nodeFn.url as any);
+    // }
+    // static resolve(filePath: string, importMetaUrl: string): string {
+    //     importMetaUrl = importMetaUrl ?? getMetaUrl<ProjectRowR>(filePath, this.projects);
+    //     return resolvePathObject(filePath, importMetaUrl, ProjectManage.projects,undefined, nodeFn.path as any, nodeFn.url as any)?.result;
+    // }
 
 }

@@ -39,7 +39,7 @@ export class RendererProcess {
 
     PathBridge.CheckAndSetDefault();
 
-    const keyBinding = ProjectManage.getInfoByProjectPath(ProjectManage.PROJECT_PATH).config.developer.build.keyBind ?? [];
+    const keyBinding = ProjectManage.getInfoByProjectPath(ProjectManage.PROJECT_PATH).config.preference.build.keyBind ?? [];
 
     const shortcutKeys = [keyBinding];
     let hasCaptured = false;

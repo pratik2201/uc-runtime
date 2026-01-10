@@ -2,8 +2,8 @@
 import path from "path";
 import fs from "fs";
 import { GetPackage, GetProjectName,  isSamePath, subtractPath } from "../ipc/enumAndMore.js";
-import { GetUcConfig } from "ipc/userConfigManage.js";
-import { UserUCConfig } from "ipc/enumAndMore.js";
+import { GetUcConfig } from "../ipc/userConfigManage.js";
+import { UserUCConfig } from "../ipc/enumAndMore.js";
 const args = process.argv.slice(2);
 const user_project_dir = path.resolve();
 const ucbuilder_project_dir = path.resolve(user_project_dir, 'node_modules/ucbuilder');
@@ -50,7 +50,7 @@ DirectGenerate('ucconfig.js');
     DirectGenerate('tsconfig.json');
     DirectGenerate('ucconfig.json');
     DirectGenerate('assets/$uc-moveAssetsToStage.js');*/
-    const ignoreDirs = (uccfg.developer.build.ignorePath ?? []).map(s => path.normalize(path.join(user_project_dir, s)));
+    const ignoreDirs = (uccfg.preference.build.ignorePath ?? []).map(s => path.normalize(path.join(user_project_dir, s)));
     function isValidFile(fpath: string): boolean {
         return ignoreDirs.findIndex(s => {
             return isSamePath(s, fpath, path);

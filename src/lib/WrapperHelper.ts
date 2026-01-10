@@ -1,5 +1,6 @@
 import { codeFileInfo } from "../build/codeFileInfo.js";
 import { nodeFn } from "../nodeFn.js";
+import ucWinFrame$Dynamic from "../renderer/controls/ucWinFrame.uc.html.js";
 import { Usercontrol } from "../Usercontrol.js";
 const VOID_HTML_NODE_NAMES = [
     'AREA',
@@ -335,11 +336,14 @@ export interface IHTMLxSource {
     htmlSource: () => string;
     dynamicFilePath: string
 }
-export abstract class HTMLx {
+export class HTMLx {
+    static Design = (pera: IHTMLxSource) => {
+        return pera;
+    }
     static readonly htmlSource: () => string;
     /** out dynamic js file path */
     static readonly dynamicFilePath: string;
-    static Tag = <S extends string>([tagName, prefDefinedProps]: [S?, HTMLTagMapper<S>?], ...childs: string[]) => {
+    static Tag = <S extends string>(tagName: S, prefDefinedProps?: HTMLTagMapper<S>, ...childs: string[]) => {
         tagName = tagName ?? 'div' as any;
         tagName = tagName.toUpperCase() as any;
         let htCode = `<${tagName} `;
@@ -366,19 +370,19 @@ export abstract class HTMLx {
         }
         return htCode;
     };
-    static Wrapper = ([wrapperProps]: [HTMLTagMapper<'WRAPPER'>?], ...childs: string[]) => {
-        return HTMLx.Tag(['wrapper', wrapperProps], ...childs);
+    static Wrapper = (wrapperProps: HTMLTagMapper<'WRAPPER'>, ...childs: string[]) => {
+        return HTMLx.Tag('wrapper', wrapperProps, ...childs);
     };
     static Template = <S>(templates: { [id: string]: Partial<AnyTagAttributes> }) => {
         let cntnt: string[] = [];
         for (const [id, template] of Object.entries(templates)) {
             cntnt.push(this.Wrapper([Object.assign({ id: id }, template)]))
         }
-        return HTMLx.Tag(['x:template', {
+        return HTMLx.Tag('x:template', {
             "<childs>": cntnt
-        }]);
+        });
     }
-    static Usercontrol = ([name, targetUc, outDynamicJsPath, ucProps]: [string?, (IHTMLxSource)?, string?, HTMLTagMapper<'WRAPPER'>?], ...childs: string[]) => {
+    static Usercontrol = (name: string, targetUc: IHTMLxSource, outDynamicJsPath: string, ucProps: HTMLTagMapper<'WRAPPER'>, ...childs: string[]) => {
         let relpath: string;
         const targetCinfo = new codeFileInfo();
         targetCinfo.parseUrl(nodeFn.url.fileURLToPath(targetUc.dynamicFilePath), undefined, undefined);  // DESIGNER OUT
@@ -392,7 +396,7 @@ export abstract class HTMLx {
             if (name != undefined)
                 ucProps["x-name"] = name as any;
             ucProps["x-from"] = `{:${relpath}}`;
-            return HTMLx.Tag([targetCinfo.name, ucProps], ...childs);
+            return HTMLx.Tag(targetCinfo.name, ucProps, ...childs);
         }
         return undefined;
         //console.log(['Absolute', obj['AbsolutePath']]);

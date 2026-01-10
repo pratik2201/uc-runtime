@@ -1,5 +1,5 @@
 import { pathToFileURL } from "node:url";
-import { deepAssign, IFileDeclaration, UserUCConfig } from "./enumAndMore.js";
+import { deepAssign, IBuildDirectory, IFileDeclaration, UserUCConfig } from "./enumAndMore.js";
 import path from "node:path";
 import { existsSync } from "node:fs";
 export async function GetUcConfig(projectdir: string): Promise<UserUCConfig> {
@@ -9,8 +9,8 @@ export async function GetUcConfig(projectdir: string): Promise<UserUCConfig> {
     }
     return undefined;
 }
-export default function UcDefaultConfig(...cfg: Partial<UserUCConfig>[]) {
-    let rtrn = new UserUCConfig();
+export default function UcDefaultConfig<K=IBuildDirectory>(...cfg: Partial<UserUCConfig<K>>[]) {
+    let rtrn = new UserUCConfig<K>();
     //console.log(rtrn);    
     deepAssign(rtrn, ...cfg);
     // console.log(rtrn);
