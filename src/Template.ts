@@ -1,5 +1,5 @@
 import { codeFileInfo, GetDeclaration } from "./build/codeFileInfo.js";
-import { TemplateMaker } from "./build/regs/TemplateMaker.js";
+import { TemplateMaker } from "./build/TemplateMaker.js";
 import { ExtractArguments, ITemplatePathOptions, ITptOptions, TptOptions } from "./enumAndMore.js";
 import { FilterContent } from "./lib/StampGenerator.js";
 import { ATTR_OF } from "./global/runtimeOpt.js";
@@ -62,11 +62,11 @@ export class Template {
       rtrn.cssContents = nodeFn.fs.readFileSync(csspath);
       rtrn.htmlContents = nodeFn.fs.readFileSync(htmlpath);
       if (rtrn.htmlContents == undefined) debugger;
-      rtrn.htmlContents = rtrn.htmlContents["#PHP_ADD"]() ?? undefined;
+      rtrn.htmlContents = ucUtil.PHP_ADD(rtrn.htmlContents ) ?? undefined;
     } else {
       rtrn.objectKey = cinfo.pathOf.scss;
       rtrn.cssContents = nodeFn.fs.readFileSync(cinfo.pathOf.scss);
-      rtrn.htmlContents = iele.outerHTML["#PHP_ADD"]();
+      rtrn.htmlContents = ucUtil.PHP_ADD(iele.outerHTML );
     }
 
     return rtrn;
@@ -140,7 +140,7 @@ export class Template {
         ppath = nodeFn.path.dirname(cssFpath);
       csscnt = csscnt.replace(/\@use\s*([\"'`])((?:\\.|(?!\1)[^\\])*)\1\s*;/gim,
         (match: string, quationMark: string, path: string) => {
-          let pth = path["#devEsc"]();
+          let pth = ucUtil.devEsc(path);
           if (ppath != undefined)
             pth = nodeFn.path.resolve(ppath, pth);
           let c = nodeFn.fs.readFileSync(pth, 'binary')
@@ -155,7 +155,7 @@ export class Template {
     outerCSS: string,
     tptObj: { [key: string]: ITemplatePathOptions }
   } {
-    //console.log(htmlcontent["#PHP_REMOVE"]());
+    //console.log(ucUtil.PHP_REMOVE(htmlcontent ));
     let ele = ucUtil.PHP_REMOVE(htmlcontent)["#$"]();
     let rtrn: { [key: string]: ITemplatePathOptions } = {};
     let hasMultipleNode = !ele.hasAttribute('id');

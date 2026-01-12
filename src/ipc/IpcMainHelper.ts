@@ -1,10 +1,10 @@
-import path, { dirname } from "node:path";
-import url, { pathToFileURL } from "node:url";
+import path, { dirname, resolve } from "node:path";
+import url, { fileURLToPath, pathToFileURL } from "node:url";
 import fs from "node:fs";
 import { PathBridge } from "../build/pathBridge.js";
 import { configManage } from "./configManage.js";
 import { protocol, type BrowserWindow, type IpcMainEvent } from "electron";
-import { getCloneableObject, IPC_API_KEY, IPC_GET_KEY, IPC_REGISTER_KEY } from "./enumAndMore.js";
+import { correctpath, getCloneableObject, IPC_API_KEY, IPC_GET_KEY, IPC_REGISTER_KEY } from "./enumAndMore.js";
 import { createImportMap, generateImportMap, scanAllProjects } from "./importMapGenerator.js";
 
 type IpcMainCallBack = (e: import("electron").IpcMainEvent, ...args: any[]) => void;
@@ -69,15 +69,7 @@ export class IpcMainHelper {
             this.IPC_HANDLE.set(actionKey, callback);
     }
 
-    static async init(_ipcMain: import("electron").IpcMain/*,  win: import("electron").BrowserWindow, initailModule: string,initialPreload:string*/) {
-
-        // _ipcMain.on(IPC_API_KEY + ';reload-browser-for-developement', (event, args) => {
-        //     console.log('reload..callback..');
-
-        //     win.webContents.reloadIgnoringCache();
-        //     win.webContents.executeJavaScript(IpcMainHelper.INITIAL_SCRIPT);
-        //     event.returnValue = true;
-        // });
+    static async init(_ipcMain: import("electron").IpcMain) {
         _ipcMain.on(IPC_API_KEY, (event, ...args: any[]) => {
             let actionKey = args.shift();
             if (this.IPC_ON.has(actionKey))
@@ -101,47 +93,37 @@ export class IpcMainHelper {
     }
     static INITIAL_SCRIPT = "";
 
-    static async loadFile(htmlFileFullPath: string, win: BrowserWindow, baseURLForDataURL?: string) {
-        // protocol.handle('file', (req,cb) => {
-        //     let filePath = decodeURIComponent(req.url.replace("file:///", ""))
-
-        //     if (filePath.endsWith("index.html")) {
-        //         let html = fs.readFileSync(filePath, "utf-8")
-
-        //         html = html.replace("<head>", `<head>${importMapScript}`)
-
-        //         cb({ data: Buffer.from(html), mimeType: "text/html" })
-
-        //     }
-
-        //    // cb(filePath);
-        //     return cb(filePath);
-        // })
-        // protocol.interceptFileProtocol("file", (req, cb) => {
-
-        // })
-        baseURLForDataURL = baseURLForDataURL ?? htmlFileFullPath;
-        let html = fs.readFileSync(htmlFileFullPath, "utf-8");
+    static async loadURL(_path: string, win: BrowserWindow, options?: Electron.LoadURLOptions) {
+        let htmlUrl: string, htmlPath: string;
+        if (_path.startsWith('file:///')) {
+            htmlUrl = _path;
+            htmlPath = fileURLToPath(_path);
+        } else {
+            htmlUrl = pathToFileURL(_path).href;
+            htmlPath = _path;
+        }
+        const baseURLForDataURL = options?.baseURLForDataURL ?? htmlUrl;
+        let html = fs.readFileSync(htmlPath, "utf-8");
         let projectDirList = await scanAllProjects();
-        const importMap = createImportMap(htmlFileFullPath, projectDirList, dirname(baseURLForDataURL));
-        //const importMap = generateImportMap(process.cwd());
-        // console.log('process.cwd', process.cwd());
+        const importMap = createImportMap(_path, projectDirList, dirname(baseURLForDataURL));
 
         let mapStr = JSON.stringify(importMap);
-        // const mapStr = JSON.stringify(configManage.filler.importmap);
-        const importMapScript = `<script type="importmap">${mapStr}</script>`;
-        if (/<head>/i.test(html)) {
-            html = html.replace(/<head>/i, `<head>${importMapScript}`)
-        } else if (/<html[^>]*>/i.test(html)) {
-            html = html.replace(/<html[^>]*>/i, `$&\n<head>${importMapScript}</head>`)
-        } else {
-            html = `${importMapScript}\n${html}`
-        }
-        const _baseUrlForDataUrl = pathToFileURL(baseURLForDataURL).href;
+        const modulePath = correctpath(resolve(dirname(fileURLToPath(import.meta.url)), './ShubhLabh.js'));
+        const importMapScript = `<script type="importmap">${mapStr}</script>
+        <script type="module" src="${modulePath}"></script>`;
+        const headRegex = /<head\b[^>]*>/i;
+        const htmlRegex = /<html\b[^>]*>/i;
 
-        console.log('importmapBaseDirectory', _baseUrlForDataUrl);
-        win.loadURL("data:text/html;charset=utf-8," + encodeURIComponent(html), {
-            baseURLForDataURL: _baseUrlForDataUrl
-        });
+        if (headRegex.test(html)) {
+            html = html.replace(headRegex, match => match + importMapScript );
+        }
+        else if (htmlRegex.test(html)) {
+            html = html.replace(htmlRegex, match => `${match}\n<head>${importMapScript}</head>`);
+        }
+        else {
+            html = `${importMapScript}\n${html}`;
+        }
+
+        win.loadURL("data:text/html;charset=utf-8," + encodeURIComponent(html), options);
     }
-}
+} 

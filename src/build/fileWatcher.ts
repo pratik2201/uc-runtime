@@ -73,13 +73,15 @@ export class fileWatcher {
 
         const _this = this;
         const changedFiles = new Map<string, string>();
-        let bpath = nodeFn.path.join(_this.main.project.projectPath, _this.main.project.config.preference.build.buildPath as any);
+
+        const pref = this.main.project.config.preference;
+        let bpath = nodeFn.path.join(_this.main.project.projectPath, pref.dirDeclaration[pref.srcDir].dirPath as any);
         //console.log(update);
         _builder.recursive(bpath, undefined, async (recursive_filepath) => {
             if (fileWatcher.isValidFileForPathReplacer(recursive_filepath)) {
                 let ext = recursive_filepath.slice(recursive_filepath.lastIndexOf('.'));
                 if (!nodeFn.fs.existsSync(recursive_filepath)) { console.log(recursive_filepath); return; }
-                let data = nodeFn.fs.readFileSync(recursive_filepath, 'binary' );
+                let data = nodeFn.fs.readFileSync(recursive_filepath, 'binary');
                 let isChanged = false;
                 recursive_filepath = ucUtil.changeExtension(recursive_filepath, '.ts', '.js');
                 let InIndex = update.moved.findIndex(s => {
@@ -159,7 +161,8 @@ export class fileWatcher {
     static isSCSSFile(filePath: string) { return filePath.match(/\.scss$/i) != null; }
     static isValidFileForPathReplacer(filePath: string) { return filePath.match(/\.ts$|\.scss$|\.html$/i) != null; }
     startWatch() {
-        let bpath = nodeFn.path.join(this.main.project.projectPath, this.main.project.config.preference.build.buildPath as any);
+        const pref = this.main.project.config.preference;
+        let bpath = nodeFn.path.join(this.main.project.projectPath, pref.dirDeclaration[pref.srcDir].dirPath as any);
         fileWatcher.renderer.send("startWatch", [bpath]);
     }
     async stopWatch() {

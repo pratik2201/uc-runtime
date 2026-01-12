@@ -162,12 +162,12 @@ export class Extensions {
                 return ar as any;
             }
         }
-        String.prototype["#PHP_REMOVE"] = function () {
-            return ucUtil.PHP_REMOVE(this as string);
-        }
-        String.prototype["#PHP_ADD"] = function () {
-            return ucUtil.PHP_ADD(this as string);
-        }
+        // String.prototype["#PHP_REMOVE"] = function () {
+        //     return ucUtil.PHP_REMOVE(this as string);
+        // }
+        // String.prototype["#PHP_ADbD"] = function () {
+        //     return ucUtil.PHP_bADD(this as string);
+        // }
       
        
 
@@ -191,14 +191,14 @@ export class Extensions {
         //     fpath.result = fpath.result?.["#toFilePath"]();
         //     return fpath;
         // }
-        String.prototype["#devEsc"] = function (this: string): string {
-             return ucUtil.devEsc(this);
-            // return this.replace(/(.{0,1}){:(.*?)}/gm, (m, fchar, url) => {
-            //   //  console.log([m,fchar,url]);
-            //     let rtrn = (fchar == "\\") ? `{:${url}}` : (fchar ?? '') + "" + url;
-            //     return rtrn;
-            // });
-        }
+        // String.prototype["#devEsc"] = function (this: string): string {
+        //      return ucUtil.devEsc(this);
+        //     // return this.replace(/(.{0,1}){:(.*?)}/gm, (m, fchar, url) => {
+        //     //   //  console.log([m,fchar,url]);
+        //     //     let rtrn = (fchar == "\\") ? `{:${url}}` : (fchar ?? '') + "" + url;
+        //     //     return rtrn;
+        //     // });
+        // }
         String.prototype["#_trim_"] = function (charlist?: string): string {
             if (charlist === undefined)
                 charlist = "\s";

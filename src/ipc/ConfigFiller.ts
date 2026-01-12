@@ -48,12 +48,12 @@ export class ConfigFiller {
 
         }
     };
-    GetByImportMeta(fileimportMeta: string): ProjectRowBase {
-        return this.ucConfigList.find(cfg => fileimportMeta.startsWith(cfg.importMetaURL)) || null;
-    }
-    GetByAlias(primaryAlicePath: string): ProjectRowBase {
-        return this.ucConfigList.find(cfg => primaryAlicePath.startsWith(cfg.projectPrimaryAlice)) || null;
-    }
+    // GetByImportMeta(fileimportMeta: string): ProjectRowBase {
+    //     return this.ucConfigList.find(cfg => fileimportMeta.startsWith(cfg.importMetaURL)) || null;
+    // }
+    // GetByAlias(primaryAlicePath: string): ProjectRowBase {
+    //     return this.ucConfigList.find(cfg => primaryAlicePath.startsWith(cfg.projectPrimaryAlice)) || null;
+    // }
     Fill_ImportMap(_config: ProjectRowBase) {
         const aliases = {};
         const pathAlias = _config.config?.browser?.importmap ?? {};

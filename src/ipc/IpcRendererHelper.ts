@@ -104,7 +104,6 @@ export class  IpcRendererHelper {
     }
 
     static get ucConfig(): ProjectRowBase {
-       // debugger;
         return this.sendSync('ucConfig', [{}],UC_ACCESS_KEY);
     }
     static get importMap() {
@@ -112,9 +111,9 @@ export class  IpcRendererHelper {
         return this.sendSync('importMap', [{}],UC_ACCESS_KEY);
     }
     static ipcChannels = new Set();
-    static get ipcChennelList() {
-        return this.sendSync('ipcChennelList', [{}],UC_ACCESS_KEY);
-    }
+    // static get ipcChennelList() {
+    //     return this.sendSync('ipcChennelList', [{}],UC_ACCESS_KEY);
+    // }
     static getRelativeURL(_path: string) {
         if (_path.match(/\.ipc\.js$/i) != null) return _path;
         return _path.replace(/\.js$/i, ".ipc.js");

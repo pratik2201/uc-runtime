@@ -2,10 +2,6 @@ import { ucUtil } from "../global/ucUtil.js";
 import { KeyboardKey } from "./hardware.js";
 import { WinManager } from "./WinManager.js";
 
-// try {
-//     if (module != undefined)
-//         console.log('Loaded from:', module.parent?.filename);
-// }catch(e){}
 interface TabIndexRow {
     container: HTMLElement;
     element: HTMLElement;
@@ -54,53 +50,7 @@ class ErrorSound {
 export interface TabContainerClearNode { target: HTMLElement, callback: (e: KeyboardEvent) => Promise<boolean | void> }
 class TabIndexManager {
     static beep() { ErrorSound.playErrorBeep(); }
-    //static audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-    /*static gainNode = (() => {
-        const gain = TabIndexManager.audioCtx.createGain();
-        gain.connect(TabIndexManager.audioCtx.destination);
-        return gain;
-    })();
-
-    static beep() {
-        try {
-            const oscillator = TabIndexManager.audioCtx.createOscillator();
-            oscillator.frequency.value = 147;
-            oscillator.type = 'sawtooth';
-            oscillator.connect(TabIndexManager.gainNode);
-
-            TabIndexManager.gainNode.gain.setValueAtTime(0.35, TabIndexManager.audioCtx.currentTime);
-            oscillator.start();
-
-            // Stop oscillator cleanly and disconnect
-            oscillator.stop(TabIndexManager.audioCtx.currentTime + 0.03); // ~30ms
-            oscillator.onended = () => oscillator.disconnect();
-        } catch (e) {
-            console.warn('Audio beep failed', e);
-        }
-    }*/
-    //static audioCtx = new (window.AudioContext)();
-    //static gainNode = this.audioCtx.createGain();
-
-    // static beep() {
-    //     console.log('music please');
-
-
-    //     this.gainNode.gain.value = 0.35;
-    //     let oscillator = this.audioCtx.createOscillator();
-    //     oscillator.connect(this.gainNode);
-    //     oscillator.frequency.value = 147;
-    //     oscillator.type = 'sawtooth';
-
-    //     oscillator.start();
-    //     let _this = this;
-    //     setTimeout(
-    //         function () {
-    //             oscillator.stop();
-    //         },
-    //         31
-    //     );
-    // }
-
+      
     static stopFurther(e: Event, breakTheLoop: boolean = false) {
         if (e == undefined) return;
         e.preventDefault();
@@ -275,28 +225,8 @@ class TabIndexManager {
                     }
                     break;
             }
-            this.breakTheLoop = false;
-
-
-
-
-            //}, 100); // custom repeat rate (ms)
-        });
-        /*document.addEventListener("keyup", () => {
-            clearInterval(keyDownTimer);
-            keyIsDown = false;
-          });*/
-        /* document.addEventListener("mousedown",async (ev: MouseEvent) => {
-             htEle = ev.target as HTMLElement;
-             tIndex = this.getTindex(htEle);
-             if (tIndex != null) {
-                 if (htEle.nodeName.match(this.allowNodePattern) == null &&
-                     htEle.getAttribute("contenteditable") != "true") {
-                     await this.moveNext(htEle, tIndex);
-                     ev.preventDefault();
-                 }
-             }
-         });*/
+            this.breakTheLoop = false; 
+        }); 
     }
 
 

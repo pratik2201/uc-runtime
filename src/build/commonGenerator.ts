@@ -1,8 +1,8 @@
-import { SpecialExtType, ucUtil } from "../../global/ucUtil.js";
-import { ISourceFileTypeMap } from "../../ipc/enumAndMore.js";
-import { nodeFn } from "../../nodeFn.js";
-import { CommonRow } from "../buildRow.js";
-import { TemplateMaker } from "../regs/TemplateMaker.js";
+import { SpecialExtType, ucUtil } from "../global/ucUtil.js";
+import { IFileDeclarationTypesMap } from "../ipc/enumAndMore.js";
+import { nodeFn } from "../nodeFn.js";
+import { CommonRow } from "./buildRow.js";
+import { TemplateMaker } from "./TemplateMaker.js";
 
 interface CodeFilesNode {
     DESIGNER: string,
@@ -127,7 +127,7 @@ export class commonGenerator {
     static readTemplate(type: 'js' | 'ts' | string, extType: SpecialExtType, fileType: '.designer' | '.code' |
         '.dynamic' | '.dynamicByHtml' | '.style') {
         let tptFileName = `${type}${extType}${fileType}`;
-        const tptDirpath = ucUtil.devEsc(`{:../../../assets/ucbuilder/templates}`);
+        const tptDirpath = ucUtil.devEsc(`{:../../assets/ucbuilder/templates}`);
         let fpath = nodeFn.path.resolve(`assets/ucbuilder/templates/${tptFileName}`);
         fpath = nodeFn.path.resolveFilePath(import.meta.url, nodeFn.path.join(tptDirpath, tptFileName));
         const data = nodeFn.fs.readFileSync(fpath, 'binary');
@@ -168,8 +168,8 @@ export class commonGenerator {
             const row = this.rows[i];
             //let srctype = row.src.projectInfo.config.type;
             let uctype = row.src.extCode;
-            let codeFileSrctype: keyof ISourceFileTypeMap = 'code',
-                designerFileSrctype: keyof ISourceFileTypeMap = 'designer';
+            let codeFileSrctype: keyof IFileDeclarationTypesMap = 'code',
+                designerFileSrctype: keyof IFileDeclarationTypesMap = 'designer';
             /*if (srctype == 'js') {
                 codeFileSrctype = '.js';
                 designerFileSrctype = '.designer.js';

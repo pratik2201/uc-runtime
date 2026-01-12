@@ -1,10 +1,8 @@
 import { GetDeclaration } from "./build/codeFileInfo.js";
-import { openCloser } from "./global/openCloser.js";
 import { ATTR_OF, StyleClassScopeType } from "./global/runtimeOpt.js";
 import { ucUtil } from "./global/ucUtil.js";
 import { ProjectManage } from "./ipc/ProjectManage.js";
 import { GetUniqueId, ProjectRowR } from "./ipc/enumAndMore.js";
-import { OpenCloseHandler } from "./lib/OpenCloseHandler.js";
 import { SourceNode, StampNode, STYLER_SELECTOR_TYPE } from "./lib/StampGenerator.js";
 import { nodeFn } from "./nodeFn.js";
 export type VariableList = { [key: string]: string };
@@ -59,30 +57,32 @@ export type CSSSearchAttributeCondition = "*" | "^" | "$";
 export const WRAPPER_TAG_NAME = 'f' + GetUniqueId();
 export class StylerRegs {
   static ScssExtractor(csscontent: string) {
-    let ocHandler = new OpenCloseHandler();
-    ocHandler.ignoreList.push({ o: `"`, c: `"` },
-      { o: `'`, c: `'` },
-      { o: "`", c: "`" },
-      { o: "/*", c: "*/" });
-    return ocHandler.parse({ o: '{', c: '}' }, csscontent);
+    let ocHandler = new openCloser();
+    ocHandler.ignoreList.push({ openingChar: `"`, closingChar: `"` },
+      { openingChar: `'`, closingChar: `'` },
+      { openingChar: "`", closingChar: "`" },
+      { openingChar: "/*", closingChar: "*/" });
+    return ocHandler.parse({ openingChar: '{', closingChar: '}' }, csscontent);
   }
   baseType: StyleBaseType = StyleBaseType.UserControl;
   static initProjectsStyle(/*callback: () => void*/): void {
     SourceNode.init();
     ProjectManage.projects.forEach((row) => {
-      let cssPath = nodeFn.path.resolve(row.projectPath, row.config.projectBaseCssPath);
+      let cssPath = nodeFn.path.resolve(row.projectPath, 'styles.scss');
+      cssPath = nodeFn.fs.existsSync(cssPath) ? cssPath : nodeFn.path.resolve(row.projectPath, row.config.projectBaseCssPath);
+
       let _stylepath: string = nodeFn.path.relativeFilePath(row.projectPath, cssPath);
-      if (nodeFn.fs.existsSync(cssPath/*, row.importMetaURL*/)) {
-        row.stampSRC = StampNode.registerSoruce({
-          key: _stylepath,
-          baseType: StyleBaseType.Global,
-          cssFilePath: cssPath,
-          project: row,
-          mode: '$',
-          accessName: row.projectPrimaryAlice,
-        });
-        row.stampSRC.pushCSS(cssPath, row.importMetaURL, document.body);
-      }
+      //if (nodeFn.fs.existsSync(cssPath/*, row.importMetaURL*/)) {
+      row.stampSRC = StampNode.registerSoruce({
+        key: _stylepath,
+        baseType: StyleBaseType.Global,
+        cssFilePath: cssPath,
+        project: row,
+        mode: '$',
+        accessName: row.projectPrimaryAlice,
+      });
+      row.stampSRC.pushCSS(cssPath, row.importMetaURL, document.body);
+      //}
     });
   }
   KEYS: IKeyStampNode = {
@@ -94,8 +94,6 @@ export class StylerRegs {
   controlXName: string = '';
   static templateID: number = 0;
   static localID: number = 0;
-  //aliceMng: AliceManager = new AliceManager();
-  //rootInfo: RootPathRow = undefined;
   projectInfo: ProjectRowR = undefined;
   nodeName: string = WRAPPER_TAG_NAME;
   private _parent: StylerRegs = undefined;
@@ -321,7 +319,7 @@ export class RootAndExcludeHandler {
     selectorText.replace(
       patternList.subUcFatcher,
       (match: string, quationMark: string, filePath: string, UCselector: string) => {
-        filePath = filePath["#devEsc"]();
+        filePath = ucUtil.devEsc(filePath);
         let fpath = nodeFn.path.resolveFilePath(this.main.main.cssFilePath, filePath);
         filePath = fpath;
         UCselector = UCselector.trim();
@@ -780,8 +778,6 @@ export class CssVariableHandler {
   handlerVariable(rtrn: string): string {
     let _this = this;
     let _main = this.main;
-
-    //   /(\$[lgit]-\w+)((?:\s*\:\s*(.*?)\s*;)|(?:\s+(.+?)\s*--)|\s*)/gim
     rtrn = rtrn.replace(patternList.varHandler,
       (match: string, fullVarName: string, defaultVal: string) => {
         //console.log([match, fullVarName, defaultVal]);
@@ -848,6 +844,156 @@ export class CssVariableHandler {
         return `animation-name : ${_this.GetCSSAnimationName(scope, value)}; `;
       }
     );
+    return rtrn;
+  }
+}
+export interface OCIterator {
+  frontContent: string;
+  betweenContent: string;
+  level: number;
+  child: OCIterator[];
+}
+interface OpenCloseCharNode {
+  openingChar: string;
+  closingChar: string;
+}
+class openCloser {
+  ignoreList: OpenCloseCharNode[] = [];
+  parse(oc: OpenCloseCharNode, str: string): OCIterator[] {
+    // console.log(str);
+    let result: OCIterator[] = [];
+    let stack: { node: OCIterator; startIndex: number }[] = [];
+    let buffer = "";
+    let level = 0;
+    let i = 0;
+
+    while (i < str.length) {
+      let ignored = this.ignoreList.find(il => str.startsWith(il.openingChar, i));
+
+      // If inside an ignored block, find closing delimiter
+      if (ignored) {
+        let endIdx = str.indexOf(ignored.closingChar, i + ignored.openingChar.length);
+        if (endIdx !== -1) {
+          // Skip ignored content entirely
+          buffer += str.substring(i, endIdx + ignored.closingChar.length);
+          i = endIdx + ignored.closingChar.length - 1;
+        } else {
+          buffer += str.substring(i);
+          break;
+        }
+      }
+      // Handle Opening `{`
+      else if (str.startsWith(oc.openingChar, i)) {
+        let frontContent = buffer.trim();
+        buffer = "";
+        let node: OCIterator = { frontContent, betweenContent: "", level, child: [] };
+        stack.push({ node, startIndex: i + oc.openingChar.length }); // Track block start index
+        level++;
+        i += oc.openingChar.length - 1;
+      }
+      // Handle Closing `}`
+      else if (str.startsWith(oc.closingChar, i)) {
+        let betweenContent = buffer.trim();
+        buffer = "";
+
+        if (stack.length > 0) {
+          let { node, startIndex } = stack.pop()!;
+          node.betweenContent = str.substring(startIndex, i).trim(); // Full content inside `{}`
+
+          level--;
+
+          if (stack.length > 0) {
+            stack[stack.length - 1].node.child.push(node);
+          } else {
+            result.push(node);
+          }
+        }
+        i += oc.closingChar.length - 1;
+      }
+      // Normal character
+      else {
+        buffer += str[i];
+      }
+
+      i++;
+    }
+
+    //console.log(result);
+
+    return result;
+  }
+  doTask(
+    openTxt: string,
+    closeTxt: string,
+    contents: string,
+    callback: (
+      outText: string,
+      inText: string,
+      txtCount: number
+    ) => void = (outText, inText, txtCount) => { }
+  ): string {
+    let opened = 0, closed = 0;
+    let rtrn = "";
+    let lastoutIndex = 0, lastinIndex = 0;
+    let iList = this.ignoreList;
+    if (iList.length == 0) {
+      let fcntnt = '';
+      let oLEN = openTxt.length;
+      let cLEN = closeTxt.length;
+      for (let index = 0, len = contents.length; index <= len; index++) {
+        if (opened == closed && index > 0 && opened > 0) {
+          let selector = contents.substring(lastoutIndex, lastinIndex - oLEN + 1);
+          let cssStyle = contents.substring(lastinIndex + 1, index - cLEN);
+          rtrn += callback(selector, cssStyle, opened);
+          lastoutIndex = index;
+          opened = closed = 0;
+        }
+        let cnt = contents.charAt(index);
+        if (index == len) {
+          rtrn += contents.substring(lastoutIndex);
+        }
+        fcntnt += cnt;
+        if (fcntnt.slice(-oLEN) == openTxt) {
+          if (opened == 0) lastinIndex = index;
+          opened++;
+        } else if (fcntnt.slice(-cLEN) == closeTxt) {
+          closed++;
+        }
+      }
+    } else {
+      let charNode: OpenCloseCharNode;
+      let state: "pause" | "resume" = "resume";
+      for (let index = 0, len = contents.length; index < len; index++) {
+        let cnt = contents.charAt(index);
+        switch (state) {
+          case "resume":
+            if (opened == closed && index > 0 && opened > 0) {
+              let selector = contents.substring(lastoutIndex, lastinIndex);
+              let cssStyle = contents.substring(lastinIndex + 1, index - 1);
+              rtrn += callback(selector, cssStyle, opened);
+              lastoutIndex = index;
+              opened = closed = 0;
+            }
+            switch (cnt) {
+              case openTxt:
+                if (opened == 0) lastinIndex = index;
+                opened++;
+                break;
+              case closeTxt:
+                closed++;
+                break;
+              default:
+                charNode = iList.find((s) => s.openingChar === cnt);
+                if (charNode != undefined) state = "pause";
+                break;
+            }
+            break;
+          case "pause":
+            if (cnt === charNode.closingChar) state = "resume";
+            break;
+        }
+      }
+    }
     return rtrn;
   }
 }

@@ -4,12 +4,12 @@ import { ProjectManage } from "../ipc/ProjectManage.js";
 import { ProjectRowR } from "../ipc/enumAndMore.js";
 import { nodeFn } from "../nodeFn.js";
 import { CommonRow, dynamicDesignerElementTree } from "./buildRow.js";
-import { commonParser } from "./codefile/commonParser.js";
+import { commonParser } from "./commonParser.js";
 import { codeFileInfo } from "./codeFileInfo.js";
 import { fileWatcher } from "./fileWatcher.js";
 import { PathBridge } from "./pathBridge.js";
 import { DynamicToHtml, IHTMLxSource } from "../lib/WrapperHelper.js";
-import { commonGenerator } from "./codefile/commonGenerator.js";
+import { commonGenerator } from "./commonGenerator.js";
 export interface SourceCodeNode {
     designerCode?: string,
     jsFileCode?: string,
@@ -70,7 +70,7 @@ export class builder {
                     const isDynamicFile = fullpath.endsWith(srcDynamicExt);
                     const isHtmlFile = fullpath.endsWith(srcHtmlExt);
                     if (isDynamicFile || isHtmlFile) {
-                        cInfo.parseUrl(fullpath, pref.srcDir as any );
+                        cInfo.parseUrl(fullpath, pref.srcDir as any);
                         if (cInfo.pathOf == undefined /*|| !nodeFn.fs.existsSync(cInfo.pathOf.html)*/) return;
                         if (rtrn.cinfo.findIndex(s => (
                             (isHtmlFile && s.pathOf.html == cInfo.pathOf.html) ||
@@ -154,6 +154,7 @@ export class builder {
         let designerPath = nodeFn.path.join(prj.projectPath, srcdirDeclaration.dirPath ?? '', designerFileDeclaration?.dirPath ?? '');
         //console.log(designerPath);
         let cInfos = ((await _this.getAllDesignerXfiles())).cinfo;
+
         const messages = {
             generateOutputAndRetry: false
         }
@@ -161,17 +162,17 @@ export class builder {
         for (let index = 0; index < cInfos.length; index++) {
             const cinfo = cInfos[index];
             //if (cinfo.pathOf.html.includes('ledger$form')) debugger;
-           
-            let dynamicOutputPath = cinfo.allPathOf[outDeclareKey].dynamicDesign;
+            const srcDec = cinfo.allPathOf[pref.srcDir];
+            const outDec = cinfo.allPathOf[pref.outDir];
+            let dynamicOutputPath = outDec.dynamicDesign;
             let dynamicOutputData = undefined as string;
             let hasDynamicOutput = nodeFn.fs.existsSync(dynamicOutputPath);
-            if (hasDynamicOutput) { 
+            if (hasDynamicOutput) {
                 const dtodata = (await this.DynamicToHtml(dynamicOutputPath));
                 dynamicOutputData = dtodata?.htmlSource();
-                
                 dynamicOutputData = dynamicOutputData?.trim() ?? '';
                 if (dynamicOutputData.length > 0) {
-                    const htnode = dynamicOutputData["#$"]();                    
+                    const htnode = dynamicOutputData["#$"]();
                     if (htnode?.nodeName != undefined && htnode?.nodeType != undefined) {
                         commonGenerator.ensureDirectoryExistence(cinfo.pathOf.html);
                         try {
@@ -180,12 +181,24 @@ export class builder {
                             console.warn(eee);
                         }
                     }
+                } else {
+                    if (nodeFn.fs.existsSync(srcDec.dynamicDesign)) {
+                        const dynamicContent = nodeFn.fs.readFileSync(srcDec.dynamicDesign);
+                        if (dynamicContent?.trim().length == 0) {
+                            nodeFn.fs.writeFileSync(srcDec.dynamicDesign,
+                                this.commonMng.gen.filex('ts', '.uc', '.dynamic')({}), 'utf-8');
+                            console.log('GENERATE `output` AND REBUILD DESINGER..');
+                        }
+                    }
                 }
+
                 await this.commonMng.init(cinfo);
             } else {
+
                 if (nodeFn.fs.existsSync(cinfo.pathOf.dynamicDesign)) {
                     console.log('GENERATE `output` AND REBUILD DESINGER..');
                 }
+
                 if (nodeFn.fs.existsSync(cinfo.pathOf.html))
                     await this.commonMng.init(cinfo);
             }

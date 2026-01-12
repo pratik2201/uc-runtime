@@ -32,43 +32,18 @@ export class IpcPreload {
             on: (chennel, callback = (event: IpcRendererEvent, ...args: any[]) => { }) => {
                 ipcRenderer.on(chennel, callback);
             },
-            reload: () => {
-                ipcRenderer.send(IPC_API_KEY + ';reload-browser-for-developement', {});
-            },
-            // INIT_IMPORT_MAP: (_win: Window) => {
-            //     const scriptEle = document.createElement("script");
-            //     scriptEle.type = "importMap";
-            //     scriptEle.textContent = JSON.stringify(WINDOW_API.sendSync('importMap', [{}], undefined, _win));
-            //     document.head.prepend(scriptEle);
-            //     console.log('IMPORT MAP inited..');
-            // },
             fullFill: fullFill,
+            /*reload: () => {
+                ipcRenderer.send(IPC_API_KEY + ';reload-browser-for-developement', {});
+            }, 
             Ready: () => {
                 console.log('Ready..');
-            }
+            }*/
         } as BridgeAPI);
         contextBridge.exposeInMainWorld("env", {
             NODE_ENV: process.env.NODE_ENV
         });
-
-        // ipcRenderer.on(IPC_API_KEY, this.onCallback);
-        console.log('IpcPreload inited..');
-        /*
-        const importMap = createImportMap(scanAllProjects());
-        let mapStr = JSON.stringify(importMap);
-        let e: HTMLElement;
-        
-        window.addEventListener('DOMContentLoaded', () => {
-            const importMap = {} // your generated import map
-            const head = document.head!
-            const script = document.createElement('script');
-         
-            script.type = 'importmap'
-            script.textContent = mapStr;
-            head.prepend(script);
-            console.log('ImportMap inited..');
-        });
-        */
+        console.log('IpcPreload inited..');         
         IpcPreload.IS_INITED = true;
     }
 

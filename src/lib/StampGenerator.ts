@@ -32,7 +32,7 @@ class HTMLCodeNode {
     path: string;
     load(original_content: string/*, project: ProjectRow*/): boolean {
         //   debugger;
-        original_content = original_content['#devEsc']();
+        original_content = ucUtil.devEsc(original_content);
         let hasAlreadyLoaded = this.hasContent;
         if (original_content != undefined) {
             this.originalContent = original_content;
@@ -102,7 +102,7 @@ export class SourceNode {
     pushCSSByContent(key: string, cssContent: string, /*project: ProjectRow,*/ localNodeElement?: HTMLElement) {
         if (cssContent == undefined) return;
         let csnd = this.cssObj[key];
-        cssContent = cssContent['#devEsc']();
+        cssContent = ucUtil.devEsc(cssContent);
         let ccontent = this.styler.parseStyleSeperator_sub({
             data: cssContent,
             localNodeElement: localNodeElement,
@@ -121,7 +121,7 @@ export class SourceNode {
         importMetaUrl = importMetaUrl ?? getMetaUrl(cssFilePath, ProjectManage.projects);
         let cssContent = '';
         if (nodeFn.fs.existsSync(cssFilePath))
-            cssContent = nodeFn.fs.readFileSync(cssFilePath );
+            cssContent = nodeFn.fs.readFileSync(cssFilePath);
         this.pushCSSByContent(
             cssFilePath,
             cssContent,
@@ -253,7 +253,7 @@ export class SourceNode {
             this.dataHT.setAttribute('x-tabindex', '-1');
         }
         htCode.content = this.dataHT.outerHTML;
-        htCode.content = ucUtil.PHP_ADD(htCode.content);//["#PHP_ADD"](); //.replace(/<!--\?(=|php)(.*?)\?-->/gm, '<?$1$2?>');
+        htCode.content = ucUtil.PHP_ADD(htCode.content);//["#PbHP_ADD"](); //.replace(/<!--\?(=|php)(.*?)\?-->/gm, '<?$1$2?>');
 
 
     }
@@ -262,7 +262,7 @@ export class SourceNode {
         if ((states)) {
 
             if (this.cssObj == undefined) {
-             ///   console.log(['stamp result', states.count]);
+                ///   console.log(['stamp result', states.count]);
                 console.warn([this.myObjectKey, '`cssObj` is undefined']);
                 return;
             }

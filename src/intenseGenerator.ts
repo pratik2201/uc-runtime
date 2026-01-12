@@ -1,7 +1,7 @@
 import { codeFileInfo, GetDeclaration } from "./build/codeFileInfo.js";
 import { PathBridge } from "./build/pathBridge.js";
 import { IUcOptions, UcOptions, ITptOptions, TptOptions } from "./enumAndMore.js";
-import { objectOpt } from "./global/objectOpt.js";
+import { objectOpt } from "./enumAndMore.js";
 import { getMetaUrl, GetProject } from "./ipc/enumAndMore.js";
 import { ProjectManage } from "./ipc/ProjectManage.js";
 import { nodeFn } from "./nodeFn.js";

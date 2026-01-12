@@ -1,12 +1,7 @@
 import UcDefaultConfig from "./out/ipc/userConfigManage.js";
 export default UcDefaultConfig({
     exports: "import",
-    projectBaseCssPath: "index.scss",
-    browser: {
-        importmap: {
-            "@ucbuilder": "out"
-        }
-    },
+    projectBaseCssPath: "./index.scss",
     preference: {
         build: {
             RuntimeResources: [
@@ -35,7 +30,6 @@ export default UcDefaultConfig({
                 }
             }
         },
-
         fileWisePath: {
             code: { dirPath: '' },
             dynamicDesign: { dirPath: '' },
@@ -46,9 +40,4 @@ export default UcDefaultConfig({
         outDir: "out",
         srcDir: "src",
     },
-    type: "ts",
-    preloadMain: [
-        "{:out/build/fileWatcher.ipc.js}",
-        "{:out/nodeFn.ipc.js}"
-    ]
 });

@@ -1,32 +1,42 @@
-import { builder } from "../build/builder.js";
-import { PathBridge } from "../build/pathBridge.js";
-import { Extensions } from "../lib/Extensions.js";
-import { TabIndexManager } from "../lib/TabIndexManager.js";
-import { WinManager } from "../lib/WinManager.js";
-import { nodeFn } from "../nodeFn.js";
-import { StylerRegs } from "../StylerRegs.js";
-import { IPC_API_KEY } from "./enumAndMore.js";
-import { IpcRendererHelper } from "./IpcRendererHelper.js";
-import { ProjectManage } from "./ProjectManage.js";
-let isExecuted = false;
-export function initRenderer() {
-  if (isExecuted) return;
-  isExecuted = true;
+export async function initRenderer() {
+  const { IPC_API_KEY } = await import('./enumAndMore.js');
+  const { IpcRendererHelper } = await import('./IpcRendererHelper.js');
   IpcRendererHelper.init(window);
+
+  const { nodeFn } = await import('../nodeFn.js');
   nodeFn.fullfill = window[IPC_API_KEY].fullFill;
+
+  const { ProjectManage } = await import('./ProjectManage.js');
   ProjectManage.init();
+
+  const { PathBridge } = await import('../build/pathBridge.js');
   PathBridge.path = nodeFn.path;
   PathBridge.url = nodeFn.url;
-  PathBridge.CheckAndSetDefault();
   PathBridge.source = ProjectManage.projects;
+
+  //ProjectManage.getInfo();
+  const { TabIndexManager } = await import("../lib/TabIndexManager.js");
   TabIndexManager.init();
+
+  const { Extensions } = await import('../lib/Extensions.js');
   Extensions.init();
+
+  const { StylerRegs } = await import('../StylerRegs.js');
   StylerRegs.initProjectsStyle();
+
+  const { builder } = await import('../build/builder.js');
   let mgen = builder.GetInstance();
+
+  const { WinManager } = await import('../lib/WinManager.js');
   WinManager.initEvent();
+
+  PathBridge.CheckAndSetDefault();
+
   const keyBinding = ProjectManage.getInfoByProjectPath(ProjectManage.PROJECT_PATH).config.preference.build.keyBind ?? ['ControlRight', 'F12'];
+
   const shortcutKeys = [keyBinding];
   let hasCaptured = false;
+
   //mgen.filewatcher.startWatch();
   window['$ucbuilder'] = mgen;
   //console.log(WinManager.sortcutMng);
@@ -42,5 +52,4 @@ export function initRenderer() {
     })();
   });
   console.log('All Done... ');
-}
-initRenderer();
+} 

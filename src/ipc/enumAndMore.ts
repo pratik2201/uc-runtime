@@ -1,5 +1,4 @@
-import { IpcRendererEvent } from "electron"
-import { ImportUserConfig } from "./userConfigManage.js";
+import { IpcRendererEvent } from "electron";
 import { KeyboardKey } from "../lib/hardware.js";
 export const UC_ACCESS_KEY = '_____UC____';
 export interface ProjectPrimaryAlias { alice?: string; aliceValue?: string; projectPath?: string; }
@@ -150,28 +149,7 @@ export function IPC_SPLIT_KEY(actionKey: string): { action: string, regKey: stri
     return { action: rtrn[0], regKey: rtrn[1] };
 }
 
-export type SourceFileType = 'code' | 'designer' | 'dynamicDesign' | 'html' | 'scss';
-export type SourceType = 'out' | 'src' | 'dist';
-export type ISourceFileTypeMap = {
-    [s in Partial<SourceFileType>]: string;
-};
-export type ISourceTypeMap = {
-    [s in Partial<SourceType>]: string;
-};
-export const SourceFileTypeMap: ISourceFileTypeMap = {
-    html: '',
-    scss: '',
-    code: '',
-    designer: '',
-    dynamicDesign: '',
-    /*'.js': '',
-    '.designer.js': '',*/
-}
-export const SourceTypeMap: ISourceTypeMap = {
-    out: '',
-    src: '',
-    dist: '',
-}
+
 
 export interface IImportMap {
     imports?: { [alice: string]: string; };
@@ -338,7 +316,7 @@ export class UserUCConfig<K = IBuildDirectory> {
     preloadMain: string[] = [];
     browser = {
         importmap: {} as { [alice: string]: string; },
-        globalAlias: {} as { [alice: string]: string; },
+        //globalAlias: {} as { [alice: string]: string; },
     };
     preference?: IUCConfigPreference<K> = {
         build: new UcBuildOptions<K>(),
@@ -356,40 +334,53 @@ export class UserUCConfig<K = IBuildDirectory> {
 //     pathRelacer?: { [pattern: string]: PathReplacer } = {};
 // }
 export class UcBuildOptions<K = IBuildDirectory> {
-    keyBind?: KeyboardKey[] = [];
-    ignorePath?: string[] = [];
-    buildPath?: keyof K;
+    keyBind?: KeyboardKey[] = ['ControlRight', 'F12'];
+    ignorePath?: string[] = ["node_modules", ".vscode", "out", "dist", ".git"];
     RuntimeResources: RuntimeFileManage<K>[] = [];
-    //watcher = new projectWatcher();
-
 }
- 
+
 class RuntimeFileManage<K = IBuildDirectory> {
     includeCallback = undefined as (filepath: string) => boolean;
     includeExtensions = [] as string[];
     fromDeclare: keyof K;
     toDeclares: Array<keyof K>;
 }
+export type FileDeclarationTypes = 'code' | 'designer' | 'dynamicDesign' | 'html' | 'scss';
+export type DirDeclarationTypes = 'out' | 'src' | 'dist';
+export type IFileDeclarationTypesMap = {
+    [s in Partial<FileDeclarationTypes>]: string;
+};
 
-export class IFileTypeInfo {
+export const SourceFileTypeMap: IFileDeclarationTypesMap = {
+    html: '',
+    scss: '',
+    code: '',
+    designer: '',
+    dynamicDesign: '',
+    /*'.js': '',
+    '.designer.js': '',*/
+}
+export class IDirDeclaration {
     dirPath: string;
     /**
      * specify filePath
      */
-    fileWisePath?: Partial<{ [s in SourceFileType]: IFileDeclaration }> = {
+    fileWisePath?: Partial<{ [s in FileDeclarationTypes]: IFileDeclaration }> = {
 
     };
 }
 export type IBuildDirectory = {
-    [s: string]: IFileTypeInfo
+    [dirDeclareKey: string]: IDirDeclaration
 }
 export type IBuildDirectoryResult = {
-    [s: string]: ISourceFileTypeMap
+    [dirDeclareKey: string]: IFileDeclarationTypesMap
 }
+// export type IBuildDirectoryResult<k extends string> = {
+//     [dirDeclareKey in k]: IFileDeclarationTypesMap
+// }
 export class IFileDeclaration {
     dirPath: string = '';
 
-    generateFilesOnUcBuild = false;
     /**
      *  i.e  ./src/file.uc[.xt].html     =>    ./src/file.uc.xt.html     
      *       ./src/file.uc[.designer].ts     =>    ./src/file.uc.designer.ts
@@ -398,16 +389,21 @@ export class IFileDeclaration {
     /**
     *  i.e  ./src/[html]/file.uc.html     =>    ./src/html/file.uc.html
     *       ./src/[designer]/file.uc.designer.ts     =>    ./src/designer/file.uc.designer.ts
-    
-   directoryExtendor: string; */
+    */
 }
 export class IUCConfigPreference<K = IBuildDirectory> {
     build = new UcBuildOptions<K>();
-
+    /**
+     * 
+     */
     dirDeclaration?: K = {
 
     } as any;
-    fileWisePath?: Partial<{ [s in SourceFileType]: IFileDeclaration }> = {};
+    /**
+     * A common Declaration  for all items in `dirDeclaration`
+     */
+    fileWisePath?: Partial<{ [s in FileDeclarationTypes]: IFileDeclaration }> = {};
+
     /**
      * specify dirDeclaration key
      */

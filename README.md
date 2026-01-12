@@ -3,6 +3,68 @@
 **App Builder** – A modular UI framework for Electron-based applications.
 
 ---
+# 🚀 BASIC INFO
+this tool is used for manage sources and structers of electron project. 
+
+what kind of project it work for ?
+
+    - electron latest version is supperted (i tested in 39), 
+    - package type =  es module
+    
+
+what it do in project ?
+    
+    - it generate designer files for you so you can easily access the control in ui.
+    - all ui (usercontrol) will renderer in same browser window 
+    - each loaded ui will have their seperated css
+    - you can also import usercontrol from other projects.
+
+
+how to apply this in project ?
+  
+    - there are 4 things to do.
+
+---
+  First one is `main.ts` (starting point of app).<br>
+        
+```ts
+import { app, BrowserWindow, ipcMain, screen } from "electron";
+import { IpcMainHelper } from "ucbuilder/out/ipc/IpcMainHelper.js"; // <-- import the library
+let win: Electron.BrowserWindow;
+app.on('ready', async () => {
+    ...   
+    await IpcMainHelper.init(ipcMain);  // <-- initlize main helper just before `BrowserWindow` created
+    win = new BrowserWindow({
+        ...
+    });    
+    // loading `index.html` file 
+    // if you need `importmap` in browser. {
+        IpcMainHelper.loadFile(join(__dirname, 'index.html'), win, '');  
+    //} else { // use 
+        win.loadFile(join(__dirname, 'index.html'));   
+    //} 
+```
+---
+Second one is `preload.ts` 
+```ts
+import { contextBridge, ipcRenderer } from "electron";
+import { IpcPreload } from "ucbuilder/out/ipc/IpcPreload.js";
+(async () => {
+    await IpcPreload.init(contextBridge, ipcRenderer);  /* add these line of code (mandatory)    
+    */
+})();
+```
+---
+Third one is `ucconfig.js` (renderer file)
+```ts
+
+```
+
+
+
+
+
+
 # 🚀 Create Project
 `Node Version 22.9.0` require (I Tested). ``you can test earliar or later version``
 
@@ -166,206 +228,6 @@ Program.preload-renderer.ts `(this file loaded just before Program.ts)`
 Program.preload.cjs `(main process preload script. it should commonJs (.cjs))`
 
 Program.viewer.html `(main page that loaded in window)`
-
----
-**example**
-
-MainDashboard.uc.designer.ts  (this file generate on build designer)
-```ts
-import { Usercontrol } from "ucbuilder/out/Usercontrol.js";
-import { intenseGenerator } from "ucbuilder/out/intenseGenerator.js";
-import { IUcOptions } from "ucbuilder/out/enumAndMore.js";
-import { VariableList } from "ucbuilder/out/StylerRegs.js";
-import { topMenu } from "../../../src/MainDashboard/topMenu.uc.js"; // other userconctrol
-import { leftMenu } from "../../../src/MainDashboard/leftMenu.uc.js"; // 
-import { footerMenu } from "../../../src/MainDashboard/footerMenu.uc.js"; 
-import { MainDashboard } from "../../../src/MainDashboard.uc.js"; // codefile ref.
-
-
-
-export class MainDashboard$Designer extends Usercontrol {    
-    private static _FILE_PATH = '../../../src/MainDashboard.uc.html'; 
-    public static get FILE_PATH() {
-        return this._FILE_PATH;
-    }
-    public static get AbsolutePath() {
-        return Usercontrol.Resolver(import.meta.url, this.FILE_PATH);
-    }
-    // static get designerToCode(): string {
-    //     return Usercontrol.designerToCode;
-    // }
-    static setCSS_globalVar (varList:VariableList): void  {
-        intenseGenerator.setCSS_globalVar(varList,this.FILE_PATH);
-    }   
-    static Create(pera: IUcOptions, ...args: any[]): MainDashboard { 
-        /**  */
-        return intenseGenerator.generateUC(this.FILE_PATH,MainDashboard,import.meta.url,pera,...args) as MainDashboard;
-    }
-    static async CreateAsync(pera: IUcOptions, ...args: any[]): Promise<MainDashboard> {
-        return (await intenseGenerator.generateUCAsync( this.FILE_PATH, MainDashboard, import.meta.url, pera, ...args)) as MainDashboard;
-    }
-    get(id:"") {
-        return this.ucExtends.find(`[id="${id}"]`)[0];
-    }
-
-    public topmenu1: import('../../../src/MainDashboard/topMenu.uc.js').topMenu;
-    public leftmenu1: import('../../../src/MainDashboard/leftMenu.uc.js').leftMenu;
-    public maincontent1: HTMLElement;
-    public footerMenu1: import('../../../src/MainDashboard/footerMenu.uc.js').footerMenu;
-    
-    
-    constructor(){ super(); }
-
-    async initializecomponentAsync(args: IUcOptions, form: MainDashboard) {
-        let ucExt = this.ucExtends;
-        ucExt.initializecomponent(args);        
-        let CONTROLS = ucExt.controls;        
-        await Usercontrol.GenerateControls(this,args,args.cfInfo.pathOf[".js"]);        
-        ucExt.finalizeInit(args);
-        if(ucExt.session != undefined) ucExt.session.prepareForAutoLoadIfExist();
-        // Usercontrol.assignPropertiesFromDesigner(form);
-        delete this.initializecomponent; // = undefined;
-        delete this.initializecomponentAsync; // = undefined;
-    }
-
-    initializecomponent(argsLst: IArguments, form: MainDashboard) {
-        let fargs = Usercontrol.extractArgs(arguments);
-        let args = fargs[fargs.length-1] as IUcOptions;
-        let ucExt = this.ucExtends; 
-        ucExt.initializecomponent(args);         
-        let CONTROLS = ucExt.controls;
-         //   Initialize child components
-        this.topmenu1 = topMenu.Create({       
-                parentUc : this, 
-                mode:args.mode,
-                accessName:"topmenu1" , 
-                session:{
-                    loadBySession:args.session.loadBySession,
-                    uniqueIdentity:"topmenu1" , 
-                    addNodeToParentSession:true,
-                },   
-                decisionForTargerElement:'replace',
-                targetElement : CONTROLS.topmenu1 as any
-            });
-        this.topmenu1.ucExtends.show();
-        // .... SAME FOR OTHER 2 Usercontrols
-        this.maincontent1 = CONTROLS.maincontent1  as unknown as HTMLElement;
-       
-        
-
-        //   finalize current 
-        ucExt.finalizeInit(args);
-        if(ucExt.session != undefined) ucExt.session.prepareForAutoLoadIfExist();
-        // Usercontrol.assignPropertiesFromDesigner(form);
-        delete this.initializecomponent; // = undefined;
-        delete this.initializecomponentAsync; // = undefined;
-
-    }
-}
-```
-MainDashboard.uc.ts
-```ts
-import { MainDashboard$Designer } from '../assets/designer/src/MainDashboard.uc.designer.js';  // generate on build  
-export class MainDashboard extends MainDashboard$Designer{
-    /*constructor() { super(); this.initializecomponent(arguments, this); }*/
-    
-  async $(args:any){    // this method user to define construction call
-        this.topmenu1.lnkHome.innerText = 'Dashboard';  // access child uc's link button
-    }
-}
-```
-***HTML Files***
-
-in `html` file there are some special extra attibute
-
-**x-name**<br>
-`x-name` attibute used to access element or loaded usercontrol in codefile 
-same you can set `id` attibute to element and get access in codefile
- 
-**x-from**<br>
-this attibute stand for load usercontrol at the place of element
-
-**x-tabindex**<br> 
-attibute stand for define tab order 
-here you can define any child elements tab order from `0` index inside each `closest parent element` element with x-tabindex.
-
-**x-caption**<br> 
-attibute stand for set title to window  
-
-MainDashboard.uc.html<br>
-```html
-<wrapper x-caption="Form1" x-at="src\MainDashboard.uc.html" tabindex="0">
-    <div class="layout">
-        <topmenu x-from="MainDashboard/topMenu.uc.html" x-name="topmenu1"></topmenu>
-        <leftmenu x-from="MainDashboard/leftMenu.uc.html" x-name="leftmenu1"></leftmenu>
-        <main class="main-content" x-name="maincontent1"></main>
-        <footermenu x-from="MainDashboard/footerMenu.uc.html" x-name="footerMenu1"></footermenu>
-    </div>
-</wrapper>
-```
-***CSS STYLES***
-`.scss` file treat here as `.css` file just some changes
-
-**&** selector has 2 meaning<br> 
-`&`  = is root element of perticular usercontrol <br> 
-`&topmenu1` = `&` followed by `x-name of usercontrol` will be apply to that usercontrol
-  ```html
-  <wrapper>
-      <topmenu x-from="MainDashboard/topMenu.uc.html" x-name="topmenu1"></topmenu>  
-  </wrapper>
-  ```
-  ```scss
-  & { background-color:green; }  
-  // this will select current `wrapper`
-
-  &topmenu1 { background-color:blue; } 
-  // this will select `wrapper` of topmenu1 usercontrol
-
-  &topmenu1 .logo { background-color:yellow; } 
-  // this will select element with `logo` class inside topmenu1 usercontrol
-  ```
-**VARIABLE** (VARIABLE Startwith,`$l-`,`$g-`,`$i-`)
- 
-**$l-** (local variable)<br>
-    local variable only apply inside `current usercontrol`.
-    `will not be` applied in `child usercontrol`.
-
-**$i-** (internal variable)<br>
-    internal variable apply to `any element` inside current usercontrol's
-
-**$g-** (global variable)<br>
-    global variable apply to any element belong to current project.
-    will not be applied to `included project's elements`
-
-
-```scss
-$l-fontColor:blue;  // local variable (start with  `$l-`,`$g-`,`$i-` define it's scope)
-&{
-    display:block; position: absolute;
-    background-color: rgb(240,240,240); 
-    border:solid 1px black; 
-    width: 100%; height: 100%;  overflow: hidden;
-}
-h2{
-    font-family: Arial, Helvetica, sans-serif; display: block;  font-size: medium; color: $l-fontColor; padding: 5px; padding-left: 15px; 
-    background-color: $g-title_background;  
-    margin: 0px;
-}
-.layout { 
-  overflow: hidden; display: grid;
-  grid-template-columns: 150px auto;
-  grid-template-rows: max-content auto max-content;
-}
-&topmenu1 {
-    grid-column: span 2;
-}
-&footerMenu1 {
-    grid-column: span 2;
-}
-```
-
-
-
 
 
 

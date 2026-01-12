@@ -3,7 +3,7 @@ import path from "path";
 import url from "url";
 import { GetUcConfig } from "./ipc/userConfigManage.js";
 import { codeFileInfo } from "./build/codeFileInfo.js";
-import { GetProject, IBuildDirectoryResult, ISourceFileTypeMap, ProjectRowBase, UserUCConfig } from "./ipc/enumAndMore.js";
+import { GetProject, IBuildDirectoryResult, IFileDeclarationTypesMap, ProjectRowBase, UserUCConfig } from "./ipc/enumAndMore.js";
 import { PathBridge } from "./build/pathBridge.js";
 import { ConfigFiller } from "./ipc/ConfigFiller.js";
 import { DynamicToHtml, IHTMLxSource } from "./lib/WrapperHelper.js";
@@ -97,7 +97,7 @@ async function getAllDesignerXfiles() {
                     if (fileDecInfo.project != undefined) {
                         let allPath = PathBridge.Convert(fullpath, pref.srcDir as any, fileDecInfo.fileDec as any, fileDecInfo.dirDec as any);
                         if (allPath == undefined) return;
-                        let pathOf: ISourceFileTypeMap = allPath[pref.srcDir];
+                        let pathOf: IFileDeclarationTypesMap = allPath[pref.srcDir];
                         if (pathOf == undefined || !existsSync(pathOf.code)) return;
                         if (rtrn.cinfo.findIndex(s => (
                             (isHtmlFile && s[pref.srcDir].html == pathOf.html) ||

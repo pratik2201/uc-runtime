@@ -5,7 +5,6 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { I_PathBaseName, I_PathRelative, I_ReadFileSyncPerameters, I_WriteFileSyncPerameters } from "./nodeFn.js";
 import crypto from "node:crypto";
 import { ucUtil } from "./global/ucUtil.js";
-import { TSPathResolver } from "./global/TSPathResolver.js";
 
 export default function () {
 

@@ -8,7 +8,7 @@ import { IpcRendererHelper } from "./IpcRendererHelper.js";
 
 export class configManage {
     static filler = new ConfigFiller();
-    static async init(/*win: import("electron").BrowserWindow, initailModule: string, initialPreload: string*/) {
+    static async init() {
         PathBridge.path = path as any;
         PathBridge.url = url as any;
         const cpth = correctpath(path.resolve());
@@ -35,12 +35,11 @@ export class configManage {
             } 
             return true; 
         }, UC_ACCESS_KEY);
-        IpcMainHelper.On('ipcChennelList', (event, args: {}) => {
-            event.returnValue = IpcRendererHelper.ipcChannels;
-        }, UC_ACCESS_KEY);
+        // IpcMainHelper.On('ipcChennelList', (event, args: {}) => {
+        //     event.returnValue = IpcRendererHelper.ipcChannels;
+        // }, UC_ACCESS_KEY);
         (await import('../nodeFn.ipc.js')).default();
-        (await import('../build/fileWatcher.ipc.js')).default();
-
+        (await import('../build/fileWatcher.ipc.js')).default(); 
         console.log('configManage inited.');
     }
 

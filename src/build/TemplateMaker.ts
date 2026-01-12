@@ -1,4 +1,5 @@
-import { nodeFn } from "../../nodeFn.js";
+import { ucUtil } from "../global/ucUtil.js";
+import { nodeFn } from "../nodeFn.js";
 function randomNo(min: number = 0, max: number = 1000000): number {
     let difference = max - min;
     let rand = Math.random();
@@ -12,7 +13,7 @@ export class TemplateMaker {
     constructor(public mainImportMeta: string) { }
 
     private loadTemplate(filepath: string ) {
-        filepath = filepath["#devEsc"]();
+        filepath = ucUtil.devEsc(filepath);
         return nodeFn.fs.readFileSync(filepath );   /// path.resolve(this.baseDir, filepath), 'utf-8'
     }
 

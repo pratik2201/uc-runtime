@@ -1,8 +1,16 @@
 import { SpecialExtType, ucUtil } from "../global/ucUtil.js";
-import { ISourceFileTypeMap, SourceFileType, ProjectRowR, SourceType, getMetaUrl, IResolvePathResult, IBuildDirectoryResult, SourceTypeMap, SourceFileTypeMap, GetProject, IFileDeclaration } from "../ipc/enumAndMore.js";
+import { IFileDeclarationTypesMap, FileDeclarationTypes, ProjectRowR, DirDeclarationTypes, getMetaUrl, IResolvePathResult, IBuildDirectoryResult, SourceFileTypeMap, GetProject, IFileDeclaration } from "../ipc/enumAndMore.js";
 import { ProjectManage } from "../ipc/ProjectManage.js";
 import { nodeFn } from "../nodeFn.js";
 import { PathBridge } from "./pathBridge.js";
+// export type ISourceTypeMap = {
+//     [s in Partial<SourceType>]: string;
+// };
+// export const SourceTypeMap: ISourceTypeMap = {
+//     out: '',
+//     src: '',
+//     dist: '',
+// }
 
 interface FileNode {
     rootPath?: string;
@@ -62,9 +70,9 @@ export function GetDeclaration(filepath: string, projectRows = ProjectManage.pro
                 if (fpathToLower.endsWith(fdn.extension.toLowerCase())) {
                     if (fdn.dirPath != '' && !np.startsWith(filepath, np.join(joinedDDN, fdn.dirPath))) continue;
                     isFileFound = true;
-                    rtrn.fileDec = j; 
+                    rtrn.fileDec = j;
                     break;
-                } 
+                }
             }
             if (isFileFound)
                 break;
@@ -87,12 +95,12 @@ export class codeFileInfo {
         else if (far.lastIndexOf('tpt') >= 0) return '.tpt';
         else return 'none';
     }
-    pathOf: ISourceFileTypeMap;
+    pathOf: IFileDeclarationTypesMap;
     resolvePathResult: IResolvePathResult;
-    fullWithoutExt = (ftype: SourceFileType) => {
+    fullWithoutExt = (ftype: FileDeclarationTypes) => {
         return ucUtil.changeExtension(this.pathOf[ftype], `${this.extCode}${ftype}`, '');
     }
-    pathWithExt = (ftype: SourceFileType) => {
+    pathWithExt = (ftype: FileDeclarationTypes) => {
         return ucUtil.changeExtension(this.pathOf[ftype], `${ftype}`, '');
     }
     static GetFileName(filePath: string) {
@@ -103,7 +111,7 @@ export class codeFileInfo {
     callerMetaUrl: string;
     callerProject: ProjectRowR; // actualPro
     get projectInfo() { return this.callerProject; /*this.resolvePathResult?.project;*/ }
-    parseUrl(_path: string, demandType: SourceType | string, callerMetaUrl?: string): boolean {
+    parseUrl(_path: string, demandType: DirDeclarationTypes | string, callerMetaUrl?: string): boolean {
         this.callerMetaUrl = callerMetaUrl;
         let fullpath = PathBridge.GetFullPath(_path, callerMetaUrl);
 

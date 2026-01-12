@@ -1,19 +1,19 @@
-import { ITemplatePathOptions } from "../../enumAndMore.js";
-import { ATTR_OF } from "../../global/runtimeOpt.js";
-import { ucUtil } from "../../global/ucUtil.js";
-import { IFileDeclaration, IUCConfigPreference, ProjectRowR, UserUCConfig } from "../../ipc/enumAndMore.js";
-import { ProjectManage } from "../../ipc/ProjectManage.js";
-import { HTMLx } from "../../lib/WrapperHelper.js";
-import { nodeFn } from "../../nodeFn.js";
-import { Template } from "../../Template.js";
-import { Usercontrol } from "../../Usercontrol.js";
-import { builder } from "../builder.js";
-import { codeOptionsBase, CommonRow, Control, DesignerOptionsBase, dynamicDesignerElementTree, ImportClassNode } from "../buildRow.js";
-import { codeFileInfo } from "../codeFileInfo.js";
-import { ScopeType } from "../buildRow.js";
-import { TemplateMaker } from "../regs/TemplateMaker.js";
+import { ITemplatePathOptions } from "../enumAndMore.js";
+import { ATTR_OF } from "../global/runtimeOpt.js";
+import { ucUtil } from "../global/ucUtil.js";
+import { IFileDeclaration, IUCConfigPreference, ProjectRowR, UserUCConfig } from "../ipc/enumAndMore.js";
+import { ProjectManage } from "../ipc/ProjectManage.js";
+import { HTMLx } from "../lib/WrapperHelper.js";
+import { nodeFn } from "../nodeFn.js";
+import { Template } from "../Template.js";
+import { Usercontrol } from "../Usercontrol.js";
+import { builder } from "./builder.js";
+import { codeOptionsBase, CommonRow, Control, DesignerOptionsBase, dynamicDesignerElementTree, ImportClassNode } from "./buildRow.js";
+import { codeFileInfo } from "./codeFileInfo.js";
+import { ScopeType } from "./buildRow.js";
+import { TemplateMaker } from "./TemplateMaker.js";
 import { commonGenerator } from "./commonGenerator.js";
-import { FilterContent } from "../../lib/StampGenerator.js";
+import { FilterContent } from "../lib/StampGenerator.js";
 export interface PathReplacementNode { findPath: string, replaceWith: string }
 
 export class commonParser {
@@ -202,7 +202,7 @@ export class commonParser {
 
         let code: string;
         const pathOf = finfo.pathOf;
-       
+
         code = await this.common0(htmlContents, _row, row.designer);
 
 
@@ -231,7 +231,7 @@ export class commonParser {
 
         row.designer.baseClassName = Usercontrol.name;
         this.common1(row.designer, row.code, _row.src);
-        //let outHT = code["#devEsc"]()["#PHP_REMOVE"]()["#$"]() as HTMLElement;
+        //let outHT = ucUtil.PHP_REMOVE(ucUtil.devEsc(code) )["#$"]() as HTMLElement;
 
         const elements = Array.from(this.codeHT.querySelectorAll(`[${ATTR_OF.X_NAME}]`));
         const elementsXfrom = Array.from(this.codeHT.querySelectorAll(`[${ATTR_OF.X_FROM}]`))
@@ -274,15 +274,16 @@ export class commonParser {
                 let _sspath = ucUtil.devEsc(element.getAttribute("x-from"));
                 let _subpath = nodeFn.path.resolveFilePath(srcPathOf.html, _sspath);//["#toFilePath"]();
                 let uFInf = new codeFileInfo();
-                uFInf.parseUrl(_subpath, pref.srcDir as any, srcPathOf.html);
+                uFInf.parseUrl(_subpath, pref.outDir as any, outPathOf.html);
                 if (uFInf.pathOf == undefined) debugger;
                 if (_exists(uFInf.pathOf.code) || _exists(uFInf.pathOf.dynamicDesign) ||
                     _exists(uFInf.pathOf.scss) || _exists(uFInf.pathOf.html)) {
                     ctr.type = uFInf.extCode;
                     ctr.nodeName = uFInf.name;
                     ctr.src = uFInf;
-                    let fullcodePath = uFInf.pathOf.code;
-                    let nws = ucUtil.changeExtension(nodeFn.path.relativeFilePath(pathOf.designer, fullcodePath), '.ts', '.js');
+                    const uFpref = uFInf.projectInfo.config.preference;
+                    let fullcodePath = uFInf.allPathOf[uFpref.outDir].code;
+                    let nws = ucUtil.changeExtension(nodeFn.path.relativeFilePath(outPathOf.designer, fullcodePath), '.ts', '.js');
                     ctr.codeFilePath = nws; //   oldone;
                     ctr.importedClassName = row.designer.importer.addImport([uFInf.name], ctr.codeFilePath)[0];
                     row.designer.controls.push(ctr);
@@ -423,7 +424,7 @@ export class commonParser {
                 </wrapper>
                     `;
             }
-            let cntHT = template.htmlContents["#PHP_REMOVE"]()["#$"]() as HTMLElement;
+            let cntHT = ucUtil.PHP_REMOVE(template.htmlContents)["#$"]() as HTMLElement;
             if (cntHT['length'] != undefined) cntHT = cntHT[0];
             const elements = Array.from(cntHT.querySelectorAll(`[${ATTR_OF.X_NAME}]`));
             for (let i = 0, iObj = elements, len = iObj.length; i < len; i++) {

@@ -1,5 +1,5 @@
 import { ucUtil } from "../global/ucUtil.js";
-import { GetProject, IBuildDirectoryResult, ProjectRowBase, SourceFileType, SourceType, correctpath, subtractPath } from "../ipc/enumAndMore.js";
+import { GetProject, IBuildDirectoryResult, ProjectRowBase, FileDeclarationTypes, DirDeclarationTypes, correctpath, subtractPath } from "../ipc/enumAndMore.js";
 export class PathBridge {
     static path: (typeof import("../nodeFn.js").nodeFn)['path'];
     static url: (typeof import("../nodeFn.js").nodeFn)['url'];
@@ -15,7 +15,7 @@ export class PathBridge {
         if (_this.Convert == undefined && PathBridge.path != undefined && PathBridge.url != undefined) {
 
 
-            function givaAll(givenType: SourceFileType, path: string, fromSrcType: SourceType = 'src', toSrcType: SourceType = 'src') {
+            function givaAll(givenType: FileDeclarationTypes, path: string, fromSrcType: DirDeclarationTypes = 'src', toSrcType: DirDeclarationTypes = 'src') {
                 let rtrn: IBuildDirectoryResult = {};
                 //debugger;
                 //console.log(PathBridge.source);
@@ -57,10 +57,10 @@ export class PathBridge {
         }
 
     }
-    static Convert: (path: string, pathDeclare: SourceType, givenFileType: SourceFileType, demandPathtype?: SourceType)
+    static Convert: (path: string, pathDeclare: DirDeclarationTypes, givenFileType: FileDeclarationTypes, demandPathtype?: DirDeclarationTypes)
         => IBuildDirectoryResult;
 
-    static changeExt = (path: string, from: SourceFileType, to: SourceFileType): string => {
+    static changeExt = (path: string, from: FileDeclarationTypes, to: FileDeclarationTypes): string => {
         return ucUtil.changeExtension(path, from, to);
     }
     static GetFullPath: (path: string, basePath: string) => string;

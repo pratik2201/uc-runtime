@@ -1,9 +1,9 @@
 import { codeFileInfo } from "./build/codeFileInfo.js";
-import { TemplateMaker } from "./build/regs/TemplateMaker.js";
+import { TemplateMaker } from "./build/TemplateMaker.js";
 import { ExtractArguments, ITptOptions, IUcOptions, UCGenerateMode, UcStates, WhatToDoWithTargetElement } from "./enumAndMore.js";
 import { CommonEvent } from "./global/commonEvent.js";
 import { FilterContent } from "./lib/StampGenerator.js";
-import { objectOpt } from "./global/objectOpt.js";
+import { objectOpt } from "./enumAndMore.js";
 import { ATTR_OF } from "./global/runtimeOpt.js";
 import { ucUtil } from "./global/ucUtil.js";
 import { GetUniqueId } from "./ipc/enumAndMore.js";

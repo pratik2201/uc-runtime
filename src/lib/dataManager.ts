@@ -70,9 +70,9 @@ export class dataManager {
         }
     }
 
-    compareElements(ele1: HTMLElement, ele2: HTMLElement): boolean {
-        return this.getId(ele1).id === this.getId(ele2).id;
-    }
+    // compareElements(ele1: HTMLElement, ele2: HTMLElement): boolean {
+    //     return this.getId(ele1).id === this.getId(ele2).id;
+    // }
 
     initElement(target: HTMLElement & HTMLElement[]): void {
         if (target.length == undefined) {

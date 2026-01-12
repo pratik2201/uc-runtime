@@ -19,5 +19,5 @@ const ucWinFrame$Dynamic = HTMLx.Design({
         );
         return ls;
     },
-});
+}); 
 export default ucWinFrame$Dynamic;
