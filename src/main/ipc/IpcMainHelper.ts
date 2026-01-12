@@ -1,10 +1,10 @@
 import path, { dirname, resolve } from "node:path";
 import url, { fileURLToPath, pathToFileURL } from "node:url";
 import fs from "node:fs";
-import { PathBridge } from "../build/pathBridge.js";
+import { PathBridge } from "../../build/pathBridge.js";
 import { configManage } from "./configManage.js";
 import { protocol, type BrowserWindow, type IpcMainEvent } from "electron";
-import { correctpath, getCloneableObject, IPC_API_KEY, IPC_GET_KEY, IPC_REGISTER_KEY } from "./enumAndMore.js";
+import { correctpath, getCloneableObject, IPC_API_KEY, IPC_GET_KEY, IPC_REGISTER_KEY } from "../../common/ipc/enumAndMore.js";
 import { createImportMap, generateImportMap, scanAllProjects } from "./importMapGenerator.js";
 
 type IpcMainCallBack = (e: import("electron").IpcMainEvent, ...args: any[]) => void;
@@ -108,7 +108,7 @@ export class IpcMainHelper {
         const importMap = createImportMap(_path, projectDirList, dirname(baseURLForDataURL));
 
         let mapStr = JSON.stringify(importMap);
-        const modulePath = correctpath(resolve(dirname(fileURLToPath(import.meta.url)), './ShubhLabh.js'));
+        const modulePath = correctpath(resolve(dirname(fileURLToPath(import.meta.url)), '../../renderer/ipc/ShubhLabh.js'));
         const importMapScript = `<script type="importmap">${mapStr}</script>
         <script type="module" src="${modulePath}"></script>`;
         const headRegex = /<head\b[^>]*>/i;

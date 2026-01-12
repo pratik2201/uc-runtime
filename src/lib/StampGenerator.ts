@@ -1,7 +1,7 @@
 import { ATTR_OF } from "../global/runtimeOpt.js";
 import { ucUtil } from "../global/ucUtil.js";
-import { ProjectRowR, getMetaUrl } from "../ipc/enumAndMore.js";
-import { ProjectManage } from "../ipc/ProjectManage.js";
+import { ProjectRowR, getMetaUrl } from "../common/ipc/enumAndMore.js";
+import { ProjectManage } from "../renderer/ipc/ProjectManage.js";
 import { nodeFn } from "../nodeFn.js";
 import { CSSSearchAttributeCondition, IKeyStampNode, StyleBaseType, StylerRegs, WRAPPER_TAG_NAME } from "../StylerRegs.js";
 import { Usercontrol } from "../Usercontrol.js";

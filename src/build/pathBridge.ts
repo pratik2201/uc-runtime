@@ -1,5 +1,5 @@
 import { ucUtil } from "../global/ucUtil.js";
-import { GetProject, IBuildDirectoryResult, ProjectRowBase, FileDeclarationTypes, DirDeclarationTypes, correctpath, subtractPath } from "../ipc/enumAndMore.js";
+import { GetProject, IBuildDirectoryResult, ProjectRowBase, FileDeclarationTypes, DirDeclarationTypes, correctpath, subtractPath } from "../common/ipc/enumAndMore.js";
 export class PathBridge {
     static path: (typeof import("../nodeFn.js").nodeFn)['path'];
     static url: (typeof import("../nodeFn.js").nodeFn)['url'];

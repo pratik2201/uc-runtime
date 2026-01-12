@@ -1,5 +1,5 @@
 import { CommonEvent } from "../global/commonEvent.js";
-import { GetUniqueId } from "../ipc/enumAndMore.js";
+import { GetUniqueId } from "../common/ipc/enumAndMore.js";
 import { Usercontrol } from "../Usercontrol.js";
 import { KeyboardKey } from "./hardware.js";
 import { TabIndexManager } from "./TabIndexManager.js";

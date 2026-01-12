@@ -1,6 +1,6 @@
 import fs, { Mode, OpenMode, PathLike } from "node:fs";
 import path from "node:path";
-import { IpcMainGroup, IpcMainHelper } from "./ipc/IpcMainHelper.js";
+import { IpcMainGroup, IpcMainHelper } from "./main/ipc/IpcMainHelper.js";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { I_PathBaseName, I_PathRelative, I_ReadFileSyncPerameters, I_WriteFileSyncPerameters } from "./nodeFn.js";
 import crypto from "node:crypto";

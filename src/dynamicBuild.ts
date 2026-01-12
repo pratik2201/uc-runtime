@@ -1,11 +1,11 @@
 import { existsSync, readdirSync, readFileSync, stat, statSync, writeFileSync } from "fs";
 import path from "path";
 import url from "url";
-import { GetUcConfig } from "./ipc/userConfigManage.js";
+import { GetUcConfig } from "./main/ipc/userConfigManage.js";
 import { codeFileInfo } from "./build/codeFileInfo.js";
-import { GetProject, IBuildDirectoryResult, IFileDeclarationTypesMap, ProjectRowBase, UserUCConfig } from "./ipc/enumAndMore.js";
+import { GetProject, IBuildDirectoryResult, IFileDeclarationTypesMap, ProjectRowBase, UserUCConfig } from "./common/ipc/enumAndMore.js";
 import { PathBridge } from "./build/pathBridge.js";
-import { ConfigFiller } from "./ipc/ConfigFiller.js";
+import { ConfigFiller } from "./main/ipc/ConfigFiller.js";
 import { DynamicToHtml, IHTMLxSource } from "./lib/WrapperHelper.js";
 PathBridge.path = path as any;
 PathBridge.url = url as any;

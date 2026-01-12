@@ -1,6 +1,6 @@
 import { ATTR_OF } from "../global/runtimeOpt.js";
-import { ProjectManage } from "../ipc/ProjectManage.js";
-import { IResolvePathResult } from "../ipc/enumAndMore.js";
+import { ProjectManage } from "../renderer/ipc/ProjectManage.js";
+import { IResolvePathResult } from "../common/ipc/enumAndMore.js";
 import { Usercontrol } from "../Usercontrol.js";
 import { dataManager } from "./dataManager.js";
 import { ucUtil } from "../global/ucUtil.js";

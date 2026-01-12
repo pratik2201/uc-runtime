@@ -1,8 +1,8 @@
 import { ITemplatePathOptions } from "../enumAndMore.js";
 import { ATTR_OF } from "../global/runtimeOpt.js";
 import { ucUtil } from "../global/ucUtil.js";
-import { IFileDeclaration, IUCConfigPreference, ProjectRowR, UserUCConfig } from "../ipc/enumAndMore.js";
-import { ProjectManage } from "../ipc/ProjectManage.js";
+import { IFileDeclaration, IUCConfigPreference, ProjectRowR, UserUCConfig } from "../common/ipc/enumAndMore.js";
+import { ProjectManage } from "../renderer/ipc/ProjectManage.js";
 import { HTMLx } from "../lib/WrapperHelper.js";
 import { nodeFn } from "../nodeFn.js";
 import { Template } from "../Template.js";

@@ -1,9 +1,9 @@
 import fs from 'fs';
-import { IpcRendererHelper } from './ipc/IpcRendererHelper.js';
+import { IpcRendererHelper } from './renderer/ipc/IpcRendererHelper.js';
 import crypto from "crypto";
-import { ProjectManage } from './ipc/ProjectManage.js';
+import { ProjectManage } from './renderer/ipc/ProjectManage.js';
 import { ucUtil } from './global/ucUtil.js';
-import { IPC_API_KEY, PreloadFullFill } from './ipc/enumAndMore.js';
+import { IPC_API_KEY, PreloadFullFill } from './common/ipc/enumAndMore.js';
 export interface I_WriteFileSyncPerameters { path: string, data: string, encode: fs.WriteFileOptions }
 export interface I_ReadFileSyncPerameters { path: string, doCache?: boolean, encode: fs.WriteFileOptions }
 export interface I_ExistsSyncPerameters { path: string, }

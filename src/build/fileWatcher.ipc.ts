@@ -1,11 +1,11 @@
 import chokidar, { ChokidarOptions, FSWatcher } from "chokidar";
 import fs from "fs";
 import path from "path";
-import { IpcMainGroup } from "../ipc/IpcMainHelper.js";
+import { IpcMainGroup } from "../main/ipc/IpcMainHelper.js";
 import { FILE_WARCHER_FILE_ROW, ucUtil } from "../global/ucUtil.js";
 import url from "url";
 import { PathBridge } from "./pathBridge.js";
-import { GetProject, isSamePath } from "../ipc/enumAndMore.js";
+import { GetProject, isSamePath } from "../common/ipc/enumAndMore.js";
 
 export default function () {
     const main = IpcMainGroup('ucbuilder/src/build/fileWatcher.ts');

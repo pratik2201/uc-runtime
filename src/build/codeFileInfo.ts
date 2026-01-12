@@ -1,6 +1,6 @@
 import { SpecialExtType, ucUtil } from "../global/ucUtil.js";
-import { IFileDeclarationTypesMap, FileDeclarationTypes, ProjectRowR, DirDeclarationTypes, getMetaUrl, IResolvePathResult, IBuildDirectoryResult, SourceFileTypeMap, GetProject, IFileDeclaration } from "../ipc/enumAndMore.js";
-import { ProjectManage } from "../ipc/ProjectManage.js";
+import { IFileDeclarationTypesMap, FileDeclarationTypes, ProjectRowR, DirDeclarationTypes, getMetaUrl, IResolvePathResult, IBuildDirectoryResult, SourceFileTypeMap, GetProject, IFileDeclaration } from "../common/ipc/enumAndMore.js";
+import { ProjectManage } from "../renderer/ipc/ProjectManage.js";
 import { nodeFn } from "../nodeFn.js";
 import { PathBridge } from "./pathBridge.js";
 // export type ISourceTypeMap = {

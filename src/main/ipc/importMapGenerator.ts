@@ -1,10 +1,10 @@
 import fs from 'fs'
 import path from 'path'
-import { ucUtil } from '../global/ucUtil.js'
-import { cleanPath } from './enumAndMore.js'
+import { ucUtil } from '../../global/ucUtil.js'
+import { cleanPath } from '../../common/ipc/enumAndMore.js'
 import { fileURLToPath } from 'url'
 import { ImportUserConfig } from './userConfigManage.js'
-import { UserUCConfig } from "./enumAndMore.js"
+import { UserUCConfig } from "../../common/ipc/enumAndMore.js"
 
 export type BrowserConfig = {
   importmap?: Record<string, string>

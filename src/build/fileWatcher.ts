@@ -1,5 +1,5 @@
 import { FILE_WARCHER_FILE_ROW, ucUtil } from "../global/ucUtil.js"
-import { IpcRendererHelper } from "../ipc/IpcRendererHelper.js";
+import { IpcRendererHelper } from "../renderer/ipc/IpcRendererHelper.js";
 import { nodeFn } from "../nodeFn.js";
 import { builder } from "./builder.js";
 import { UcDependencyScanner } from "./fileStates.js";

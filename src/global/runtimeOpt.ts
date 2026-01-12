@@ -1,4 +1,4 @@
-import { GetRandomNo, GetUniqueId } from "../ipc/enumAndMore.js";
+import { GetRandomNo, GetUniqueId } from "../common/ipc/enumAndMore.js";
 export type StyleClassScopeType = "l" | "m" | "r" | "g"
 export const GLOBAL_OPTIONS: {
     tabindexes: {

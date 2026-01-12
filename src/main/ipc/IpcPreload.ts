@@ -1,7 +1,7 @@
 import { ContextBridge, IpcRenderer, IpcRendererEvent } from "electron";
 import { basename, dirname, join, normalize, relative, resolve, isAbsolute } from "path";
 import { fileURLToPath, pathToFileURL } from "url";
-import { BridgeAPI, IPC_API_KEY } from "./enumAndMore.js";
+import { BridgeAPI, IPC_API_KEY } from "../../common/ipc/enumAndMore.js";
 export class IpcPreload {
     private static IS_INITED = false;
     static init(contextBridge: ContextBridge, ipcRenderer: IpcRenderer) {

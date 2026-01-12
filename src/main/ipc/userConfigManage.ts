@@ -1,5 +1,5 @@
 import { pathToFileURL } from "node:url";
-import { deepAssign, GetProjectName, IBuildDirectory, IFileDeclaration, UcBuildOptions, UserUCConfig } from "./enumAndMore.js";
+import { deepAssign, GetProjectName, IBuildDirectory, IFileDeclaration, UcBuildOptions, UserUCConfig } from "../../common/ipc/enumAndMore.js";
 import path from "node:path";
 import fs from "node:fs";
 import { existsSync, fstat } from "node:fs";

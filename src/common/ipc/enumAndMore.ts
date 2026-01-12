@@ -1,5 +1,5 @@
 import { IpcRendererEvent } from "electron";
-import { KeyboardKey } from "../lib/hardware.js";
+import { KeyboardKey } from "../../lib/hardware.js";
 export const UC_ACCESS_KEY = '_____UC____';
 export interface ProjectPrimaryAlias { alice?: string; aliceValue?: string; projectPath?: string; }
 export class PreloadFullFill {
@@ -204,7 +204,7 @@ export class ProjectRowBase<K = any> {
 export class ProjectRowR extends ProjectRowBase<ProjectRowR> {
     id: number;
     defaultLoadAt: HTMLElement = undefined;
-    stampSRC: import("../lib/StampGenerator.js").SourceNode = undefined;
+    stampSRC: import("../../lib/StampGenerator.js").SourceNode = undefined;
     //children?: ProjectRowR[] = [];
 }
 // export class ProjectRowM extends ProjectRowBase<ProjectRowM> {

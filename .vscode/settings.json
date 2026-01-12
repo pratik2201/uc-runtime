@@ -8,6 +8,7 @@
     "javascript.updateImportsOnFileMove.enabled": "always",
     "javascript.preferences.importModuleSpecifier": "relative",
     "typescript.preferences.importModuleSpecifier": "relative",
+    "javascript.preferences.importModuleSpecifierEnding": "js",
     "typescript.preferences.importModuleSpecifierEnding": "js",
     "explorer.fileNesting.enabled": true,     
     "explorer.fileNesting.expand": false,     

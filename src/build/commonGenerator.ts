@@ -1,5 +1,5 @@
 import { SpecialExtType, ucUtil } from "../global/ucUtil.js";
-import { IFileDeclarationTypesMap } from "../ipc/enumAndMore.js";
+import { IFileDeclarationTypesMap } from "../common/ipc/enumAndMore.js";
 import { nodeFn } from "../nodeFn.js";
 import { CommonRow } from "./buildRow.js";
 import { TemplateMaker } from "./TemplateMaker.js";

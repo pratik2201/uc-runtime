@@ -1,9 +1,9 @@
 
 import path from "path";
 import fs from "fs";
-import { GetPackage, GetProjectName,  isSamePath, subtractPath } from "../ipc/enumAndMore.js";
-import { GetUcConfig } from "../ipc/userConfigManage.js";
-import { UserUCConfig } from "../ipc/enumAndMore.js";
+import { GetPackage, GetProjectName,  isSamePath, subtractPath } from "../common/ipc/enumAndMore.js";
+import { GetUcConfig } from "../main/ipc/userConfigManage.js";
+import { UserUCConfig } from "../common/ipc/enumAndMore.js";
 const args = process.argv.slice(2);
 const user_project_dir = path.resolve();
 const ucbuilder_project_dir = path.resolve(user_project_dir, 'node_modules/ucbuilder');

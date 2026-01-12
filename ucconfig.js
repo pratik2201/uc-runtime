@@ -1,7 +1,5 @@
-import UcDefaultConfig from "./out/ipc/userConfigManage.js";
-export default UcDefaultConfig({
-    exports: "import",
-    projectBaseCssPath: "./index.scss",
+import UcDefaultConfig from "./out/main/ipc/userConfigManage.js";
+export default UcDefaultConfig({ 
     preference: {
         build: {
             RuntimeResources: [

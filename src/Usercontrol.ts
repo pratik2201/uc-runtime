@@ -6,7 +6,7 @@ import { FilterContent } from "./lib/StampGenerator.js";
 import { objectOpt } from "./enumAndMore.js";
 import { ATTR_OF } from "./global/runtimeOpt.js";
 import { ucUtil } from "./global/ucUtil.js";
-import { GetUniqueId } from "./ipc/enumAndMore.js";
+import { GetUniqueId } from "./common/ipc/enumAndMore.js";
 import { IPassElementOptions, STYLER_SELECTOR_TYPE, SourceNode, StampNode } from "./lib/StampGenerator.js";
 import { TabIndexManager } from "./lib/TabIndexManager.js";
 import { WinManager } from "./lib/WinManager.js";

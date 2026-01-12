@@ -1,4 +1,4 @@
-import { BridgeAPI, getCloneableObject, IPC_API_KEY, IPC_GET_KEY, IPC_REGISTER_KEY, IpcRendererCallBack, ProjectRowBase,   UC_ACCESS_KEY } from "./enumAndMore.js";
+import { BridgeAPI, getCloneableObject, IPC_API_KEY, IPC_GET_KEY, IPC_REGISTER_KEY, IpcRendererCallBack, ProjectRowBase,   UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js";
 export interface IRelativeRendere {
     sendSync: (key: string, args: any[]) => any;
     send: (key: string, args: any[]) => void;

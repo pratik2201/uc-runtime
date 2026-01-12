@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain, screen } from "electron";
 import { dirname, join } from "path";
-import { IpcMainHelper } from "../ipc/IpcMainHelper.js";
+import { IpcMainHelper } from "./ipc/IpcMainHelper.js";
 import { fileURLToPath, pathToFileURL } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

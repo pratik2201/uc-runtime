@@ -1,7 +1,7 @@
 
 import { CommonEvent } from "../global/commonEvent.js";
-import { ProjectManage } from "../ipc/ProjectManage.js";
-import { ProjectRowR } from "../ipc/enumAndMore.js";
+import { ProjectManage } from "../renderer/ipc/ProjectManage.js";
+import { ProjectRowR } from "../common/ipc/enumAndMore.js";
 import { nodeFn } from "../nodeFn.js";
 import { CommonRow, dynamicDesignerElementTree } from "./buildRow.js";
 import { commonParser } from "./commonParser.js";

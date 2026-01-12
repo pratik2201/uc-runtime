@@ -1,10 +1,10 @@
 import path from "node:path";
 import url from "node:url";
-import { PathBridge } from "../build/pathBridge.js";
+import { PathBridge } from "../../build/pathBridge.js";
 import { ConfigFiller } from "./ConfigFiller.js";
-import { correctpath, UC_ACCESS_KEY } from "./enumAndMore.js";
+import { correctpath, UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js";
 import { IpcMainHelper } from "./IpcMainHelper.js";
-import { IpcRendererHelper } from "./IpcRendererHelper.js";
+import { IpcRendererHelper } from "../../renderer/ipc/IpcRendererHelper.js";
 
 export class configManage {
     static filler = new ConfigFiller();
@@ -38,8 +38,8 @@ export class configManage {
         // IpcMainHelper.On('ipcChennelList', (event, args: {}) => {
         //     event.returnValue = IpcRendererHelper.ipcChannels;
         // }, UC_ACCESS_KEY);
-        (await import('../nodeFn.ipc.js')).default();
-        (await import('../build/fileWatcher.ipc.js')).default(); 
+        (await import('../../nodeFn.ipc.js')).default();
+        (await import('../../build/fileWatcher.ipc.js')).default(); 
         console.log('configManage inited.');
     }
 

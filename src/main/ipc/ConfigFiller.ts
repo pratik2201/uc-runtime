@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
-import { ucUtil } from "../global/ucUtil.js";
-import { correctpath, deepAssign, GetProjectName, IImportMap, IUCConfigPreference, ProjectRowBase, UcBuildOptions, UserUCConfig } from "./enumAndMore.js";
+import { ucUtil } from "../../global/ucUtil.js";
+import { correctpath, deepAssign, GetProjectName, IImportMap, IUCConfigPreference, ProjectRowBase, UcBuildOptions, UserUCConfig } from "../../common/ipc/enumAndMore.js";
 import { ImportUserConfig } from "./userConfigManage.js";
 
 export class ConfigFiller {
