@@ -31,7 +31,7 @@ how to install and setup in project ?
   3 required changes.
 ```ts
 import { app, BrowserWindow, ipcMain, screen } from "electron";
-import { IpcMainHelper } from "ucbuilder/out/main/ipc/IpcMainHelper.js"; // <-- import the library
+import { IpcMainHelper } from "uucbuilder/out/main/ipc/IpcMainHelper.js"; // <-- import the library
 let win: Electron.BrowserWindow;
 app.on('ready', async () => {
     ...   
@@ -80,9 +80,9 @@ export default UcDefaultConfig({
             }
         },
         fileCommonDeclaration: { //  set declaration of files
-            designer: { dirPath: 'designerFiles' },
+            designer: { subDirPath: 'designerFiles' },
             scss: { extension: '.scss' },
-            html: { dirPath: 'htmlFiles', extension: '.html' }
+            html: { subDirPath: 'htmlFiles', extension: '.html' }
         },
         outDir: "out",  //(set dirDeclaration key as value)
         srcDir: "src",  //(set dirDeclaration key as value)
@@ -110,6 +110,6 @@ github : [https://github.com/pratik2201/ucbuilder.git](https://github.com/pratik
 A complete step-by-step video guide is coming soon.
 
 🔔 Subscribe to get notified when it’s live:
-(YouTube link will be added here)
+youtube : [here](https://youtu.be/GzXJulsTS8A?si=qhwbj0o9QTLnEwjk)
 
 
