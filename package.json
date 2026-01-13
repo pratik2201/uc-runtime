@@ -1,6 +1,6 @@
 {
   "name": "ucbuilder",
-  "version": "2.0.1-beta.2",
+  "version": "2.0.1-beta.3",
   "main": "./out/main/index.js",
   "types": "./out/main/index.d.ts",
   "type": "module",
