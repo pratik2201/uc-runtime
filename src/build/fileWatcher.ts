@@ -1,6 +1,6 @@
 import { FILE_WARCHER_FILE_ROW, ucUtil } from "../global/ucUtil.js"
 import { IpcRendererHelper } from "../renderer/ipc/IpcRendererHelper.js";
-import { nodeFn } from "../nodeFn.js";
+import { nodeFn } from "../renderer/nodeFn.js";
 import { builder } from "./builder.js";
 import { UcDependencyScanner } from "./fileStates.js";
 export class fileWatcher {

@@ -1,7 +1,7 @@
-import { Usercontrol } from "../../../Usercontrol.js";
-import { intenseGenerator } from "../../../intenseGenerator.js";
-import { IUcOptions } from "../../../enumAndMore.js";
-import { VariableList } from "../../../StylerRegs.js";
+import { Usercontrol } from "../../../renderer/Usercontrol.js";
+import { intenseGenerator } from "../../../renderer/intenseGenerator.js";
+import { IUcOptions } from "../../../common/enumAndMore.js";
+import { VariableList } from "../../../renderer/StylerRegs.js";
 import { ucWinFrame } from "../../../renderer/controls/ucWinFrame.uc.js";
 
 import ucWinFrame$dynamicHtmlCode from "../../../renderer/controls/ucWinFrame.uc.html.js";   

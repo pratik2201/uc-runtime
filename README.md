@@ -61,10 +61,10 @@ Third one is `ucconfig.js`  (configuration)
 import UcDefaultConfig from "ucbuilder/out/ipc/userConfigManage.js";
 export default UcDefaultConfig({    
     preference: {                
-        dirDeclaration: {
+        dirDeclaration: {  //  add declaration of directory
             src: {
                 dirPath: 'src',
-                fileWisePath: {
+                fileDeclaration: {  //  add declaration of files
                     code: { extension: '.ts' },
                     designer: { extension: '.designer.ts' },
                     dynamicDesign: { extension: '.html.ts' },
@@ -72,18 +72,16 @@ export default UcDefaultConfig({
             },
             out: {
                 dirPath: 'out',
-                fileWisePath: {
+                fileDeclaration: {
                     code: { extension: '.js' },
                     designer: { extension: '.designer.js' },
                     dynamicDesign: { extension: '.html.js' },
                 }
             }
         },
-        fileWisePath: {
-            code: { dirPath: '' },
+        fileCommonDeclaration: { //  set declaration of files
             designer: { dirPath: 'designerFiles' },
-            dynamicDesign: { dirPath: '' },
-            scss: { dirPath: '', extension: '.scss' },
+            scss: { extension: '.scss' },
             html: { dirPath: 'htmlFiles', extension: '.html' }
         },
         outDir: "out",  //(set dirDeclaration key as value)
@@ -101,11 +99,17 @@ export default UcDefaultConfig({
 });
 ```
 
+full explained about config in youtube video.
 
 Links
 ---
 github : [https://github.com/pratik2201/ucbuilder.git](https://github.com/pratik2201/ucbuilder.git)
 
-Youtube : [here]()
+ ## 📺 Video Tutorial
+
+A complete step-by-step video guide is coming soon.
+
+🔔 Subscribe to get notified when it’s live:
+(YouTube link will be added here)
 
 

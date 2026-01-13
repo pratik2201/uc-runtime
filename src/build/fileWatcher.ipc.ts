@@ -104,10 +104,10 @@ export default function () {
     const preference = mainProjectUcConfig?.preference;
     const dirDeclaration = mainProjectUcConfig?.preference?.dirDeclaration;
     const srcDirDec = dirDeclaration[preference.srcDir];
-    const srcFileWisePath = srcDirDec.fileWisePath;
+    const srcFileWisePath = srcDirDec.fileDeclaration;
     const codeExtension = srcFileWisePath.code.extension;
     const outDirDec = dirDeclaration[preference.outDir];
-    const outFileWisePath = outDirDec.fileWisePath;
+    const outFileWisePath = outDirDec.fileDeclaration;
     const outcodeExtension = outFileWisePath.code.extension;
     // const outFileWisePath = outDirDec.fileWisePath;
     // const dirDecEntries = Object.entries(dirDeclaration);

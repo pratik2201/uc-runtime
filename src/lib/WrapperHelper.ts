@@ -1,7 +1,7 @@
 import { codeFileInfo } from "../build/codeFileInfo.js";
-import { nodeFn } from "../nodeFn.js";
+import { nodeFn } from "../renderer/nodeFn.js";
 import ucWinFrame$Dynamic from "../renderer/controls/ucWinFrame.uc.html.js";
-import { Usercontrol } from "../Usercontrol.js";
+import { Usercontrol } from "../renderer/Usercontrol.js";
 const VOID_HTML_NODE_NAMES = [
     'AREA',
     'BASE',

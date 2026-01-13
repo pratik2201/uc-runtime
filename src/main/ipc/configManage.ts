@@ -38,7 +38,7 @@ export class configManage {
         // IpcMainHelper.On('ipcChennelList', (event, args: {}) => {
         //     event.returnValue = IpcRendererHelper.ipcChannels;
         // }, UC_ACCESS_KEY);
-        (await import('../../nodeFn.ipc.js')).default();
+        (await import('../nodeFn.ipc.js')).default();
         (await import('../../build/fileWatcher.ipc.js')).default(); 
         console.log('configManage inited.');
     }

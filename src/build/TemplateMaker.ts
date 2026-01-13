@@ -1,5 +1,5 @@
 import { ucUtil } from "../global/ucUtil.js";
-import { nodeFn } from "../nodeFn.js";
+import { nodeFn } from "../renderer/nodeFn.js";
 function randomNo(min: number = 0, max: number = 1000000): number {
     let difference = max - min;
     let rand = Math.random();

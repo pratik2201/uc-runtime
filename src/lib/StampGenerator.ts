@@ -2,9 +2,9 @@ import { ATTR_OF } from "../global/runtimeOpt.js";
 import { ucUtil } from "../global/ucUtil.js";
 import { ProjectRowR, getMetaUrl } from "../common/ipc/enumAndMore.js";
 import { ProjectManage } from "../renderer/ipc/ProjectManage.js";
-import { nodeFn } from "../nodeFn.js";
-import { CSSSearchAttributeCondition, IKeyStampNode, StyleBaseType, StylerRegs, WRAPPER_TAG_NAME } from "../StylerRegs.js";
-import { Usercontrol } from "../Usercontrol.js";
+import { nodeFn } from "../renderer/nodeFn.js";
+import { CSSSearchAttributeCondition, IKeyStampNode, StyleBaseType, StylerRegs, WRAPPER_TAG_NAME } from "../renderer/StylerRegs.js";
+import { Usercontrol } from "../renderer/Usercontrol.js";
 
 
 export enum STYLER_SELECTOR_TYPE {

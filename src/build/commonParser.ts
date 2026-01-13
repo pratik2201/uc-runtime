@@ -1,12 +1,12 @@
-import { ITemplatePathOptions } from "../enumAndMore.js";
+import { ITemplatePathOptions } from "../common/enumAndMore.js";
 import { ATTR_OF } from "../global/runtimeOpt.js";
 import { ucUtil } from "../global/ucUtil.js";
 import { IFileDeclaration, IUCConfigPreference, ProjectRowR, UserUCConfig } from "../common/ipc/enumAndMore.js";
 import { ProjectManage } from "../renderer/ipc/ProjectManage.js";
 import { HTMLx } from "../lib/WrapperHelper.js";
-import { nodeFn } from "../nodeFn.js";
-import { Template } from "../Template.js";
-import { Usercontrol } from "../Usercontrol.js";
+import { nodeFn } from "../renderer/nodeFn.js";
+import { Template } from "../renderer/Template.js";
+import { Usercontrol } from "../renderer/Usercontrol.js";
 import { builder } from "./builder.js";
 import { codeOptionsBase, CommonRow, Control, DesignerOptionsBase, dynamicDesignerElementTree, ImportClassNode } from "./buildRow.js";
 import { codeFileInfo } from "./codeFileInfo.js";
@@ -99,8 +99,8 @@ export class commonParser {
         this.project = this.bldr.project;
         this.CONFIG = this.project?.config;
         this.PREFERENCE = this.CONFIG?.preference;
-        this.SRC_DEC = this.PREFERENCE?.dirDeclaration[this.PREFERENCE?.srcDir]?.fileWisePath as any;
-        this.OUT_DEC = this.PREFERENCE?.dirDeclaration[this.PREFERENCE?.outDir]?.fileWisePath as any;
+        this.SRC_DEC = this.PREFERENCE?.dirDeclaration[this.PREFERENCE?.srcDir]?.fileDeclaration as any;
+        this.OUT_DEC = this.PREFERENCE?.dirDeclaration[this.PREFERENCE?.outDir]?.fileDeclaration as any;
         this.SRC_CODE_EXT = this.SRC_DEC.code.extension;
         this.OUT_CODE_EXT = this.OUT_DEC.code.extension;
         //this.UC_BUILDER_DIRECTORY = this.project.aliceToPath['ucbuilder/'];
@@ -245,10 +245,10 @@ export class commonParser {
         switch (this.UC_CONFIG?.exports ?? this.CONFIG.exports) {
             case "import":
                 const prePath = (this.project.projectName == 'ucbuilder') ? `.` : `./node_modules/ucbuilder`;
-                _importer.addImport(['Usercontrol'], this.nc(`${prePath}/out/Usercontrol.js`, outPathOf.designer));
-                _importer.addImport(['intenseGenerator'], this.nc(`${prePath}/out/intenseGenerator.js`, outPathOf.designer));
-                _importer.addImport(['IUcOptions'], this.nc(`${prePath}/out/enumAndMore.js`, outPathOf.designer));
-                _importer.addImport(['VariableList'], this.nc(`${prePath}/out/StylerRegs.js`, outPathOf.designer));
+                _importer.addImport(['Usercontrol'], this.nc(`${prePath}/out/renderer/Usercontrol.js`, outPathOf.designer));
+                _importer.addImport(['intenseGenerator'], this.nc(`${prePath}/out/renderer/intenseGenerator.js`, outPathOf.designer));
+                _importer.addImport(['IUcOptions'], this.nc(`${prePath}/out/common/enumAndMore.js`, outPathOf.designer));
+                _importer.addImport(['VariableList'], this.nc(`${prePath}/out/renderer/StylerRegs.js`, outPathOf.designer));
                 break;
             case "types":
                 _importer.addImport(['Usercontrol'], 'ucbuilder/Usercontrol');
@@ -387,10 +387,10 @@ export class commonParser {
             case "import":
                 const prePath = (this.project.projectName == 'ucbuilder') ? `.` : `./node_modules/ucbuilder`;
 
-                row.designer.importer.addImport(['Template', 'TemplateNode'], this.nc(`${prePath}/out/Template.js`, outPathof.designer));
-                row.designer.importer.addImport(['intenseGenerator'], this.nc(`${prePath}/out/intenseGenerator.js`, outPathof.designer));
-                row.designer.importer.addImport(['ITptOptions'], this.nc(`${prePath}/out/enumAndMore.js`, outPathof.designer));
-                row.designer.importer.addImport(['VariableList'], this.nc(`${prePath}/out/StylerRegs.js`, outPathof.designer));
+                row.designer.importer.addImport(['Template', 'TemplateNode'], this.nc(`${prePath}/out/renderer/Template.js`, outPathof.designer));
+                row.designer.importer.addImport(['intenseGenerator'], this.nc(`${prePath}/out/renderer/intenseGenerator.js`, outPathof.designer));
+                row.designer.importer.addImport(['ITptOptions'], this.nc(`${prePath}/out/renderer/enumAndMore.js`, outPathof.designer));
+                row.designer.importer.addImport(['VariableList'], this.nc(`${prePath}/out/renderer/StylerRegs.js`, outPathof.designer));
                 break;
             case "types":
                 row.designer.importer.addImport(['Template', 'TemplateNode'], 'ucbuilder/Template');

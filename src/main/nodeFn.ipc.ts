@@ -1,10 +1,10 @@
 import fs, { Mode, OpenMode, PathLike } from "node:fs";
 import path from "node:path";
-import { IpcMainGroup, IpcMainHelper } from "./main/ipc/IpcMainHelper.js";
+import { IpcMainGroup, IpcMainHelper } from "./ipc/IpcMainHelper.js";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { I_PathBaseName, I_PathRelative, I_ReadFileSyncPerameters, I_WriteFileSyncPerameters } from "./nodeFn.js";
+import { I_PathBaseName, I_PathRelative, I_ReadFileSyncPerameters, I_WriteFileSyncPerameters } from "../renderer/nodeFn.js";
 import crypto from "node:crypto";
-import { ucUtil } from "./global/ucUtil.js";
+import { ucUtil } from "../global/ucUtil.js";
 
 export default function () {
 
@@ -13,17 +13,8 @@ export default function () {
         key: 'prat' as string, //crypto.randomBytes(32);
         iv: crypto.randomBytes(16) as Buffer
     }
-
-
-    const main = IpcMainGroup('ucbuilder/src/nodeFn');
-    // const resolver = TSPathResolver.getInstance();
-    // main.On("resolver.resolve", (event, importPath: string, importer?: string) => {
-    //     event.returnValue = resolver.resolve(importPath, importer);
-    // });
-    // main.On("resolver.resolveOut", (event, importPath: string, importer?: string) => {
-    //     event.returnValue = resolver.resolveOut(importPath, importer);
-    // });
-
+    const main = IpcMainGroup('ucbuilder/src/main/nodeFn');
+  
     main.On("crypto.toString", (event, size: number, encoding?: BufferEncoding) => {
         event.returnValue = crypto.randomBytes(size).toString(encoding);
     });

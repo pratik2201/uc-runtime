@@ -1,5 +1,5 @@
 import { pathToFileURL } from "node:url";
-import { deepAssign, GetProjectName, IBuildDirectory, IFileDeclaration, UcBuildOptions, UserUCConfig } from "../../common/ipc/enumAndMore.js";
+import { deepAssign, GetProjectName, IDirDeclarations, IFileDeclaration, UcBuildOptions, UserUCConfig } from "../../common/ipc/enumAndMore.js";
 import path from "node:path";
 import fs from "node:fs";
 import { existsSync, fstat } from "node:fs";
@@ -10,7 +10,7 @@ export async function GetUcConfig(projectdir: string): Promise<UserUCConfig> {
     }
     return undefined;
 }
-export default function UcDefaultConfig<K = IBuildDirectory>(...cfg: Partial<UserUCConfig<K>>[]) {
+export default function UcDefaultConfig<K = IDirDeclarations>(...cfg: Partial<UserUCConfig<K>>[]) {
     let rtrn = new UserUCConfig<K>();
     //console.log(rtrn);    
     deepAssign(rtrn, ...cfg);
@@ -19,6 +19,7 @@ export default function UcDefaultConfig<K = IBuildDirectory>(...cfg: Partial<Use
 
     return rtrn;
 }
+
 export async function ImportUserConfig(fpath: string): Promise<UserUCConfig> {
     //console.log(fpath);
     if (!fpath.startsWith('file:/')) fpath = pathToFileURL(fpath).href;
@@ -36,20 +37,34 @@ function checkUc(cfg: UserUCConfig, filePath: string) {
     const pref = cfg?.preference;
     let dirDeclaration = pref?.dirDeclaration;
     if (dirDeclaration != undefined) {
-        const fileWisePath = pref.fileWisePath;
+
+        
+        const fileWisePath = pref.fileCommonDeclaration;
         if (fileWisePath != undefined) {
-            for (const [srcType, fileDec] of Object.entries(fileWisePath)) {
+            for (const [fileDeckey, fileDec] of Object.entries(fileWisePath)) {
+                fileDec.dirPath = fileDec.dirPath ?? '';
                 for (const dirDec of Object.values(pref?.dirDeclaration)) {
-                    dirDec.fileWisePath = dirDec.fileWisePath ?? {};
-                    dirDec.fileWisePath[srcType] = dirDec.fileWisePath[srcType] ?? {};
-                    const fd = dirDec.fileWisePath[srcType] as IFileDeclaration;
+                    dirDec.dirPath = dirDec.dirPath ?? '';
+                    dirDec.fileDeclaration = dirDec.fileDeclaration ?? {};
+                    dirDec.fileDeclaration[fileDeckey] = dirDec.fileDeclaration[fileDeckey] ?? {};
+
+                    const fd = dirDec.fileDeclaration[fileDeckey] as IFileDeclaration;
                     fd.dirPath = fd.dirPath ?? fileDec.dirPath ?? '';
                     fd.extension = fd.extension ?? fileDec.extension ?? '';
                 }
             }
         }
+        for (const dirDec of Object.values(pref?.dirDeclaration)) {
+            for (const [srcType, fileDec] of Object.entries(dirDec.fileDeclaration)) {
+                fileDec.dirPath = fileDec.dirPath ?? '';
+                fileDec.extension = fileDec.extension ?? '';
+            }
+        }
     }
     pref.build = pref.build ?? new UcBuildOptions();
+
+
+
 
     const prjName = GetProjectName(filePath, path, fs);
 

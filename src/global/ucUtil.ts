@@ -1,4 +1,4 @@
-import { Usercontrol } from "../Usercontrol.js";
+import { Usercontrol } from "../renderer/Usercontrol.js";
 import { ATTR_OF } from "./runtimeOpt.js";
 
 export interface FILE_WARCHER_FILE_ROW {

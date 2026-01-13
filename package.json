@@ -1,7 +1,8 @@
 {
   "name": "ucbuilder", 
-  "version": "1.0.4", 
+  "version": "2.0.0", 
   "main": "./out/main/index.js",
+  "types": "./out/main/index.d.ts",
   "type": "module",
   "description": ":Shree Ganeshay Namah: \n new way app design",
   "scripts": {    
@@ -10,7 +11,7 @@
     "build:dts": "tsc --emitDeclarationOnly",
     "build": "tsc",
     "rebuild": "npm run clean && npm run build && npm run build:dts",
-    "test": "node out/main.js"
+    "rebuild:start": "npm run rebuild && npm run start"
   },
   "author": "ap",
   "license": "ISC",

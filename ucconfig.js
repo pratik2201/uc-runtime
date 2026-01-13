@@ -1,5 +1,5 @@
 import UcDefaultConfig from "./out/main/ipc/userConfigManage.js";
-export default UcDefaultConfig({ 
+export default UcDefaultConfig({
     preference: {
         build: {
             RuntimeResources: [
@@ -13,7 +13,7 @@ export default UcDefaultConfig({
         dirDeclaration: {
             src: {
                 dirPath: 'src',
-                fileWisePath: {
+                fileDeclaration: {
                     code: { extension: '.ts' },
                     designer: { extension: '.designer.ts' },
                     dynamicDesign: { extension: '.html.ts' }
@@ -21,18 +21,16 @@ export default UcDefaultConfig({
             },
             out: {
                 dirPath: 'out',
-                fileWisePath: {
+                fileDeclaration: {
                     code: { extension: '.js' },
                     designer: { extension: '.designer.js' },
                     dynamicDesign: { extension: '.html.js' },
                 }
             }
         },
-        fileWisePath: {
-            code: { dirPath: '' },
-            dynamicDesign: { dirPath: '' },
+        fileCommonDeclaration: {
             designer: { dirPath: 'designerFiles' },
-            scss: { dirPath: '', extension: '.scss' },
+            scss: { extension: '.scss' },
             html: { dirPath: 'htmlFiles', extension: '.html' },
         },
         outDir: "out",

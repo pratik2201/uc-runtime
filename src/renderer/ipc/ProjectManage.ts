@@ -1,6 +1,6 @@
 
 import { ucUtil } from "../../global/ucUtil.js";
-import { nodeFn } from "../../nodeFn.js";
+import { nodeFn } from "../nodeFn.js";
 import { IPC_API_KEY, PreloadFullFill, ProjectRowR } from "../../common/ipc/enumAndMore.js";
 import { IpcRendererHelper } from "./IpcRendererHelper.js";
 

@@ -310,7 +310,7 @@ export type IResolvePathResult<K = ProjectRowR> = {
     alias?: string;
     aliasPath?: string;
 };
-export class UserUCConfig<K = IBuildDirectory> {
+export class UserUCConfig<K = IDirDeclarations> {
     env: 'developer' | 'release' = 'developer';
     exports: 'types' | 'import' = 'import';
     preloadMain: string[] = [];
@@ -321,7 +321,7 @@ export class UserUCConfig<K = IBuildDirectory> {
     preference?: IUCConfigPreference<K> = {
         build: new UcBuildOptions<K>(),
         dirDeclaration: {} as any,
-        fileWisePath: {},
+        fileCommonDeclaration: {},
         srcDir: "" as any,
         outDir: "" as any,
     };
@@ -333,13 +333,13 @@ export class UserUCConfig<K = IBuildDirectory> {
 // export class projectWatcher {
 //     pathRelacer?: { [pattern: string]: PathReplacer } = {};
 // }
-export class UcBuildOptions<K = IBuildDirectory> {
+export class UcBuildOptions<K = IDirDeclarations> {
     keyBind?: KeyboardKey[] = ['ControlRight', 'F12'];
     ignorePath?: string[] = ["node_modules", ".vscode", "out", "dist", ".git"];
     RuntimeResources: RuntimeFileManage<K>[] = [];
 }
 
-class RuntimeFileManage<K = IBuildDirectory> {
+class RuntimeFileManage<K = IDirDeclarations> {
     includeCallback = undefined as (filepath: string) => boolean;
     includeExtensions = [] as string[];
     fromDeclare: keyof K;
@@ -360,39 +360,71 @@ export const SourceFileTypeMap: IFileDeclarationTypesMap = {
     /*'.js': '',
     '.designer.js': '',*/
 }
+// export type IQuickDirDeclaration = {
+//     [dirPath: string]: Partial<{ [s in FileDeclarationTypes]: IFileDeclaration }>
+// }
 export class IDirDeclaration {
+    /**
+     *  i.e
+     * ```ts
+     *  dirDeclaration.dirpath = 'src';
+     *      ./[src]/file.uc.ts     =>    ./src/file.uc.ts  
+     *      ./[src]/file.uc.html     =>    ./src/file.uc.html  
+     * 
+     *  dirDeclaration.dirpath = 'out';
+     *      ./[out]/file.uc.js     =>    ./out/file.uc.js  
+     *      ./[out]/file.uc.html     =>    ./out/file.uc.html  
+     * ```
+     */
     dirPath: string;
     /**
      * specify filePath
      */
-    fileWisePath?: Partial<{ [s in FileDeclarationTypes]: IFileDeclaration }> = {
+    fileDeclaration?: Partial<{ [s in FileDeclarationTypes]: IFileDeclaration }> = {
 
     };
 }
-export type IBuildDirectory = {
+export type IDirDeclarations = {
     [dirDeclareKey: string]: IDirDeclaration
 }
-export type IBuildDirectoryResult = {
+export type IDirDeclarationTypesMap = {
     [dirDeclareKey: string]: IFileDeclarationTypesMap
 }
-// export type IBuildDirectoryResult<k extends string> = {
-//     [dirDeclareKey in k]: IFileDeclarationTypesMap
-// }
+
 export class IFileDeclaration {
+    /**
+     *  i.e
+     * ```ts
+     * dirDeclaration.dirpath = 'src';
+     * 
+     * fileDeclaration.dirpath = 'designerFiles'
+     * ./[src]/[designerFiles]/file.uc.designer.ts     =>    ./src/designerFiles/file.uc.designer.ts  
+     * 
+     * fileDeclaration.dirpath = 'htmlFiles'
+     * ./[src]/[htmlFiles]/file.uc.designer.ts     =>    ./src/htmlFiles/file.uc.designer.ts 
+     * ```
+     */
     dirPath: string = '';
 
     /**
-     *  i.e  ./src/file.uc[.xt].html     =>    ./src/file.uc.xt.html     
-     *       ./src/file.uc[.designer].ts     =>    ./src/file.uc.designer.ts
+     *  i.e  
+     * ```ts
+     * ./src/file.uc[.xt].html     =>    ./src/file.uc.xt.html     
+     * ./src/file.uc[.designer].ts     =>    ./src/file.uc.designer.ts
+     * ```
      */
     extension: string = '';
     /**
-    *  i.e  ./src/[html]/file.uc.html     =>    ./src/html/file.uc.html
-    *       ./src/[designer]/file.uc.designer.ts     =>    ./src/designer/file.uc.designer.ts
+    *  i.e  
+    * ```ts
+    * ./src/[html]/file.uc.html     =>    ./src/html/file.uc.html
+    * ./src/[designer]/file.uc.designer.ts     =>    ./src/designer/file.uc.designer.ts
+    * ```
     */
 }
-export class IUCConfigPreference<K = IBuildDirectory> {
+export class IUCConfigPreference<K = IDirDeclarations> {
     build = new UcBuildOptions<K>();
+    // dirs?: IQuickDirDeclaration;
     /**
      * 
      */
@@ -402,14 +434,14 @@ export class IUCConfigPreference<K = IBuildDirectory> {
     /**
      * A common Declaration  for all items in `dirDeclaration`
      */
-    fileWisePath?: Partial<{ [s in FileDeclarationTypes]: IFileDeclaration }> = {};
+    fileCommonDeclaration?: Partial<{ [s in FileDeclarationTypes]: IFileDeclaration }> = {};
 
     /**
-     * specify dirDeclaration key
+     * specify dirDeclaration key for output 
      */
     outDir?: keyof K = '' as any;
     /**
-    * specify dirDeclaration key
+    * specify dirDeclaration key for source 
     */
     srcDir?: keyof K = '' as any;
 }

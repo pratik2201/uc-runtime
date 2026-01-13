@@ -1,8 +1,8 @@
 import { ucUtil } from "../global/ucUtil.js";
-import { GetProject, IBuildDirectoryResult, ProjectRowBase, FileDeclarationTypes, DirDeclarationTypes, correctpath, subtractPath } from "../common/ipc/enumAndMore.js";
+import { GetProject, IDirDeclarationTypesMap, ProjectRowBase, FileDeclarationTypes, DirDeclarationTypes, correctpath, subtractPath } from "../common/ipc/enumAndMore.js";
 export class PathBridge {
-    static path: (typeof import("../nodeFn.js").nodeFn)['path'];
-    static url: (typeof import("../nodeFn.js").nodeFn)['url'];
+    static path: (typeof import("../renderer/nodeFn.js").nodeFn)['path'];
+    static url: (typeof import("../renderer/nodeFn.js").nodeFn)['url'];
     static source: ProjectRowBase<any>[];
     static CheckAndSetDefault = () => {
         const _this = this;
@@ -16,7 +16,7 @@ export class PathBridge {
 
 
             function givaAll(givenType: FileDeclarationTypes, path: string, fromSrcType: DirDeclarationTypes = 'src', toSrcType: DirDeclarationTypes = 'src') {
-                let rtrn: IBuildDirectoryResult = {};
+                let rtrn: IDirDeclarationTypesMap = {};
                 //debugger;
                 //console.log(PathBridge.source);
 
@@ -27,16 +27,16 @@ export class PathBridge {
                 const dirDeclaration = pref.dirDeclaration;
                 let right = '';
                 const givenDirectoryDeclaration = dirDeclaration[fromSrcType];
-                const givenFileWisePath = givenDirectoryDeclaration.fileWisePath;
+                const givenFileWisePath = givenDirectoryDeclaration.fileDeclaration;
                 const givenFileDeclaration = givenFileWisePath[givenType];
                 const demandDeclaration = dirDeclaration[toSrcType];
-                const demandFileWisePath = demandDeclaration.fileWisePath;
+                const demandFileWisePath = demandDeclaration.fileDeclaration;
                 right = subtractPath(correctpath(`${rootDir}/${givenDirectoryDeclaration.dirPath}/${givenFileDeclaration.dirPath}`), path, _this.path as any);
 
                 for (const [key, typeDec] of Object.entries(dirDeclaration)) {
                     rtrn[key] = {} as any;
                     const fWisePath = rtrn[key];
-                    for (const [fileType, fileDec] of Object.entries(typeDec.fileWisePath)) {
+                    for (const [fileType, fileDec] of Object.entries(typeDec.fileDeclaration)) {
 
                         fWisePath[fileType] = PathBridge.changeExt(PathBridge.path.join(rootDir, typeDec.dirPath, fileDec.dirPath, right),
                             `${givenFileDeclaration.extension}` as any,
@@ -58,7 +58,7 @@ export class PathBridge {
 
     }
     static Convert: (path: string, pathDeclare: DirDeclarationTypes, givenFileType: FileDeclarationTypes, demandPathtype?: DirDeclarationTypes)
-        => IBuildDirectoryResult;
+        => IDirDeclarationTypesMap;
 
     static changeExt = (path: string, from: FileDeclarationTypes, to: FileDeclarationTypes): string => {
         return ucUtil.changeExtension(path, from, to);

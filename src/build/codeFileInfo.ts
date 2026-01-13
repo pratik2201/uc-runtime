@@ -1,7 +1,7 @@
 import { SpecialExtType, ucUtil } from "../global/ucUtil.js";
-import { IFileDeclarationTypesMap, FileDeclarationTypes, ProjectRowR, DirDeclarationTypes, getMetaUrl, IResolvePathResult, IBuildDirectoryResult, SourceFileTypeMap, GetProject, IFileDeclaration } from "../common/ipc/enumAndMore.js";
+import { IFileDeclarationTypesMap, FileDeclarationTypes, ProjectRowR, DirDeclarationTypes, getMetaUrl, IResolvePathResult, IDirDeclarationTypesMap, SourceFileTypeMap, GetProject, IFileDeclaration } from "../common/ipc/enumAndMore.js";
 import { ProjectManage } from "../renderer/ipc/ProjectManage.js";
-import { nodeFn } from "../nodeFn.js";
+import { nodeFn } from "../renderer/nodeFn.js";
 import { PathBridge } from "./pathBridge.js";
 // export type ISourceTypeMap = {
 //     [s in Partial<SourceType>]: string;
@@ -64,7 +64,7 @@ export function GetDeclaration(filepath: string, projectRows = ProjectManage.pro
             rtrn.dirDec = k as any;
             let isFileFound = false;
             const fpathToLower = filepath.toLowerCase();
-            const fileDec = Object.entries(ddn.fileWisePath)
+            const fileDec = Object.entries(ddn.fileDeclaration)
                 .sort((a, b) => b[1].extension.length - a[1].extension.length);
             for (const [j, fdn] of fileDec) {
                 if (fpathToLower.endsWith(fdn.extension.toLowerCase())) {
@@ -107,7 +107,7 @@ export class codeFileInfo {
         const fileName = filePath.split(/[\\/]/).pop();
         return fileName.split('.')[0];
     }
-    allPathOf: IBuildDirectoryResult;
+    allPathOf: IDirDeclarationTypesMap;
     callerMetaUrl: string;
     callerProject: ProjectRowR; // actualPro
     get projectInfo() { return this.callerProject; /*this.resolvePathResult?.project;*/ }

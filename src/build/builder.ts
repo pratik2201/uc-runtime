@@ -2,7 +2,7 @@
 import { CommonEvent } from "../global/commonEvent.js";
 import { ProjectManage } from "../renderer/ipc/ProjectManage.js";
 import { ProjectRowR } from "../common/ipc/enumAndMore.js";
-import { nodeFn } from "../nodeFn.js";
+import { nodeFn } from "../renderer/nodeFn.js";
 import { CommonRow, dynamicDesignerElementTree } from "./buildRow.js";
 import { commonParser } from "./commonParser.js";
 import { codeFileInfo } from "./codeFileInfo.js";
@@ -56,7 +56,7 @@ export class builder {
         const ign = [nodeFn.path.join(rootPath, 'node_modules')];
         const pref = this.project.config.preference;
         const srcDec = pref.dirDeclaration[pref.srcDir];
-        const srcFileDec = srcDec?.fileWisePath;
+        const srcFileDec = srcDec?.fileDeclaration;
         const srcDynamicExt = srcFileDec?.dynamicDesign?.extension;
         const srcHtmlExt = srcFileDec?.html?.extension;
         if (srcDynamicExt == undefined) { console.log("!!! no dynamic design file (.html.js) "); }
@@ -147,7 +147,7 @@ export class builder {
         if (prj.config.env == 'release') return;
         const pref = this.project.config.preference;
         const srcdirDeclaration = pref.dirDeclaration[pref.srcDir];
-        const fileWisePath = srcdirDeclaration.fileWisePath;
+        const fileWisePath = srcdirDeclaration.fileDeclaration;
         const srcDeclareKey = pref.srcDir;
         const outDeclareKey = pref.outDir;
         const designerFileDeclaration = fileWisePath.designer;
