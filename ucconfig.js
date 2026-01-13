@@ -29,9 +29,9 @@ export default UcDefaultConfig({
             }
         },
         fileCommonDeclaration: {
-            designer: { dirPath: 'designerFiles' },
+            designer: { subDirPath: 'designerFiles' },
             scss: { extension: '.scss' },
-            html: { dirPath: 'htmlFiles', extension: '.html' },
+            html: { subDirPath: 'htmlFiles', extension: '.html' },
         },
         outDir: "out",
         srcDir: "src",

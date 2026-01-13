@@ -389,7 +389,7 @@ export class commonParser {
 
                 row.designer.importer.addImport(['Template', 'TemplateNode'], this.nc(`${prePath}/out/renderer/Template.js`, outPathof.designer));
                 row.designer.importer.addImport(['intenseGenerator'], this.nc(`${prePath}/out/renderer/intenseGenerator.js`, outPathof.designer));
-                row.designer.importer.addImport(['ITptOptions'], this.nc(`${prePath}/out/renderer/enumAndMore.js`, outPathof.designer));
+                row.designer.importer.addImport(['ITptOptions'], this.nc(`${prePath}/out/common/enumAndMore.js`, outPathof.designer));
                 row.designer.importer.addImport(['VariableList'], this.nc(`${prePath}/out/renderer/StylerRegs.js`, outPathof.designer));
                 break;
             case "types":

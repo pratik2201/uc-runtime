@@ -151,7 +151,7 @@ export class builder {
         const srcDeclareKey = pref.srcDir;
         const outDeclareKey = pref.outDir;
         const designerFileDeclaration = fileWisePath.designer;
-        let designerPath = nodeFn.path.join(prj.projectPath, srcdirDeclaration.dirPath ?? '', designerFileDeclaration?.dirPath ?? '');
+        let designerPath = nodeFn.path.join(prj.projectPath, srcdirDeclaration.dirPath ?? '', designerFileDeclaration?.subDirPath ?? '');
         //console.log(designerPath);
         let cInfos = ((await _this.getAllDesignerXfiles())).cinfo;
 

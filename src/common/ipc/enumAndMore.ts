@@ -404,7 +404,7 @@ export class IFileDeclaration {
      * ./[src]/[htmlFiles]/file.uc.designer.ts     =>    ./src/htmlFiles/file.uc.designer.ts 
      * ```
      */
-    dirPath: string = '';
+    subDirPath: string = '';
 
     /**
      *  i.e  

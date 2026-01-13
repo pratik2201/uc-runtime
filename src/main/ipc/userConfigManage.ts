@@ -42,21 +42,21 @@ function checkUc(cfg: UserUCConfig, filePath: string) {
         const fileWisePath = pref.fileCommonDeclaration;
         if (fileWisePath != undefined) {
             for (const [fileDeckey, fileDec] of Object.entries(fileWisePath)) {
-                fileDec.dirPath = fileDec.dirPath ?? '';
+                fileDec.subDirPath = fileDec.subDirPath ?? '';
                 for (const dirDec of Object.values(pref?.dirDeclaration)) {
                     dirDec.dirPath = dirDec.dirPath ?? '';
                     dirDec.fileDeclaration = dirDec.fileDeclaration ?? {};
                     dirDec.fileDeclaration[fileDeckey] = dirDec.fileDeclaration[fileDeckey] ?? {};
 
                     const fd = dirDec.fileDeclaration[fileDeckey] as IFileDeclaration;
-                    fd.dirPath = fd.dirPath ?? fileDec.dirPath ?? '';
+                    fd.subDirPath = fd.subDirPath ?? fileDec.subDirPath ?? '';
                     fd.extension = fd.extension ?? fileDec.extension ?? '';
                 }
             }
         }
         for (const dirDec of Object.values(pref?.dirDeclaration)) {
             for (const [srcType, fileDec] of Object.entries(dirDec.fileDeclaration)) {
-                fileDec.dirPath = fileDec.dirPath ?? '';
+                fileDec.subDirPath = fileDec.subDirPath ?? '';
                 fileDec.extension = fileDec.extension ?? '';
             }
         }

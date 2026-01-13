@@ -68,7 +68,7 @@ export function GetDeclaration(filepath: string, projectRows = ProjectManage.pro
                 .sort((a, b) => b[1].extension.length - a[1].extension.length);
             for (const [j, fdn] of fileDec) {
                 if (fpathToLower.endsWith(fdn.extension.toLowerCase())) {
-                    if (fdn.dirPath != '' && !np.startsWith(filepath, np.join(joinedDDN, fdn.dirPath))) continue;
+                    if (fdn.subDirPath != '' && !np.startsWith(filepath, np.join(joinedDDN, fdn.subDirPath))) continue;
                     isFileFound = true;
                     rtrn.fileDec = j;
                     break;

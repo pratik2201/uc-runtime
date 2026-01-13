@@ -31,14 +31,14 @@ export class PathBridge {
                 const givenFileDeclaration = givenFileWisePath[givenType];
                 const demandDeclaration = dirDeclaration[toSrcType];
                 const demandFileWisePath = demandDeclaration.fileDeclaration;
-                right = subtractPath(correctpath(`${rootDir}/${givenDirectoryDeclaration.dirPath}/${givenFileDeclaration.dirPath}`), path, _this.path as any);
+                right = subtractPath(correctpath(`${rootDir}/${givenDirectoryDeclaration.dirPath}/${givenFileDeclaration.subDirPath}`), path, _this.path as any);
 
                 for (const [key, typeDec] of Object.entries(dirDeclaration)) {
                     rtrn[key] = {} as any;
                     const fWisePath = rtrn[key];
                     for (const [fileType, fileDec] of Object.entries(typeDec.fileDeclaration)) {
 
-                        fWisePath[fileType] = PathBridge.changeExt(PathBridge.path.join(rootDir, typeDec.dirPath, fileDec.dirPath, right),
+                        fWisePath[fileType] = PathBridge.changeExt(PathBridge.path.join(rootDir, typeDec.dirPath, fileDec.subDirPath, right),
                             `${givenFileDeclaration.extension}` as any,
                             `${fileDec.extension}` as any);
 

@@ -32,13 +32,7 @@ export class IpcPreload {
             on: (chennel, callback = (event: IpcRendererEvent, ...args: any[]) => { }) => {
                 ipcRenderer.on(chennel, callback);
             },
-            fullFill: fullFill,
-            /*reload: () => {
-                ipcRenderer.send(IPC_API_KEY + ';reload-browser-for-developement', {});
-            }, 
-            Ready: () => {
-                console.log('Ready..');
-            }*/
+            fullFill: fullFill, 
         } as BridgeAPI);
         contextBridge.exposeInMainWorld("env", {
             NODE_ENV: process.env.NODE_ENV
