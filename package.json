@@ -1,11 +1,11 @@
 {
-  "name": "ucbuilder", 
-  "version": "2.0.0", 
+  "name": "ucbuilder",
+  "version": "2.0.1-0",
   "main": "./out/main/index.js",
   "types": "./out/main/index.d.ts",
   "type": "module",
   "description": ":Shree Ganeshay Namah: \n new way app design",
-  "scripts": {    
+  "scripts": {
     "clean": "rimraf out",
     "start": "electron .",
     "build:dts": "tsc --emitDeclarationOnly",
@@ -16,7 +16,7 @@
   "author": "ap",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^20.11.0", 
+    "@types/node": "^20.11.0",
     "electron": "^39.1.1",
     "rimraf": "^6.0.1",
     "tsconfig-paths": "^4.2.0",
