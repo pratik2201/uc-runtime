@@ -107,9 +107,9 @@ github : [https://github.com/pratik2201/ucbuilder.git](https://github.com/pratik
 
  ## 📺 Video Tutorial
 
-A complete step-by-step video guide is coming soon.
+A complete step-by-step video guide 
 
-🔔 Subscribe to get notified when it’s live:
-youtube : [here](https://youtu.be/GzXJulsTS8A?si=qhwbj0o9QTLnEwjk)
+🔔 Subscribe to get notified when it’s live:<br>
+youtube : [https://youtu.be/GzXJulsTS8A?si=qhwbj0o9QTLnEwjk](https://youtu.be/GzXJulsTS8A?si=qhwbj0o9QTLnEwjk)
 
 
