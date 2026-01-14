@@ -371,6 +371,10 @@ export class IDirDeclaration {
      *      ./[src]/file.uc.ts     =>    ./src/file.uc.ts  
      *      ./[src]/file.uc.html     =>    ./src/file.uc.html  
      * 
+     *  dirDeclaration.dirpath = '';
+     *      ./[]/file.uc.js     =>    ./file.uc.js  
+     *      ./[]/file.uc.html     =>    ./file.uc.html  
+     * 
      *  dirDeclaration.dirpath = 'out';
      *      ./[out]/file.uc.js     =>    ./out/file.uc.js  
      *      ./[out]/file.uc.html     =>    ./out/file.uc.html  
@@ -397,11 +401,15 @@ export class IFileDeclaration {
      * ```ts
      * dirDeclaration.dirpath = 'src';
      * 
-     * fileDeclaration.dirpath = 'designerFiles'
+     * fileDeclaration.subDirPath = 'designerFiles'
      * ./[src]/[designerFiles]/file.uc.designer.ts     =>    ./src/designerFiles/file.uc.designer.ts  
      * 
-     * fileDeclaration.dirpath = 'htmlFiles'
+     * fileDeclaration.subDirPath = ''
+     * ./[src]/[]/file.uc.ts     =>    ./src/file.uc.ts 
+     * 
+     * fileDeclaration.subDirPath = 'htmlFiles'
      * ./[src]/[htmlFiles]/file.uc.designer.ts     =>    ./src/htmlFiles/file.uc.designer.ts 
+     * 
      * ```
      */
     subDirPath: string = '';
