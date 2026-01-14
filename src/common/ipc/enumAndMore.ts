@@ -368,16 +368,16 @@ export class IDirDeclaration {
      *  i.e
      * ```ts
      *  dirDeclaration.dirpath = 'src';
-     *      ./[src]/file.uc.ts     =>    ./src/file.uc.ts  
-     *      ./[src]/file.uc.html     =>    ./src/file.uc.html  
+     *      ./[src]/lib/file.uc.ts     =>    ./src/lib/file.uc.ts  
+     *      ./[src]/lib/file.uc.html     =>    ./src/lib/file.uc.html  
      * 
      *  dirDeclaration.dirpath = '';
-     *      ./[]/file.uc.js     =>    ./file.uc.js  
-     *      ./[]/file.uc.html     =>    ./file.uc.html  
+     *      ./[]/lib/file.uc.js     =>    ./lib/file.uc.js  
+     *      ./[]/lib/file.uc.html     =>    ./lib/file.uc.html  
      * 
      *  dirDeclaration.dirpath = 'out';
-     *      ./[out]/file.uc.js     =>    ./out/file.uc.js  
-     *      ./[out]/file.uc.html     =>    ./out/file.uc.html  
+     *      ./[out]/lib/file.uc.js     =>    ./out/lib/file.uc.js  
+     *      ./[out]/lib/file.uc.html     =>    ./out/lib/file.uc.html  
      * ```
      */
     dirPath: string;
@@ -402,13 +402,13 @@ export class IFileDeclaration {
      * dirDeclaration.dirpath = 'src';
      * 
      * fileDeclaration.subDirPath = 'designerFiles'
-     * ./[src]/[designerFiles]/file.uc.designer.ts     =>    ./src/designerFiles/file.uc.designer.ts  
+     * ./[src]/[designerFiles]/lib/file.uc.designer.ts     =>    ./src/designerFiles/lib/file.uc.designer.ts  
      * 
      * fileDeclaration.subDirPath = ''
-     * ./[src]/[]/file.uc.ts     =>    ./src/file.uc.ts 
+     * ./[src]/[]/lib/file.uc.ts     =>    ./src/lib/file.uc.ts 
      * 
      * fileDeclaration.subDirPath = 'htmlFiles'
-     * ./[src]/[htmlFiles]/file.uc.designer.ts     =>    ./src/htmlFiles/file.uc.designer.ts 
+     * ./[src]/[htmlFiles]/lib/file.uc.designer.ts     =>    ./src/htmlFiles/lib/file.uc.designer.ts 
      * 
      * ```
      */
@@ -417,25 +417,16 @@ export class IFileDeclaration {
     /**
      *  i.e  
      * ```ts
-     * ./src/file.uc[.xt].html     =>    ./src/file.uc.xt.html     
-     * ./src/file.uc[.designer].ts     =>    ./src/file.uc.designer.ts
+     * ./src/lib/file.uc[.xt].html     =>    ./src/lib/file.uc.xt.html     
+     * ./src/lib/file.uc[.designer].ts     =>    ./src/lib/file.uc.designer.ts
      * ```
      */
     extension: string = '';
-    /**
-    *  i.e  
-    * ```ts
-    * ./src/[html]/file.uc.html     =>    ./src/html/file.uc.html
-    * ./src/[designer]/file.uc.designer.ts     =>    ./src/designer/file.uc.designer.ts
-    * ```
-    */
+    
 }
 export class IUCConfigPreference<K = IDirDeclarations> {
     build = new UcBuildOptions<K>();
-    // dirs?: IQuickDirDeclaration;
-    /**
-     * 
-     */
+      
     dirDeclaration?: K = {
 
     } as any;
