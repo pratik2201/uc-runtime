@@ -2,7 +2,7 @@
 import { ucUtil } from "../../global/ucUtil.js";
 import { nodeFn } from "../nodeFn.js";
 import { IPC_API_KEY, PreloadFullFill, ProjectRowR } from "../../common/ipc/enumAndMore.js";
-import { IpcRendererHelper } from "./IpcRendererHelper.js";
+import { IpcRendererHelper } from "./IpcRendererHelper.js"; 
 
 export class ProjectManage {
     static projects: ProjectRowR[] = [];
@@ -46,11 +46,11 @@ export class ProjectManage {
         return this.projects[findex];
     }
     // static getInfo(_path: string, callerMetaUrl: string): IResolvePathResult | undefined {
-    //     return resolvePathObject(_path, callerMetaUrl, ProjectManage.projects,undefined, nodeFn.path as any, nodeFn.url as any);
+    //     return resolvePathObject(_path, callerMetaUrl, ProjectManage.projects,undefined, nodeExp.path as any, nodeExp.url as any);
     // }
     // static resolve(filePath: string, importMetaUrl: string): string {
     //     importMetaUrl = importMetaUrl ?? getMetaUrl<ProjectRowR>(filePath, this.projects);
-    //     return resolvePathObject(filePath, importMetaUrl, ProjectManage.projects,undefined, nodeFn.path as any, nodeFn.url as any)?.result;
+    //     return resolvePathObject(filePath, importMetaUrl, ProjectManage.projects,undefined, nodeExp.path as any, nodeExp.url as any)?.result;
     // }
 
 }

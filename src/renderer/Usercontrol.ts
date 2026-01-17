@@ -1,5 +1,5 @@
-import { codeFileInfo } from "../build/codeFileInfo.js";
-import { TemplateMaker } from "../build/TemplateMaker.js";
+import { codeFileInfo } from "../global/codeFileInfo.js";
+import { TemplateMaker } from "../global/TemplateMaker.js";
 import { ExtractArguments, ITptOptions, IUcOptions, UCGenerateMode, UcStates, WhatToDoWithTargetElement } from "../common/enumAndMore.js";
 import { CommonEvent } from "../global/commonEvent.js";
 import { FilterContent } from "../lib/StampGenerator.js";
@@ -9,9 +9,9 @@ import { ucUtil } from "../global/ucUtil.js";
 import { GetUniqueId } from "../common/ipc/enumAndMore.js";
 import { IPassElementOptions, STYLER_SELECTOR_TYPE, SourceNode, StampNode } from "../lib/StampGenerator.js";
 import { TabIndexManager } from "../lib/TabIndexManager.js";
-import { WinManager } from "../lib/WinManager.js";
-import { nodeFn } from "./nodeFn.js";
+import { WinManager } from "../lib/WinManager.js"; 
 import { CSSVariableScope, CssVariableHandler, StyleBaseType, VariableList } from "./StylerRegs.js";
+import { nodeFn } from "./nodeFn.js";
 export type UcDialogResult = "none" | "ok" | 'cancel' | 'close';
 export type ucVisibility = 'inherit' | 'visible' | 'hidden';
 export class Usercontrol {
@@ -24,7 +24,7 @@ export class Usercontrol {
     static async GenerateControls(mainUc: Usercontrol, args?: IUcOptions, htmlCodePath?: string) {
         const mainFilePath = htmlCodePath;
         async function _tpt(xname: string, finfo: codeFileInfo, targetEle: HTMLElement) {
-            //let jsPath = ucUtil.changeExtension(nodeFn.path.resolveFilePath(mainFilePath, xfrom), '.html', 'js');
+            //let jsPath = ucUtil.changeExtension(nodeExp.path.resolveFilePath(mainFilePath, xfrom), '.html', 'js');
             let jsPath: string;
 
             jsPath = finfo.pathOf.code;
@@ -39,7 +39,7 @@ export class Usercontrol {
         async function _uc(xname: string, finfo: codeFileInfo, targetEle: HTMLElement) {
             let jsPath: string;
 
-            jsPath = finfo.pathOf.code; //ucUtil.changeExtension(nodeFn.path.resolveFilePath(mainFilePath, xfrom), '.html', '.js');
+            jsPath = finfo.pathOf.code; //ucUtil.changeExtension(nodeExp.path.resolveFilePath(mainFilePath, xfrom), '.html', '.js');
             let className = nodeFn.path.basename(jsPath).split('.')[0];
             let ft = await import(jsPath);
             let frmType = ft[className] as Usercontrol;

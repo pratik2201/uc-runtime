@@ -1,4 +1,4 @@
-import { codeFileInfo } from "../build/codeFileInfo.js";
+import { codeFileInfo } from "../global/codeFileInfo.js";
 import { SourceNode } from "../lib/StampGenerator.js";
 import { IKeyStampNode } from "../renderer/StylerRegs.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";

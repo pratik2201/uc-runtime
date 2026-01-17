@@ -5,6 +5,7 @@ import { cleanPath } from '../../common/ipc/enumAndMore.js'
 import { fileURLToPath } from 'url'
 import { ImportUserConfig } from './userConfigManage.js'
 import { UserUCConfig } from "../../common/ipc/enumAndMore.js"
+import { configManage } from './configManage.js'
 
 export type BrowserConfig = {
   importmap?: Record<string, string>
@@ -33,7 +34,7 @@ export function ensureHead(): HTMLHeadElement {
 }
 
 export async function scanAllProjects(
-  mainRoot: string = process.cwd()
+  mainRoot: string = configManage.filler.MAIN_PROJECT_PATH//process.cwd()
 ): Promise<ProjectEntry[]> {
   //console.log(mainRoot);
 
@@ -45,12 +46,12 @@ export async function scanAllProjects(
 
     try {
       // const json = JSON.parse(fs.readFileSync(ucconfigPath, 'utf8'))
-      const json = await ImportUserConfig(ucconfigPath);
+      const json = await ImportUserConfig(ucconfigPath) as UserUCConfig;
       const relPath = path.relative(mainRoot, projectRoot) || '.'
 
       result.push({
         rootPath: relPath.replace(/\\/g, '/'),
-        projectName: /*json.name ??*/ path.basename(projectRoot),
+        projectName: json.mainAlias,///*json.name ??*/ path.basename(projectRoot),
         browser: json.browser ?? {}
       })
     } catch {

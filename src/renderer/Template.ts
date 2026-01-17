@@ -1,5 +1,5 @@
-import { codeFileInfo, GetDeclaration } from "../build/codeFileInfo.js";
-import { TemplateMaker } from "../build/TemplateMaker.js";
+import { codeFileInfo, GetDeclaration } from "../global/codeFileInfo.js";
+import { TemplateMaker } from "../global/TemplateMaker.js";
 import { ExtractArguments, ITemplatePathOptions, ITptOptions, TptOptions } from "../common/enumAndMore.js";
 import { FilterContent } from "../lib/StampGenerator.js";
 import { ATTR_OF } from "../global/runtimeOpt.js";
@@ -8,6 +8,7 @@ import { SourceNode, StampNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerat
 import { nodeFn } from "./nodeFn.js";
 import { CSSSearchAttributeCondition, CssVariableHandler, CSSVariableScope, StyleBaseType, StylerRegs, VariableList } from "./StylerRegs.js";
 import { ITransferDataNode, Usercontrol } from "./Usercontrol.js";
+ 
 
 
 interface TptTextObjectNode<K> {
@@ -403,9 +404,6 @@ export class TemplateNode {
       tptExt.parentUc.ucExtends.Events.afterClose.on(({ }) => {
         tptExt.srcNode.release();
       });
-
-
-
 
       tptExt.Events.onDataExport = (data) =>
         param0.parentUc.ucExtends.Events.onDataExport(data);

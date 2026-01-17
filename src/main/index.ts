@@ -6,7 +6,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 let win: Electron.BrowserWindow;
 app.on('ready', async () => {
-    await IpcMainHelper.init(ipcMain);
+     debugger;
+    await IpcMainHelper.init(import.meta.url);
     let mainScreen: Electron.Display = screen.getPrimaryDisplay();
     win = new BrowserWindow({
         width: mainScreen.size.width,
@@ -26,9 +27,9 @@ app.on('ready', async () => {
         IpcMainHelper.loadURL(pathToFileURL(join(__dirname, '../../index.html')).href, win, { baseURLForDataURL: join(__dirname, '../../') });
         win.webContents.once('did-finish-load', () => {
             console.log('Renderer loaded');
-            if (!app.isPackaged) {
+            //if (!app.isPackaged) {
                 win!.webContents.openDevTools(/*{ mode: 'detach' }*/);
-            }
+            //}
         });
         win.on('closed', () => {
             win = null;

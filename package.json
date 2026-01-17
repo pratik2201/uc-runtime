@@ -1,6 +1,6 @@
 {
   "name": "ucbuilder",
-  "version": "2.0.1-beta.6",
+  "version": "3.0.0-beta.0",
   "main": "./out/main/index.js",
   "types": "./out/main/index.d.ts",
   "type": "module",
@@ -20,11 +20,9 @@
     "electron": "^39.1.1",
     "rimraf": "^6.0.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.9.3"
-  },
-  "dependencies": {
-    "chokidar": "^4.0.3"
-  },
+    "typescript": "^5.9.3",    
+    "@types/ucbuilder-devtools": "file:../ucbuilder-devtools/ucbuilder-devtools-1.0.0-bata-0.tgz"
+  },  
   "keywords": [
     "electron app designer",
     "app developement",

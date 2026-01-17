@@ -1,19 +1,20 @@
-import { builder } from "../../build/builder.js";
-import { PathBridge } from "../../build/pathBridge.js";
+
+import { PathBridge } from "../../global/pathBridge.js";
 import { Extensions } from "../../lib/Extensions.js";
 import { TabIndexManager } from "../../lib/TabIndexManager.js";
 import { WinManager } from "../../lib/WinManager.js";
-import { nodeFn } from "../nodeFn.js";
 import { StylerRegs } from "../StylerRegs.js";
 import { IPC_API_KEY } from "../../common/ipc/enumAndMore.js";
 import { IpcRendererHelper } from "./IpcRendererHelper.js";
 import { ProjectManage } from "./ProjectManage.js";
+import { nodeFn } from "../nodeFn.js";
 let isExecuted = false;
-export function initRenderer() {
+export async function initRenderer() {
   if (isExecuted) return;
   isExecuted = true;
   IpcRendererHelper.init(window);
   nodeFn.fullfill = window[IPC_API_KEY].fullFill;
+  //nodeFn.fullfill = window[IPC_API_KEY].fullFill;
   ProjectManage.init();
   PathBridge.path = nodeFn.path;
   PathBridge.url = nodeFn.url;
@@ -22,25 +23,33 @@ export function initRenderer() {
   TabIndexManager.init();
   Extensions.init();
   StylerRegs.initProjectsStyle();
-  let mgen = builder.GetInstance();
+
+
   WinManager.initEvent();
-  const keyBinding = ProjectManage.getInfoByProjectPath(ProjectManage.PROJECT_PATH).config.preference.build.keyBind ?? ['ControlRight', 'F12'];
-  const shortcutKeys = [keyBinding];
-  let hasCaptured = false;
-  //mgen.filewatcher.startWatch();
-  window['$ucbuilder'] = mgen;
-  //console.log(WinManager.sortcutMng);
-  const scLater = WinManager.shortcutManage.CreateLayer();
-  scLater.register(shortcutKeys, (e) => {
-    (async () => {
-      console.log('BUILDING...');
-      //await mgen.filewatcher.stopWatch();
-      await mgen.buildALL(() => {
-        console.log('BUILD SUCCESSFULL...');
-        //mgen.filewatcher.startWatch();
-      }, false);
-    })();
-  });
+
+  try {
+    /*
+    const keyBinding = ProjectManage.getInfoByProjectPath(ProjectManage.PROJECT_PATH).config.preference.build.keyBind ?? ['ControlRight', 'F12'];
+    const shortcutKeys = [keyBinding];
+
+    const { builder } = await import("ucbuilder-devtools/out/renderer/builder.js");
+    let mgen = builder.GetInstance();
+    window['$ucbuilder'] = mgen;
+    const scLater = WinManager.shortcutManage.CreateLayer();
+    scLater.register(shortcutKeys, (e) => {
+      (async () => {
+        console.log('BUILDING...');
+        await mgen.buildALL(() => {
+          console.log('BUILD SUCCESSFULL...');
+        }, false);
+      })();
+    });*/
+  } catch (ex) {
+    // Devtools not installed or failed to load
+    console.warn("ucbuilder: devtools not available.");
+    console.log(ex);
+
+  }
   console.log('All Done... ');
 }
-initRenderer();
+await initRenderer();

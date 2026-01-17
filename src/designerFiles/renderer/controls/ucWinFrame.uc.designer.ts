@@ -52,6 +52,9 @@ export class ucWinFrame$Designer extends Usercontrol {
                 
         delete this.initializecomponent; 
         delete this.initializecomponentAsync; 
+        delete ucExt.initializecomponent;
+        delete ucExt.finalizeInit;
+        delete ucExt.finalizeInitAsync;
     }
 
     initializecomponent(args: IUcOptions, form: ucWinFrame) {        
@@ -72,5 +75,8 @@ export class ucWinFrame$Designer extends Usercontrol {
         ucExt.finalizeInit(args);        
         delete this.initializecomponent; 
         delete this.initializecomponentAsync;
+        delete ucExt.initializecomponent;
+        delete ucExt.finalizeInit;
+        delete ucExt.finalizeInitAsync;
     }
 }

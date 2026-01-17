@@ -1,10 +1,10 @@
-import { GetDeclaration } from "../build/codeFileInfo.js";
+import { GetDeclaration } from "../global/codeFileInfo.js";
 import { ATTR_OF, StyleClassScopeType } from "../global/runtimeOpt.js";
 import { ucUtil } from "../global/ucUtil.js";
 import { ProjectManage } from "./ipc/ProjectManage.js";
 import { GetUniqueId, ProjectRowR } from "../common/ipc/enumAndMore.js";
 import { SourceNode, StampNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
-import { nodeFn } from "./nodeFn.js";
+import { nodeFn } from "./nodeFn.js"; 
 export type VariableList = { [key: string]: string };
 export const patternList = {
   styleTagSelector: /<style([\n\r\w\W.]*?)>([\n\r\w\W.]*?)<\/style>/gi,

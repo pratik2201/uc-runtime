@@ -1,11 +1,10 @@
-import { pathToFileURL } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { deepAssign, GetProjectName, IDirDeclarations, IFileDeclaration, UcBuildOptions, UserUCConfig } from "../../common/ipc/enumAndMore.js";
-import path from "node:path";
+import path, { dirname } from "node:path";
 import fs from "node:fs";
-import { existsSync, fstat } from "node:fs";
 export async function GetUcConfig(projectdir: string): Promise<UserUCConfig> {
     let config_file_path = path.join(projectdir, 'ucconfig.js');
-    if (existsSync(config_file_path)) {
+    if (fs.existsSync(config_file_path)) {
         return await ImportUserConfig(config_file_path); //JSON.parse(fs.readFileSync(config_file_path, 'binary'));
     }
     return undefined;
@@ -62,23 +61,16 @@ function checkUc(cfg: UserUCConfig, filePath: string) {
         }
     }
     pref.build = pref.build ?? new UcBuildOptions();
-
-
-
-
-    const prjName = GetProjectName(filePath, path, fs);
-
-    /*cfg.browser = cfg.browser ?? {  importmap: {} };
-    const prjName = GetProjectName(filePath, path, fs);
-    let importMap = cfg.browser.importmap = {};
-    if (importMap['ucbuilder'] == undefined) {
-        importMap['ucbuilder'] = prjName == 'ucbuilder' ? "." : "node_modules/ucbuilder";
-    }
-    cfg.browser.importmap = importMap;*/
+    if (filePath.startsWith('file:///')) filePath = fileURLToPath(filePath);
+    cfg.browser = cfg.browser ?? {  importmap: {} };
+    const prjName = GetProjectName(dirname(filePath), path, fs);
     if (cfg.browser.importmap['ucbuilder'] == undefined) {
         cfg.browser = cfg.browser ?? { importmap: {} };
         cfg.browser.importmap = cfg.browser.importmap ?? {};
-        cfg.browser.importmap.ucbuilder = cfg.browser.importmap.ucbuilder = (prjName == 'ucbuilder' ? "." : "node_modules/ucbuilder");
+        cfg.browser.importmap.ucbuilder =
+            cfg.browser.importmap.ucbuilder =
+            (prjName == 'ucbuilder' ? "." : "node_modules/ucbuilder");
+        cfg.browser.importmap['ucbuilder-devtools'] = "node_modules/ucbuilder-devtools";
     }
 
 

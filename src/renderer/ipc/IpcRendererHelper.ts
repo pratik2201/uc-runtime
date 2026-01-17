@@ -12,12 +12,12 @@ export class  IpcRendererHelper {
 
     static IPC_ON: { [actionKey: string]: IpcRendererCallBack } = {};
     private static loadRelativeChennels(importMetaUrl: string): Promise<any> {
-        let ns = IpcRendererHelper.getRelativeURL(importMetaUrl);
+        //let ns = IpcRendererHelper.getRelativeURL(importMetaUrl);
         //let s = GetRootPathByUrl_M(ns, this.ucConfigList);
-        if (typeof window !== "undefined") {
+        /*if (typeof window !== "undefined") {
 
             return IpcRendererHelper.Invoke('loadChennels', [importMetaUrl],UC_ACCESS_KEY);
-        }
+        }*/
         return undefined;
     }
     static ucConfigList: ProjectRowBase[] = [];

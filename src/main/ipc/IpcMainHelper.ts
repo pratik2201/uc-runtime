@@ -1,11 +1,12 @@
 import path, { dirname, resolve } from "node:path";
 import url, { fileURLToPath, pathToFileURL } from "node:url";
 import fs from "node:fs";
-import { PathBridge } from "../../build/pathBridge.js";
+import { PathBridge } from "../../global/pathBridge.js";
 import { configManage } from "./configManage.js";
 import { protocol, type BrowserWindow, type IpcMainEvent } from "electron";
 import { correctpath, getCloneableObject, IPC_API_KEY, IPC_GET_KEY, IPC_REGISTER_KEY } from "../../common/ipc/enumAndMore.js";
-import { createImportMap, generateImportMap, scanAllProjects } from "./importMapGenerator.js";
+import { createImportMap, generateImportMap, scanAllProjects } from "./importMapGenerator.js";  // ucbuilder/out/main/devtoolsBridge.js
+import { app,ipcMain } from "electron";
 
 type IpcMainCallBack = (e: import("electron").IpcMainEvent, ...args: any[]) => void;
 type IpcMainInvokeCallBack = (e: import("electron").IpcMainInvokeEvent, ...args: any[]) => Promise<any>;
@@ -69,8 +70,9 @@ export class IpcMainHelper {
             this.IPC_HANDLE.set(actionKey, callback);
     }
 
-    static async init(_ipcMain: import("electron").IpcMain) {
-        _ipcMain.on(IPC_API_KEY, (event, ...args: any[]) => {
+    static async init(importMetaPath:string/*_ipcMain: import("electron").IpcMain*/) {
+       
+        ipcMain.on(IPC_API_KEY, (event, ...args: any[]) => {
             let actionKey = args.shift();
             if (this.IPC_ON.has(actionKey))
                 this.IPC_ON.get(actionKey)(event, ...args);
@@ -79,7 +81,7 @@ export class IpcMainHelper {
                 console.log(`!!! no 'ON EVENT' found [${actionKey}]`);
             }
         });
-        _ipcMain.handle(IPC_API_KEY, async (event, ...args: any[]) => {
+        ipcMain.handle(IPC_API_KEY, async (event, ...args: any[]) => {
             let actionKey = args.shift();
             if (this.IPC_HANDLE.has(actionKey))
                 return await this.IPC_HANDLE.get(actionKey)(event, ...args);
@@ -88,8 +90,31 @@ export class IpcMainHelper {
                 return undefined;
             }
         });
+        debugger;
+        await configManage.init(importMetaPath);
+        (await import('../nodeFn.ipc.js')).default();
 
-        await configManage.init();
+
+        if (app.isPackaged) return;
+        
+        try {    
+            const {initDevTools} = await import("ucbuilder-devtools/out/main/index.js");
+            if (initDevTools) {
+                console.log('before');
+                await initDevTools();
+            }
+        } catch (err) {
+            // Devtools not installed or failed to load
+            console.warn("ucbuilder: devtools not available.");
+        }
+
+
+
+        // (await import('../../build/fileWatcher.ipc.js')).default();
+        // if (configManage.filler.MAIN_CONFIG.config.env == 'developer') {
+        //     (await import('../../build/buildTimeFn.ipc.js')).default();
+        // }
+        console.log('configManage inited.');
     }
     static INITIAL_SCRIPT = "";
 
@@ -115,7 +140,7 @@ export class IpcMainHelper {
         const htmlRegex = /<html\b[^>]*>/i;
 
         if (headRegex.test(html)) {
-            html = html.replace(headRegex, match => match + importMapScript );
+            html = html.replace(headRegex, match => match + importMapScript);
         }
         else if (htmlRegex.test(html)) {
             html = html.replace(htmlRegex, match => `${match}\n<head>${importMapScript}</head>`);
@@ -126,4 +151,5 @@ export class IpcMainHelper {
 
         win.loadURL("data:text/html;charset=utf-8," + encodeURIComponent(html), options);
     }
+
 } 

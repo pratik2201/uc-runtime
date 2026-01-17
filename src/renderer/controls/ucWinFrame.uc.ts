@@ -5,7 +5,7 @@ export class ucWinFrame extends ucWinFrame$Designer {
     async $() {
         const parentExt = this.ucExtends.PARENT.ucExtends;
         this.ucExtends.initalComponents.changeStage(this.container1);
-        parentExt.initalComponents.changeStage(this.container1);
+        parentExt.initalComponents.stageHT = this.container1;
         this.lbl_title.innerText = parentExt.wrapperHT.getAttribute('x-caption') ?? '';
         this.cmd_close.addEventListener('mousedown', (e) => {
             e.preventDefault();

@@ -1,5 +1,6 @@
 import UcDefaultConfig from "./out/main/ipc/userConfigManage.js";
 export default UcDefaultConfig({
+    mainAlias:'ucbuilder',
     preference: {
         build: {
             RuntimeResources: [

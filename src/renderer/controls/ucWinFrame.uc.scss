@@ -1,6 +1,6 @@
-$i-UC_WIN_TITLE_BACK :#124559;
-$i-UC_WIN_TITLE_FORE: #ffd60a;
-$i-UC_WIN_BORDER_FILL :#0c3a4c;
+$l-UC_WIN_TITLE_BACK :#124559;
+$l-UC_WIN_TITLE_FORE: #ffd60a;
+$l-UC_WIN_BORDER_FILL :#0c3a4c;
 
 & {
     position: relative;
@@ -21,7 +21,7 @@ main-container {
 title-bar {
     width: inherit;
     display: grid;
-    background-color: $i-UC_WIN_TITLE_BACK;
+    background-color: $l-UC_WIN_TITLE_BACK;
     grid-template-columns: auto max-content;
 }
 
@@ -35,26 +35,26 @@ icon-button {
     display: block;
     width: 30px;
     text-align: center;
-    background-color: $i-UC_WIN_BORDER_FILL;
+    background-color: $l-UC_WIN_BORDER_FILL;
 }
 
 title-text,
 icon-button {
     font-weight: bold;
-    color: $i-UC_WIN_TITLE_FORE;
+    color: $l-UC_WIN_TITLE_FORE;
 }
 
 icon-button:hover {
-    background-color: $i-UC_WIN_TITLE_BACK;
+    background-color: $l-UC_WIN_TITLE_BACK;
 }
 
 icon-close {
     display: block;
-    background-color: $i-UC_WIN_BORDER_FILL;
+    background-color: $l-UC_WIN_BORDER_FILL;
 }
 
 container {
-    border-right: solid 4px $i-UC_WIN_BORDER_FILL;
-    border-left: solid 4px $i-UC_WIN_BORDER_FILL;
-    border-bottom: solid 4px $i-UC_WIN_BORDER_FILL;
+    border-right: solid 4px $l-UC_WIN_BORDER_FILL;
+    border-left: solid 4px $l-UC_WIN_BORDER_FILL;
+    border-bottom: solid 4px $l-UC_WIN_BORDER_FILL;
 }

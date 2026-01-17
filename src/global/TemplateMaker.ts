@@ -1,4 +1,4 @@
-import { ucUtil } from "../global/ucUtil.js";
+import { ucUtil } from "./ucUtil.js";
 import { nodeFn } from "../renderer/nodeFn.js";
 function randomNo(min: number = 0, max: number = 1000000): number {
     let difference = max - min;

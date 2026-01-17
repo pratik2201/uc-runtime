@@ -1,7 +1,7 @@
-import { codeFileInfo } from "../build/codeFileInfo.js";
-import { nodeFn } from "../renderer/nodeFn.js";
+import { codeFileInfo } from "../global/codeFileInfo.js"; 
 import ucWinFrame$Dynamic from "../renderer/controls/ucWinFrame.uc.html.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
+import { nodeFn } from "../renderer/nodeFn.js";
 const VOID_HTML_NODE_NAMES = [
     'AREA',
     'BASE',
@@ -401,7 +401,7 @@ export class HTMLx {
         }
         return undefined;
         //console.log(['Absolute', obj['AbsolutePath']]);
-        // relpath = nodeFn.path.relativeFilePath(htmlFilePath, targetUc['AbsolutePath']);
+        // relpath = nodeExp.path.relativeFilePath(htmlFilePath, targetUc['AbsolutePath']);
         //console.log(relpath);
 
 

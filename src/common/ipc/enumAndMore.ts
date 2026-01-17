@@ -234,6 +234,8 @@ export function GetPackage(projectdir: string, path: typeof import('path'), fs: 
 }
 export function GetProjectName(projectdir: string, path: typeof import('path'), fs: typeof import('fs')): string | undefined {
     let package_file_path = path.join(projectdir, 'package.json');
+    //console.log(package_file_path);
+
     if (fs.existsSync(package_file_path)) {
         let packageContent = JSON.parse(fs.readFileSync(package_file_path, 'binary'));
         if (packageContent != undefined)
@@ -313,6 +315,7 @@ export type IResolvePathResult<K = ProjectRowR> = {
 export class UserUCConfig<K = IDirDeclarations> {
     env: 'developer' | 'release' = 'developer';
     exports: 'types' | 'import' = 'import';
+    mainAlias: string;
     preloadMain: string[] = [];
     browser = {
         importmap: {} as { [alice: string]: string; },
@@ -326,13 +329,7 @@ export class UserUCConfig<K = IDirDeclarations> {
         outDir: "" as any,
     };
     projectBaseCssPath?: string = "styles.scss";
-    //developer = new UcBuildOptions<K>();
-    //type?: "ts" | "js";
 }
-
-// export class projectWatcher {
-//     pathRelacer?: { [pattern: string]: PathReplacer } = {};
-// }
 export class UcBuildOptions<K = IDirDeclarations> {
     keyBind?: KeyboardKey[] = ['ControlRight', 'F12'];
     ignorePath?: string[] = ["node_modules", ".vscode", "out", "dist", ".git"];
@@ -356,9 +353,7 @@ export const SourceFileTypeMap: IFileDeclarationTypesMap = {
     scss: '',
     code: '',
     designer: '',
-    dynamicDesign: '',
-    /*'.js': '',
-    '.designer.js': '',*/
+    dynamicDesign: ''
 }
 // export type IQuickDirDeclaration = {
 //     [dirPath: string]: Partial<{ [s in FileDeclarationTypes]: IFileDeclaration }>
@@ -409,7 +404,6 @@ export class IFileDeclaration {
      * 
      * fileDeclaration.subDirPath = 'htmlFiles'
      * ./[src]/[htmlFiles]/lib/file.uc.designer.ts     =>    ./src/htmlFiles/lib/file.uc.designer.ts 
-     * 
      * ```
      */
     subDirPath: string = '';
@@ -422,11 +416,11 @@ export class IFileDeclaration {
      * ```
      */
     extension: string = '';
-    
+
 }
 export class IUCConfigPreference<K = IDirDeclarations> {
     build = new UcBuildOptions<K>();
-      
+
     dirDeclaration?: K = {
 
     } as any;

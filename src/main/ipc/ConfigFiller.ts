@@ -4,16 +4,18 @@ import url from "node:url";
 import { ucUtil } from "../../global/ucUtil.js";
 import { correctpath, deepAssign, GetProjectName, IImportMap, IUCConfigPreference, ProjectRowBase, UcBuildOptions, UserUCConfig } from "../../common/ipc/enumAndMore.js";
 import { ImportUserConfig } from "./userConfigManage.js";
+import { app } from "electron";
 
 export class ConfigFiller {
     MAIN_CONFIG: ProjectRowBase;
+    MAIN_PROJECT_PATH: string;
     PREELOAD_IMPORT: string[] = [];
     ucConfigList: ProjectRowBase[] = [];
 
     _setRootDirecory(row: ProjectRowBase, projPath: string) {
         row.projectPath = projPath;
         const cfg = row.config;
-        let mainProjPath = path.resolve();
+        let mainProjPath = this.MAIN_PROJECT_PATH; //;path.resolve();
         row.rootPath = correctpath(path.normalize(path.relative(mainProjPath, row.projectPath)));
         row.rootPath = row.rootPath == '.' ? '.' : `./${row.rootPath}/`;
         /*if (row.rootPath == '.') {
@@ -87,7 +89,9 @@ export class ConfigFiller {
         this.PREELOAD_IMPORT = ucUtil.distinct(this.PREELOAD_IMPORT);
         this.ucConfigList.sort((a, b) => b.importMetaURL.length - a.importMetaURL.length);
         this.updateAliceToPath(this.ucConfigList);
-        this.generateResource();
+        if (!app.isPackaged) {
+            this.generateResource();
+        }
         this.Fill_ImportMap(this.ucConfig);
     }
     generateResource = () => {
@@ -144,7 +148,10 @@ export class ConfigFiller {
             if (ucCfg != undefined) {
                 row.config = deepAssign(row.config ?? new UserUCConfig(), ucCfg);
                 const cfg = row.config;
-                if (this.MAIN_CONFIG == undefined) this.MAIN_CONFIG = row;
+                if (this.MAIN_CONFIG == undefined) {
+                    this.MAIN_CONFIG = row;
+                    this.MAIN_PROJECT_PATH = projectDirPath;
+                }
                 row.projectName = projectName;
                 this._setRootDirecory(row, correctpath(projectDirPath));
                 this.PREELOAD_IMPORT.push(...cfg.preloadMain);
@@ -178,7 +185,7 @@ export class ConfigFiller {
     getProjectDir(_dirPath: string) {
         let package_path = '';
         do {
-            package_path = path.join(_dirPath, 'package.json');
+            package_path = path.join(_dirPath, 'ucconfig.js');
             _dirPath = path.dirname(_dirPath);
         } while (!fs.existsSync(package_path))
         return path.dirname(package_path);
