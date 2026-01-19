@@ -28,7 +28,7 @@ export async function initRenderer() {
   WinManager.initEvent();
 
   try {
-    /*
+    
     const keyBinding = ProjectManage.getInfoByProjectPath(ProjectManage.PROJECT_PATH).config.preference.build.keyBind ?? ['ControlRight', 'F12'];
     const shortcutKeys = [keyBinding];
 
@@ -43,7 +43,7 @@ export async function initRenderer() {
           console.log('BUILD SUCCESSFULL...');
         }, false);
       })();
-    });*/
+    });
   } catch (ex) {
     // Devtools not installed or failed to load
     console.warn("ucbuilder: devtools not available.");

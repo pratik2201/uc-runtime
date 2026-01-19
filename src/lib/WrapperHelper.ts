@@ -334,6 +334,7 @@ export interface PreDefinedPropertiesHTML extends HTMLBaseAttributes {
 };
 export interface IHTMLxSource {
     htmlSource: () => string;
+    namespace?: string;
     dynamicFilePath: string
 }
 export class HTMLx {

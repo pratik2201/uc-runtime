@@ -6,7 +6,7 @@ import { configManage } from "./configManage.js";
 import { protocol, type BrowserWindow, type IpcMainEvent } from "electron";
 import { correctpath, getCloneableObject, IPC_API_KEY, IPC_GET_KEY, IPC_REGISTER_KEY } from "../../common/ipc/enumAndMore.js";
 import { createImportMap, generateImportMap, scanAllProjects } from "./importMapGenerator.js";  // ucbuilder/out/main/devtoolsBridge.js
-import { app,ipcMain } from "electron";
+import { app, ipcMain } from "electron";
 
 type IpcMainCallBack = (e: import("electron").IpcMainEvent, ...args: any[]) => void;
 type IpcMainInvokeCallBack = (e: import("electron").IpcMainInvokeEvent, ...args: any[]) => Promise<any>;
@@ -70,8 +70,8 @@ export class IpcMainHelper {
             this.IPC_HANDLE.set(actionKey, callback);
     }
 
-    static async init(importMetaPath:string/*_ipcMain: import("electron").IpcMain*/) {
-       
+    static async init(importMetaPath: string/*_ipcMain: import("electron").IpcMain*/) {
+
         ipcMain.on(IPC_API_KEY, (event, ...args: any[]) => {
             let actionKey = args.shift();
             if (this.IPC_ON.has(actionKey))
@@ -95,19 +95,17 @@ export class IpcMainHelper {
         (await import('../nodeFn.ipc.js')).default();
 
 
-        if (app.isPackaged) return;
-        
-        try {    
-            const {initDevTools} = await import("ucbuilder-devtools/out/main/index.js");
-            if (initDevTools) {
-                console.log('before');
-                await initDevTools();
+        if (!app.isPackaged) {
+            try {
+                const { initDevTools } = await import("ucbuilder-devtools/out/main/index.js");
+                if (initDevTools) {
+                    await initDevTools();
+                }
+            } catch (err) {
+                // Devtools not installed or failed to load
+                console.warn("ucbuilder: devtools not available.");
             }
-        } catch (err) {
-            // Devtools not installed or failed to load
-            console.warn("ucbuilder: devtools not available.");
         }
-
 
 
         // (await import('../../build/fileWatcher.ipc.js')).default();

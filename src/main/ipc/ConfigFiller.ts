@@ -96,8 +96,7 @@ export class ConfigFiller {
     }
     generateResource = () => {
         const cfg = this.MAIN_CONFIG.config;
-
-        if (cfg.env == 'release') return;
+        if (app.isPackaged) return;
         const pref = cfg.preference;
         const dirDeclaration = pref.dirDeclaration;
         const runtimeRes = pref.build?.RuntimeResources ?? [];
@@ -120,6 +119,8 @@ export class ConfigFiller {
                             let OUT_DIR = dirDeclaration[pref.outDir].dirPath;
                             const dest = path.join(OUT_DIR, commonPath);
                             fs.mkdirSync(path.dirname(dest), { recursive: true });
+                            //console.log([full,dest]);
+
                             fs.copyFileSync(full, dest);
                         });
                     }

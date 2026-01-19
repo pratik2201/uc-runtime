@@ -1,14 +1,14 @@
 import { codeFileInfo, GetDeclaration } from "../global/codeFileInfo.js";
 import { TemplateMaker } from "../global/TemplateMaker.js";
-import { ExtractArguments, ITemplatePathOptions, ITptOptions, TptOptions } from "../common/enumAndMore.js";
+import { ExtractArguments, ISourceOptions, ITemplatePathOptions, ITptOptions, TptOptions } from "../common/enumAndMore.js";
 import { FilterContent } from "../lib/StampGenerator.js";
 import { ATTR_OF } from "../global/runtimeOpt.js";
 import { ucUtil } from "../global/ucUtil.js";
 import { SourceNode, StampNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
 import { nodeFn } from "./nodeFn.js";
-import { CSSSearchAttributeCondition, CssVariableHandler, CSSVariableScope, StyleBaseType, StylerRegs, VariableList } from "./StylerRegs.js";
+import { CSSSearchAttributeCondition, CssVariableHandler, CSSVariableScope, StyleBaseType, StylerRegs, Use_loader, VariableList } from "./StylerRegs.js";
 import { ITransferDataNode, Usercontrol } from "./Usercontrol.js";
- 
+
 
 
 interface TptTextObjectNode<K> {
@@ -16,6 +16,10 @@ interface TptTextObjectNode<K> {
   row: K
 }
 export class Template {
+  static MATERIAL: ISourceOptions = {
+    htmlContents: undefined as string,
+    cssContents: undefined as string,
+  }
   static extractArgs = (args: any) => ExtractArguments(args);
 
   static getTemplateOptionByElement(iele: HTMLElement, cinfo: codeFileInfo): ITemplatePathOptions | undefined {
@@ -63,11 +67,11 @@ export class Template {
       rtrn.cssContents = nodeFn.fs.readFileSync(csspath);
       rtrn.htmlContents = nodeFn.fs.readFileSync(htmlpath);
       if (rtrn.htmlContents == undefined) debugger;
-      rtrn.htmlContents = ucUtil.PHP_ADD(rtrn.htmlContents ) ?? undefined;
+      rtrn.htmlContents = ucUtil.PHP_ADD(rtrn.htmlContents) ?? undefined;
     } else {
       rtrn.objectKey = cinfo.pathOf.scss;
       rtrn.cssContents = nodeFn.fs.readFileSync(cinfo.pathOf.scss);
-      rtrn.htmlContents = ucUtil.PHP_ADD(iele.outerHTML );
+      rtrn.htmlContents = ucUtil.PHP_ADD(iele.outerHTML);
     }
 
     return rtrn;
@@ -76,7 +80,8 @@ export class Template {
   static splitCSSById(cssContent: string, cssFilePath: string, importMetaUrl: string, rtrn: { [key: string]: ITemplatePathOptions }): string {
     let rtrnKeys = Object.keys(rtrn);
     //  if (cssContent.includes('part2Size')) debugger;
-    cssContent = StylerRegs.REMOVE_EXTRASPACE(StylerRegs.REMOVE_COMMENT(useLoader(cssContent, cssFilePath, importMetaUrl)));
+    //cssContent = StylerRegs.REMOVE_EXTRASPACE(StylerRegs.REMOVE_COMMENT(useLoader(cssContent, cssFilePath, importMetaUrl)));
+    cssContent = Use_loader(cssContent, cssFilePath);
     let cssExtrct = StylerRegs.ScssExtractor(cssContent);
 
     let outerRulesCSS = "";
@@ -134,7 +139,7 @@ export class Template {
       }
 
     return outerRulesCSS;
-    function useLoader(csscnt: string, cssFpath: string, importMetaUrl: string): string {
+    /*function useLoader(csscnt: string, cssFpath: string, importMetaUrl: string): string {
       //console.log(cssContent);
       let ppath: string = undefined;
       if (cssFpath != undefined)
@@ -150,13 +155,12 @@ export class Template {
           return useLoader(c, pth, prj.project.importMetaURL);
         });
       return csscnt;
-    }
+    }*/
   }
   static GetOptionsByContent(htmlcontent: string, cssContent: string, cssFilePath: string, importMetaUrl: string): {
     outerCSS: string,
     tptObj: { [key: string]: ITemplatePathOptions }
   } {
-    //console.log(ucUtil.PHP_REMOVE(htmlcontent ));
     let ele = ucUtil.PHP_REMOVE(htmlcontent)["#$"]();
     let rtrn: { [key: string]: ITemplatePathOptions } = {};
     let hasMultipleNode = !ele.hasAttribute('id');
@@ -196,11 +200,14 @@ export class Template {
   }
 
   static GetObjectOfTemplate(cinfo: codeFileInfo, htContent?: string, cssdata?: string): { outerCSS: string, tptObj: { [key: string]: ITemplatePathOptions } } {
+
     let impUrl = cinfo.projectInfo.importMetaURL;
     htContent = htContent ?? nodeFn.fs.readFileSync(cinfo.pathOf.html);
-    if (cssdata == undefined && nodeFn.fs.existsSync(cinfo.pathOf.scss/*, impUrl*/))
+
+    if (cssdata == undefined && nodeFn.fs.existsSync(cinfo.pathOf.scss))
       cssdata = nodeFn.fs.readFileSync(cinfo.pathOf.scss);
     else cssdata = '';
+
     let robj = this.GetOptionsByContent(htContent,
       cssdata,
       cinfo.pathOf.scss, impUrl);

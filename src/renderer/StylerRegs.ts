@@ -4,7 +4,7 @@ import { ucUtil } from "../global/ucUtil.js";
 import { ProjectManage } from "./ipc/ProjectManage.js";
 import { GetUniqueId, ProjectRowR } from "../common/ipc/enumAndMore.js";
 import { SourceNode, StampNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
-import { nodeFn } from "./nodeFn.js"; 
+import { nodeFn } from "./nodeFn.js";
 export type VariableList = { [key: string]: string };
 export const patternList = {
   styleTagSelector: /<style([\n\r\w\W.]*?)>([\n\r\w\W.]*?)<\/style>/gi,
@@ -12,7 +12,7 @@ export const patternList = {
   SINGLELINE_COMMENT_REGS: /\/\/.*/mg,
   SPACE_REMOVER_REGS: /(;|,|:|{|})[\n\r ]*/gi,
   subUcFatcher: /\[inside=([\"'`])((?:\\.|(?!\1)[^\\])*)\1\]([\S\s]*)/gim,
-  themeCSSLoader: /\@(import|use)\s*([\"'`])((?:\\.|(?!\2)[^\\])*)\2\s*;/gim,
+  themeCSSLoader: /@use\s*(["'`])((?:\\.|(?!\1)[^\\])*)\1\s*;/gim,
   mediaSelector: /^\s*@(media|keyframes|supports|container|document)\s+([\s\S]*)\s*/i,
   animationNamePattern: /animation-name\s*:\s*-([lgit])-(\w+)\s*;/gim,
   animationAccessPattern: /-([lgit])-(\w+)\s*/gim,
@@ -143,14 +143,14 @@ export class StylerRegs {
 
     this.nodeName = WRAPPER_TAG_NAME; //"f" + uniqOpt.randomNo();
     this.rootAndExcludeHandler = new RootAndExcludeHandler(this);
-    this.themeCssHandler = new ThemeCssHandler(this);
+    //this.themeCssHandler = new ThemeCssHandler(this);
     this.varHandler = new CssVariableHandler(this);
     this.selectorHandler = new SelectorHandler(this, mode);
   }
   varHandler: CssVariableHandler;
   selectorHandler: SelectorHandler;
   rootAndExcludeHandler: RootAndExcludeHandler;
-  themeCssHandler: ThemeCssHandler;
+  //themeCssHandler: ThemeCssHandler;
   cssVars: { key: string; value: string }[] = [];
 
 
@@ -185,9 +185,9 @@ export class StylerRegs {
     let _params = Object.assign(Object.assign({}, StyleSeperatorOptions), _args);
     _params.callCounter++;
     let _curProject: ProjectRowR = _this.projectInfo;
-    let rtrn = StylerRegs.REMOVE_COMMENT(_params.data);
-    rtrn = StylerRegs.REMOVE_EXTRASPACE(_this.themeCssHandler.match(rtrn));
-
+    //let rtrn = StylerRegs.REMOVE_COMMENT(_params.data);
+    //rtrn = StylerRegs.REMOVE_EXTRASPACE(Use_loader(rtrn, this.main.cssFilePath));
+    let rtrn = Use_loader(_params.data, this.main.cssFilePath);
     rtrn = this.opnClsr.doTask("{", "}", rtrn,
       (selectorText: string, styleContent: string, count: number): string => {
         let excludeContentList = this.rootAndExcludeHandler.checkRoot(selectorText, styleContent, _params);
@@ -393,52 +393,74 @@ export class RootAndExcludeHandler {
     return externalStyles;
   }
 }
-
-export class ThemeCssHandler {
-  main: StylerRegs;
-  constructor(main: StylerRegs) {
-    this.main = main;
-  }
-  match(rtrn: string): string {
-    let _this = this;
-    let fspath = this.main.main.cssFilePath;
-    rtrn = rtrn.replace(
-      patternList.themeCSSLoader,
-      (match: string, code: string, quationMark: string, path: string, offset: any, input_string: string) => {
-
-        switch (code) {
-          case "use":
-            let themecontents = '';
-            if (fspath != undefined) {
-              fspath = nodeFn.path.resolveFilePath(fspath, path);
-              themecontents = ucUtil.devEsc(nodeFn.fs.readFileSync(fspath));
-            }
-            themecontents = StylerRegs.REMOVE_COMMENT(themecontents);
-            themecontents = StylerRegs.REMOVE_EXTRASPACE(_this.match(themecontents));
-            return themecontents;
-          case "import":
-            if (fspath != undefined) {
-              fspath = nodeFn.path.resolveFilePath(fspath, path);
-              let prj = GetDeclaration(this.main.projectInfo.importMetaURL);// ProjectManage.getInfo(fspath, this.main.projectInfo.importMetaURL);
-              let stpSrc = StampNode.registerSoruce({
-                key: path,
-                cssFilePath: fspath,
-                baseType: _this.main.baseType,
-                project: prj.project as any,
-                accessName: '',
-              });
-              stpSrc.pushCSS(fspath, prj.project.importMetaURL);
-              _this.main.main.onRelease.push(async () => {
-                await stpSrc.release();
-              });
-            }
-            return "";
+export function Use_loader(content: string, cssFilePath: string) {
+  content = StylerRegs.REMOVE_EXTRASPACE(StylerRegs.REMOVE_COMMENT(content));
+  content = content.replace(
+    patternList.themeCSSLoader,
+    (match: string, quationMark: string, path: string, offset: any, input_string: string) => {
+      let themecontents = '';
+      if (cssFilePath != undefined) {
+        const useFilePath = nodeFn.path.resolveFilePath(cssFilePath, path);
+        if (nodeFn.fs.existsSync(useFilePath)) {
+          themecontents = ucUtil.devEsc(nodeFn.fs.readFileSync(useFilePath));
+          themecontents = Use_loader(themecontents, useFilePath);
+          //themecontents = StylerRegs.REMOVE_COMMENT(themecontents);
+          //themecontents = StylerRegs.REMOVE_EXTRASPACE(Use_loader(themecontents, useFilePath));
         }
       }
-    );
-    return rtrn;
-  }
+      return themecontents;
+    }
+  );
+  return content;
 }
+
+// export class ThemeCssHandler {
+//   main: StylerRegs;
+//   constructor(main: StylerRegs) {
+//     this.main = main;
+//   }
+//   match(rtrn: string): string {
+//     let _this = this;
+//     let cssfilepath = this.main.main.cssFilePath;
+//     rtrn = rtrn.replace(
+//       patternList.themeCSSLoader,
+//       (match: string, code: string, quationMark: string, path: string, offset: any, input_string: string) => {
+
+//         /*switch (code) {
+//           case "use":*/
+//         let themecontents = '';
+//         if (cssfilepath != undefined) {
+//           const fspath = nodeFn.path.resolveFilePath(cssfilepath, path);
+//           themecontents = ucUtil.devEsc(nodeFn.fs.readFileSync(fspath));
+//         }
+//         themecontents = StylerRegs.REMOVE_COMMENT(themecontents);
+//         themecontents = StylerRegs.REMOVE_EXTRASPACE(_this.match(themecontents));
+//         return themecontents;
+//         /*case "import":
+//           console.log('[[[[[[[[[[[[[[[[[[[[     IMPORT     ]]]]]]]]]]]]]]]]]]]]]]');
+
+//           if (cssfilepath != undefined) {
+//             const fspath = nodeFn.path.resolveFilePath(cssfilepath, path);
+//             let prj = GetDeclaration(this.main.projectInfo.importMetaURL);// ProjectManage.getInfo(fspath, this.main.projectInfo.importMetaURL);
+//             let stpSrc = StampNode.registerSoruce({
+//               key: path,
+//               cssFilePath: fspath,
+//               baseType: _this.main.baseType,
+//               project: prj.project as any,
+//               accessName: '',
+//             });
+//             stpSrc.pushCSS(fspath, prj.project.importMetaURL);
+//             _this.main.main.onRelease.push(async () => {
+//               await stpSrc.release();
+//             });
+//           }
+//           return "";
+//       }*/
+//       }
+//     );
+//     return rtrn;
+//   }
+// }
 
 export const ScopeSelectorOptions: IScopeSelectorOptions = {
   selectorText: "",

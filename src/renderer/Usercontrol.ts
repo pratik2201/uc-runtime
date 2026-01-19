@@ -1,6 +1,6 @@
 import { codeFileInfo } from "../global/codeFileInfo.js";
 import { TemplateMaker } from "../global/TemplateMaker.js";
-import { ExtractArguments, ITptOptions, IUcOptions, UCGenerateMode, UcStates, WhatToDoWithTargetElement } from "../common/enumAndMore.js";
+import { ExtractArguments, ISourceOptions, ITptOptions, IUcOptions, UCGenerateMode, UcStates, WhatToDoWithTargetElement } from "../common/enumAndMore.js";
 import { CommonEvent } from "../global/commonEvent.js";
 import { FilterContent } from "../lib/StampGenerator.js";
 import { objectOpt } from "../common/enumAndMore.js";
@@ -9,13 +9,16 @@ import { ucUtil } from "../global/ucUtil.js";
 import { GetUniqueId } from "../common/ipc/enumAndMore.js";
 import { IPassElementOptions, STYLER_SELECTOR_TYPE, SourceNode, StampNode } from "../lib/StampGenerator.js";
 import { TabIndexManager } from "../lib/TabIndexManager.js";
-import { WinManager } from "../lib/WinManager.js"; 
+import { WinManager } from "../lib/WinManager.js";
 import { CSSVariableScope, CssVariableHandler, StyleBaseType, VariableList } from "./StylerRegs.js";
 import { nodeFn } from "./nodeFn.js";
 export type UcDialogResult = "none" | "ok" | 'cancel' | 'close';
 export type ucVisibility = 'inherit' | 'visible' | 'hidden';
 export class Usercontrol {
-
+    static MATERIAL: ISourceOptions = {
+        htmlContents: undefined as string,
+        cssContents: undefined as string,
+    }
     static parse(node: HTMLElement): Usercontrol { return node["#data"](ATTR_OF.BASE_OBJECT); }
     static Resolver = (outDesignerImportMetaUrl: string, relPathOfOutHtml: string) => {
         let fp = nodeFn.url.fileURLToPath(outDesignerImportMetaUrl); // `absFileUrl` designer js path
@@ -255,7 +258,8 @@ export class Usercontrol {
                 ucExt.session = new SessionManager();
                 ucExt.session.init(this, param0.session, param0.session.uniqueIdentity);
             }*/
-
+            //console.log(`{${param0.cssKeyStamp}}`);
+            
             ucExt.srcNode = StampNode.registerSoruce({
                 key: ucExt.fileInfo.pathOf.scss,
                 cssKeyStamp: param0.cssKeyStamp,
@@ -268,7 +272,7 @@ export class Usercontrol {
             });
 
             //  if (ucExt.fileInfo.html.fullPath.includes('expenseSetup.uc.html')) debugger;
-            let htPathToRead = param0.source.htmlFilePath ?? ucExt.fileInfo.pathOf.html;
+            let htPathToRead = param0.source.htmlFilePath  ?? ucExt.fileInfo.pathOf.html;
             let htContent = param0.source.htmlContents;
             /*console.log(htContent);
             
@@ -277,7 +281,7 @@ export class Usercontrol {
                 
             }*/
             //console.log(htPathToRead);
-            
+
             let tmkr = Usercontrol.templateMkr.get(htPathToRead);
             if (tmkr == undefined) {
                 if (htContent == undefined)
@@ -322,14 +326,12 @@ export class Usercontrol {
                 ucExt.form = param0.parentUc.ucExtends.form;
                 ucExt.PARENT = param0.parentUc;
                 ucExt.srcNode.config({
-                    parentUc: param0.parentUc,
+                    parentUc: ucExt.PARENT,
                     parentSrc: ucExt.PARENT.ucExtends.srcNode,
                     wrapper: ucExt.wrapperHT,
                     key: ucExt.fileInfo.pathWithExt('html'),
                     accessName: param0.accessName
-                });
-                // param0.targetElement.nodeName
-
+                }); 
 
                 if (param0.targetElement) {
                     ucExt.initalComponents.elements = param0.targetElement.children;

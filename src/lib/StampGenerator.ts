@@ -118,7 +118,7 @@ export class SourceNode {
     }
 
     pushCSS(cssFilePath: string, importMetaUrl: string, localNodeElement?: HTMLElement) {
-        importMetaUrl = importMetaUrl ?? getMetaUrl(cssFilePath, ProjectManage.projects);
+       // importMetaUrl = importMetaUrl ?? getMetaUrl(cssFilePath, ProjectManage.projects);
         let cssContent = '';
         if (nodeFn.fs.existsSync(cssFilePath))
             cssContent = nodeFn.fs.readFileSync(cssFilePath);
@@ -129,18 +129,18 @@ export class SourceNode {
             localNodeElement
         );
     }
-    pushCSSAsync = async (cssFilePath: string, importMetaUrl: string, localNodeElement?: HTMLElement) => {
-        importMetaUrl = importMetaUrl ?? getMetaUrl(cssFilePath, ProjectManage.projects);
-        let cssContent = '';
-        if (nodeFn.fs.existsSync(cssFilePath))
-            cssContent = nodeFn.fs.readFileSync(cssFilePath, undefined);
-        this.pushCSSByContent(
-            cssFilePath,
-            cssContent,
-            // ProjectManage.getInfo(cssFilePath, importMetaUrl).project,
-            localNodeElement
-        );
-    }
+    // pushCSSAsync = async (cssFilePath: string, importMetaUrl: string, localNodeElement?: HTMLElement) => {
+    //     importMetaUrl = importMetaUrl ?? getMetaUrl(cssFilePath, ProjectManage.projects);
+    //     let cssContent = '';
+    //     if (nodeFn.fs.existsSync(cssFilePath))
+    //         cssContent = nodeFn.fs.readFileSync(cssFilePath, undefined);
+    //     this.pushCSSByContent(
+    //         cssFilePath,
+    //         cssContent,
+    //         // ProjectManage.getInfo(cssFilePath, importMetaUrl).project,
+    //         localNodeElement
+    //     );
+    // }
     static resourcesHT: HTMLElement = document.createElement("programres");
     static init() {
         this.resourcesHT.setAttribute("stamp", 'program.stamp');
@@ -314,7 +314,6 @@ export class StampNode {
             rtrn.myObjectKey = myObjectKey;
             rtrn.accessKey = accessName;
             this.childs[myObjectKey] = rtrn;
-            // if (mode == '*') debugger;
             rtrn.styler = new StylerRegs(rtrn, generateStamp, cssKeyStamp ?? StampNode.cacheData[myObjectKey], baseType, mode);
         } else rtrn.isNewSource = false;
         rtrn.counter++;

@@ -27,7 +27,7 @@ export class configManage {
         // IpcMainHelper.On('importMap', (event, args) => {
         //     event.returnValue = this.filler.importmap;
         // }, UC_ACCESS_KEY);
-        IpcMainHelper.Handle('loadChennels', async (event, ..._paths: []) => {
+        /*IpcMainHelper.Handle('loadChennels', async (event, ..._paths: []) => {
             // for (let i = 0; i < _paths.length; i++) {
             //     const _path = _paths[i];
             //     try {
@@ -39,7 +39,7 @@ export class configManage {
             //     }
             // }
             return true;
-        }, UC_ACCESS_KEY);
+        }, UC_ACCESS_KEY);*/
 
         // IpcMainHelper.On('ipcChennelList', (event, args: {}) => {
         //     event.returnValue = IpcRendererHelper.ipcChannels;
