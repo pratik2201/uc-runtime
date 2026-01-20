@@ -316,7 +316,6 @@ export class UserUCConfig<K = IDirDeclarations> {
     env: 'developer' | 'release' = 'developer';
     exports: 'types' | 'import' = 'import';
     mainAlias: string;
-    preloadMain: string[] = [];
     browser = {
         importmap: {} as { [alice: string]: string; },
         //globalAlias: {} as { [alice: string]: string; },
@@ -329,11 +328,16 @@ export class UserUCConfig<K = IDirDeclarations> {
         outDir: "" as any,
     };
     projectBaseCssPath?: string = "styles.scss";
+
 }
+ 
 export class UcBuildOptions<K = IDirDeclarations> {
     keyBind?: KeyboardKey[] = ['ControlRight', 'F12'];
     ignorePath?: string[] = ["node_modules", ".vscode", "out", "dist", ".git"];
     RuntimeResources: RuntimeFileManage<K>[] = [];
+    // ResourcesRegister: {
+
+    // }
 }
 
 class RuntimeFileManage<K = IDirDeclarations> {

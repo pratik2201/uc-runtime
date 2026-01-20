@@ -117,11 +117,14 @@ export class SourceNode {
         }
     }
 
-    pushCSS(cssFilePath: string, importMetaUrl: string, localNodeElement?: HTMLElement) {
-       // importMetaUrl = importMetaUrl ?? getMetaUrl(cssFilePath, ProjectManage.projects);
-        let cssContent = '';
-        if (nodeFn.fs.existsSync(cssFilePath))
-            cssContent = nodeFn.fs.readFileSync(cssFilePath);
+    pushCSS(cssFilePath: string, cssContent: string,/*importMetaUrl: string,*/ localNodeElement?: HTMLElement) {
+        // importMetaUrl = importMetaUrl ?? getMetaUrl(cssFilePath, ProjectManage.projects);
+        if (cssContent == undefined) {
+            console.warn('cssContent not provided in `SourceNode.pushCSS`');
+            return;
+        }
+        /*  if (nodeFn.fs.existsSync(cssFilePath))
+              cssContent = nodeFn.fs.readFileSeync(cssFilePrath);*/
         this.pushCSSByContent(
             cssFilePath,
             cssContent,

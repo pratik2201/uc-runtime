@@ -9,8 +9,7 @@ import { app } from "electron";
 export class ConfigFiller {
     MAIN_CONFIG: ProjectRowBase;
     MAIN_PROJECT_PATH: string;
-    PREELOAD_IMPORT: string[] = [];
-    ucConfigList: ProjectRowBase[] = [];
+      ucConfigList: ProjectRowBase[] = [];
 
     _setRootDirecory(row: ProjectRowBase, projPath: string) {
         row.projectPath = projPath;
@@ -37,11 +36,11 @@ export class ConfigFiller {
 
 
         cfg.browser.importmap[row.projectPrimaryAlice] = '';
-        cfg.preloadMain = cfg.preloadMain ?? [];
-        for (let i = 0, preeloadFiles = cfg.preloadMain, ilen = preeloadFiles.length; i < ilen; i++) {
-            let PTH = correctpath(path.join(row.projectPath, ucUtil.devEsc(preeloadFiles[i])));
-            preeloadFiles[i] = PTH;
-        }
+        // cfg.preloadMain = cfg.preloadMain ?? [];
+        // for (let i = 0, preeloadFiles = cfg.preloadMain, ilen = preeloadFiles.length; i < ilen; i++) {
+        //     let PTH = correctpath(path.join(row.projectPath, ucUtil.devEsc(preeloadFiles[i])));
+        //     preeloadFiles[i] = PTH;
+        // }
 
     }
     importmap: IImportMap = {
@@ -86,8 +85,7 @@ export class ConfigFiller {
         if (bld.keyBind == undefined || bld.keyBind.length == 0)
             bld.keyBind = ['ControlRight', 'F12'];
 
-        this.PREELOAD_IMPORT = ucUtil.distinct(this.PREELOAD_IMPORT);
-        this.ucConfigList.sort((a, b) => b.importMetaURL.length - a.importMetaURL.length);
+         this.ucConfigList.sort((a, b) => b.importMetaURL.length - a.importMetaURL.length);
         this.updateAliceToPath(this.ucConfigList);
         if (!app.isPackaged) {
             this.generateResource();
@@ -155,8 +153,7 @@ export class ConfigFiller {
                 }
                 row.projectName = projectName;
                 this._setRootDirecory(row, correctpath(projectDirPath));
-                this.PREELOAD_IMPORT.push(...cfg.preloadMain);
-                this.ucConfigList.push(row);
+                 this.ucConfigList.push(row);
                 row.importMetaURL = url.pathToFileURL(projectDirPath).href;
                 let dirs = this.listProjectPath(projectDirPath);
                 for (let i = 0, ilen = dirs.length; i < ilen; i++) {

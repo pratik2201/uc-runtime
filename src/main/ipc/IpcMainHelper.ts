@@ -131,9 +131,9 @@ export class IpcMainHelper {
         const importMap = createImportMap(_path, projectDirList, dirname(baseURLForDataURL));
 
         let mapStr = JSON.stringify(importMap);
-        const modulePath = correctpath(resolve(dirname(fileURLToPath(import.meta.url)), '../../renderer/ipc/ShubhLabh.js'));
-        const importMapScript = `<script type="importmap">${mapStr}</script>
-        <script type="module" src="${modulePath}"></script>`;
+        //const modulePath = correctpath(resolve(dirname(fileURLToPath(import.meta.url)), '../../renderer/ipc/ShubhLabh.js'));
+        const importMapScript = `<script type="importmap">${mapStr}</script>`;
+        //<script type="module" src="${modulePath}"></script>
         const headRegex = /<head\b[^>]*>/i;
         const htmlRegex = /<html\b[^>]*>/i;
 

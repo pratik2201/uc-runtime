@@ -2,6 +2,7 @@ import fs from 'fs';
 import { PreloadFullFill } from "../common/ipc/enumAndMore.js";
 import { ucUtil } from "../global/ucUtil.js";
 import { IpcRendererHelper } from './ipc/IpcRendererHelper.js';
+import { ResourceType } from '../resMng/resourceManager.js';
 // export interface I_WriteFileSyncPerameters { path: string, data: string, encode: fs.WriteFileOptions }
 // export interface I_ReadFileSyncPerameters { path: string, doCache?: boolean, encode: fs.WriteFileOptions }
 // export interface I_ExistsSyncPerameters { path: string, }
@@ -263,6 +264,22 @@ export class nodeFn {
                 return this.renderer.sendSync('fs.readFileSync', [_finalpath, encode,]);
             }
         },
+        readFileBase64Sync: (path: string, encode: import('fs').WriteFileOptions = 'utf-8'): string | null => {
+            let _finalpath = nodeFn.path.normalize(path);
+            return this.renderer.sendSync('fs.readFileBase64Sync', [_finalpath, encode]);
+        },
+    }
+    static resource = {
 
+        getFile: (key: string,
+            filePath: string,
+            type: ResourceType): string => {
+            return this.renderer.sendSync('resource.getFile', [key, filePath, type]);
+        },
+        getValue: (key: string,
+            value: string,
+            type: ResourceType): string => {
+            return this.renderer.sendSync('resource.getValue', [key, value, type]);
+        }
     }
 }

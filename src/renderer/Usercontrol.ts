@@ -83,7 +83,7 @@ export class Usercontrol {
         //console.log(uc.ucExtends.controls);
 
     }
-
+      
     static HiddenSpace: HTMLElement = document.createElement('hspc' + GetUniqueId());
 
     static UcOptionsStc: IUcOptions;
@@ -259,11 +259,11 @@ export class Usercontrol {
                 ucExt.session.init(this, param0.session, param0.session.uniqueIdentity);
             }*/
             //console.log(`{${param0.cssKeyStamp}}`);
-            
+
             ucExt.srcNode = StampNode.registerSoruce({
                 key: ucExt.fileInfo.pathOf.scss,
                 cssKeyStamp: param0.cssKeyStamp,
-                cssFilePath: param0.source.cssBaseFilePath ?? ucExt.fileInfo.pathOf.scss,
+                cssFilePath: param0.source.cssFilePath ?? ucExt.fileInfo.pathOf.scss,
                 accessName: param0.accessName,
                 project: ucExt.fileInfo.projectInfo,
                 baseType: StyleBaseType.UserControl,
@@ -272,7 +272,7 @@ export class Usercontrol {
             });
 
             //  if (ucExt.fileInfo.html.fullPath.includes('expenseSetup.uc.html')) debugger;
-            let htPathToRead = param0.source.htmlFilePath  ?? ucExt.fileInfo.pathOf.html;
+            let htPathToRead = param0.source.htmlFilePath ?? ucExt.fileInfo.pathOf.html;
             let htContent = param0.source.htmlContents;
             /*console.log(htContent);
             
@@ -284,8 +284,8 @@ export class Usercontrol {
 
             let tmkr = Usercontrol.templateMkr.get(htPathToRead);
             if (tmkr == undefined) {
-                if (htContent == undefined)
-                    htContent = nodeFn.fs.readFileSync(htPathToRead);
+                //if (htContent == undefined)
+                //    htContent = nodeFn.fs.readFdileSync(htdPathToRead);
                 let t = new TemplateMaker(htPathToRead);
                 tmkr = t.compileTemplate(htContent)(param0.source.htmlRow ?? {});
                 Usercontrol.templateMkr.set(htPathToRead, tmkr);
@@ -331,7 +331,7 @@ export class Usercontrol {
                     wrapper: ucExt.wrapperHT,
                     key: ucExt.fileInfo.pathWithExt('html'),
                     accessName: param0.accessName
-                }); 
+                });
 
                 if (param0.targetElement) {
                     ucExt.initalComponents.elements = param0.targetElement.children;
@@ -398,9 +398,12 @@ export class Usercontrol {
         resizerObserver: undefined as ResizeObserver,
         finalizeInitAsync: async (param0: IUcOptions) => {
             let ext = this.ucExtends;
-            ext.srcNode.pushCSS(ext.srcNode.cssFilePath ?? ext.fileInfo.pathOf.scss, ext.fileInfo.projectInfo.importMetaURL, ext.self);
-
-
+            //ext.srcNode.pushCSS(ext.srcNode.cssFilePath ?? ext.fileInfo.pathOf.scss, ext.fileInfo.projectInfo.importMetaURL, ext.self);
+            
+            ext.srcNode.pushCSS(
+                ext.srcNode.cssFilePath ?? ext.fileInfo.pathOf.scss,
+                param0.source.cssContents,
+                ext.self);
 
             if (ext.isDialogBox) {
                 ext.Events.afterInitlize.on(param0.events.afterInitlize);
@@ -409,9 +412,12 @@ export class Usercontrol {
         },
         finalizeInit: (param0: IUcOptions) => {
             let ext = this.ucExtends;
-            ext.srcNode.pushCSS(ext.srcNode.cssFilePath ?? ext.fileInfo.pathOf.scss, ext.fileInfo.projectInfo.importMetaURL, ext.self);
-
-
+            //ext.srcNode.pushCSS(ext.srcNode.cssFilePath ?? ext.fileInfo.pathOf.scss, ext.fileInfo.projectInfo.importMetaURL, ext.self);
+            ext.srcNode.pushCSS(
+                ext.srcNode.cssFilePath ??
+                ext.fileInfo.pathOf.scss,
+                param0.source.cssContents,
+                ext.self);
 
             if (ext.isDialogBox) {
                 ext.Events.afterInitlize.on(param0.events.afterInitlize);

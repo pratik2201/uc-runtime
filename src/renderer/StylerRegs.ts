@@ -81,7 +81,7 @@ export class StylerRegs {
         mode: '$',
         accessName: row.projectPrimaryAlice,
       });
-      row.stampSRC.pushCSS(cssPath, row.importMetaURL, document.body);
+      row.stampSRC.pushCSS(cssPath, nodeFn.resource.getFile(_stylepath,cssPath,'css') , document.body);//row.importMetaURL,
       //}
     });
   }

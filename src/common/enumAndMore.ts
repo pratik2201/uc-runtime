@@ -101,10 +101,10 @@ export type WrapperNodeNameAs = "wrapper" | "targetElement" | "random";
 export type StringExchangerCallback = (content: string) => string;
 export interface ISourceOptions {
     htmlRow?: any;
-    htmlImportMetaUrl?: string;
+   //htmlImportMetaUrl?: string;
     htmlContents?: string;
     cssContents?: string;
-    cssBaseFilePath?: string;
+    cssFilePath?: string;
     htmlFilePath?: string;
     //beforeContentAssign: StringExchangerCallback;
 }
@@ -174,6 +174,7 @@ export function ExtractArguments(args: IArguments): IArguments {
 export interface ITptOptions {
     cfInfo?: codeFileInfo;
     MakeEmptyTemplate?: boolean;
+    source?: ISourceOptions;
     cssBaseFilePath?: string;
     parentUc?: Usercontrol;
 }

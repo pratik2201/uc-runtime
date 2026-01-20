@@ -22,61 +22,6 @@ export class Template {
   }
   static extractArgs = (args: any) => ExtractArguments(args);
 
-  static getTemplateOptionByElement(iele: HTMLElement, cinfo: codeFileInfo): ITemplatePathOptions | undefined {
-    //let stts = this.getTemplateStatus(iele);
-    let rtrn: ITemplatePathOptions = {
-      accessKey: 'primary',
-      objectKey: undefined,
-    };
-    let name = iele.getAttribute('x-name');
-    if (name != null /*&& iele.nodeName == 'X:TEMPLATE'*/) {
-      //let partinfo = cinfo.partInfo;
-      let csspath = '';
-      let htmlpath = '';
-      let isHTMLFullpath = undefined as boolean;
-      let isCSSFullpath = undefined as boolean;
-      let xrelativeChild = iele.getAttribute('x-relative-child');
-      let xrelative = iele.getAttribute('x-relative');
-      let xpath = iele.getAttribute('x-path');
-      let xhtmlpath = iele.getAttribute('x-htmlpath');
-      let xcsspath = iele.getAttribute('x-csspath');
-      /*if (xrelativeChild != null) {
-        xrelativeChild = xrelativeChild["#removeExtension"]();
-        csspath = cinfo.mainBase.rootWithExt + '/' + xrelativeChild + '.scss';
-        htmlpath = cinfo.mainBase.pathWithExt + '/' + xrelativeChild + '.html';
-        isCSSFullpath = false; isHTMLFullpath = true;
-      } else if (xrelative != null) {
-        xrelative = xrelative["#removeExtension"]();
-        csspath = partinfo.sort_DirPath + '/' + xrelative + '.scss';
-        htmlpath = partinfo.dirPath + '/' + xrelative + '.html';
-        isCSSFullpath = false; isHTMLFullpath = true;
-      } else */if (xpath != null) {
-        xpath = xpath["#removeExtension"]();
-        csspath = xpath + '.scss';
-        htmlpath = xpath + '.html';
-        isCSSFullpath = false; isHTMLFullpath = false;
-      } else if (xhtmlpath != null && xcsspath != null) {
-        xhtmlpath = xhtmlpath["#removeExtension"](['html']);
-        xcsspath = xcsspath["#removeExtension"](['scss']);
-        csspath = xhtmlpath + '.scss';
-        htmlpath = xcsspath + '.html';
-        isCSSFullpath = false; isHTMLFullpath = false;
-      } else return rtrn;
-      rtrn.objectKey = csspath;
-      rtrn.accessKey = name;
-      rtrn.cssContents = nodeFn.fs.readFileSync(csspath);
-      rtrn.htmlContents = nodeFn.fs.readFileSync(htmlpath);
-      if (rtrn.htmlContents == undefined) debugger;
-      rtrn.htmlContents = ucUtil.PHP_ADD(rtrn.htmlContents) ?? undefined;
-    } else {
-      rtrn.objectKey = cinfo.pathOf.scss;
-      rtrn.cssContents = nodeFn.fs.readFileSync(cinfo.pathOf.scss);
-      rtrn.htmlContents = ucUtil.PHP_ADD(iele.outerHTML);
-    }
-
-    return rtrn;
-  }
-
   static splitCSSById(cssContent: string, cssFilePath: string, importMetaUrl: string, rtrn: { [key: string]: ITemplatePathOptions }): string {
     let rtrnKeys = Object.keys(rtrn);
     //  if (cssContent.includes('part2Size')) debugger;
@@ -204,9 +149,11 @@ export class Template {
     let impUrl = cinfo.projectInfo.importMetaURL;
     htContent = htContent ?? nodeFn.fs.readFileSync(cinfo.pathOf.html);
 
-    if (cssdata == undefined && nodeFn.fs.existsSync(cinfo.pathOf.scss))
-      cssdata = nodeFn.fs.readFileSync(cinfo.pathOf.scss);
-    else cssdata = '';
+    if (cssdata == undefined) {
+      if (nodeFn.fs.existsSync(cinfo.pathOf.scss))
+        cssdata = nodeFn.fs.readFileSync(cinfo.pathOf.scss);
+    }
+
 
     let robj = this.GetOptionsByContent(htContent,
       cssdata,
@@ -353,14 +300,13 @@ export class TemplateNode {
       let tptExt = this.extended;
       let param0 = Object.assign(Object.assign({}, TptOptions), _args);
       tptExt.accessName = tptPathOpt.accessKey;
-      param0.cssBaseFilePath = param0.cssBaseFilePath ?? _args.cfInfo.pathOf.scss;
-
+     
       //console.log(param0.cssBaseFilePath);
       tptExt.srcNode = StampNode.registerSoruce(
         {
           key: tptPathOpt.objectKey /*+ "@" + tptPathOpt.accessKey*/,
           accessName: tptExt.accessName,
-          cssFilePath: param0.cssBaseFilePath,
+          cssFilePath: param0.cssBaseFilePath ?? param0.cfInfo.pathOf.scss,
           baseType: StyleBaseType.Template,
           mode: '^',
           //root: param0.cfInfo.rootInfo,

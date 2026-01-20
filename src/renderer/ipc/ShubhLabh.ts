@@ -44,6 +44,7 @@ export async function initRenderer() {
         }, false);
       })();
     });
+    
   } catch (ex) {
     // Devtools not installed or failed to load
     console.warn("ucbuilder: devtools not available.");
