@@ -1,17 +1,15 @@
-import { codeFileInfo } from "../global/codeFileInfo.js";
-import { TemplateMaker } from "../global/TemplateMaker.js";
-import { ExtractArguments, ISourceOptions, ITptOptions, IUcOptions, UCGenerateMode, UcStates, WhatToDoWithTargetElement } from "../common/enumAndMore.js";
-import { CommonEvent } from "../global/commonEvent.js";
-import { FilterContent } from "../lib/StampGenerator.js";
-import { objectOpt } from "../common/enumAndMore.js";
-import { ATTR_OF } from "../global/runtimeOpt.js";
-import { ucUtil } from "../global/ucUtil.js";
+import { ExtractArguments, ISourceOptions, ITptOptions, IUcOptions, UCGenerateMode, UcStates, WhatToDoWithTargetElement, objectOpt } from "../common/enumAndMore.js";
 import { GetUniqueId } from "../common/ipc/enumAndMore.js";
-import { IPassElementOptions, STYLER_SELECTOR_TYPE, SourceNode, StampNode } from "../lib/StampGenerator.js";
+import { codeFileInfo } from "../global/codeFileInfo.js";
+import { CommonEvent } from "../global/commonEvent.js";
+import { ATTR_OF } from "../global/runtimeOpt.js";
+import { TemplateMaker } from "../global/TemplateMaker.js";
+import { ucUtil } from "../global/ucUtil.js";
+import { FilterContent, IPassElementOptions, STYLER_SELECTOR_TYPE, SourceNode } from "../lib/StampGenerator.js";
 import { TabIndexManager } from "../lib/TabIndexManager.js";
 import { WinManager } from "../lib/WinManager.js";
-import { CSSVariableScope, CssVariableHandler, StyleBaseType, VariableList } from "./StylerRegs.js";
 import { nodeFn } from "./nodeFn.js";
+import { CSSVariableScope, CssVariableHandler, StyleBaseType, VariableList } from "./StylerRegs.js";
 export type UcDialogResult = "none" | "ok" | 'cancel' | 'close';
 export type ucVisibility = 'inherit' | 'visible' | 'hidden';
 export class Usercontrol {
@@ -252,76 +250,43 @@ export class Usercontrol {
             }
             if (ucExt.isForm) {
                 ucExt.dialogForm.ucExtends.___META.CONTEXT = param0.context;
-            }
-            //console.log(param0.session);
-            /*if (param0.session.loadBySession) {
-                ucExt.session = new SessionManager();
-                ucExt.session.init(this, param0.session, param0.session.uniqueIdentity);
-            }*/
-            //console.log(`{${param0.cssKeyStamp}}`);
-
-            ucExt.srcNode = StampNode.registerSoruce({
+            }  
+            ucExt.srcNode = SourceNode.registerSource({
                 key: ucExt.fileInfo.pathOf.scss,
                 cssKeyStamp: param0.cssKeyStamp,
                 cssFilePath: param0.source.cssFilePath ?? ucExt.fileInfo.pathOf.scss,
                 accessName: param0.accessName,
                 project: ucExt.fileInfo.projectInfo,
                 baseType: StyleBaseType.UserControl,
-                mode: '^',
-                //root: ucExt.fileInfo.rootInfo
+                mode: '^', 
             });
-
-            //  if (ucExt.fileInfo.html.fullPath.includes('expenseSetup.uc.html')) debugger;
             let htPathToRead = param0.source.htmlFilePath ?? ucExt.fileInfo.pathOf.html;
             let htContent = param0.source.htmlContents;
-            /*console.log(htContent);
-            
-            if (htContent != undefined) {
-                console.log(htContent);
-                
-            }*/
-            //console.log(htPathToRead);
+             
 
             let tmkr = Usercontrol.templateMkr.get(htPathToRead);
-            if (tmkr == undefined) {
-                //if (htContent == undefined)
-                //    htContent = nodeFn.fs.readFdileSync(htdPathToRead);
+            if (tmkr == undefined) { 
                 let t = new TemplateMaker(htPathToRead);
                 tmkr = t.compileTemplate(htContent)(param0.source.htmlRow ?? {});
                 Usercontrol.templateMkr.set(htPathToRead, tmkr);
             }
             let isAlreadyExist = ucExt.srcNode.htmlCode.load(
-                tmkr
-                //,ucExt.fileInfo.actualPrfoject
+                tmkr 
             );
             if (!isAlreadyExist)
-                ucExt.srcNode.loadHTML(/*param0.source.beforeContentAssign*/);
-
-            //console.log([ucExt.fileInfo.mainBase.rootWithExt,res.hasHTMLContentExists]);
-
-            //ucExt.stampRow = UserControlStamp.getStamp(param0.source);
+                ucExt.srcNode.loadHTML(); 
             ucExt.wrapperHT = ucExt.srcNode.dataHT.cloneNode(true) as HTMLElement;
-
-
-
-            //console.log(ucExt.fileInfo.mainFilePath+":"+param0.accessName);
+ 
             if (ucExt.isForm) {
                 ucExt.PARENT = this;
-                ucExt.form = this;
-
+                ucExt.form = this; 
                 ucExt.srcNode.config({
                     parentUc: ucExt.PARENT,
                     parentSrc: ucExt.fileInfo.projectInfo.stampSRC,
                     wrapper: ucExt.wrapperHT,
                     key: ucExt.fileInfo.pathWithExt('html'),
                     accessName: param0.accessName
-                });
-
-                /*ucExt.fileInfo.rootInfo.stampSRC.styler
-                    .pushChild(
-                        ucExt.fileInfo.mainFilePath,
-                        ucExt.srcNode.styler, param0.accessName);*/ // param0.targetElement.nodeName
-                // param0.wrapperHT.appendChild(ucExt.wrapperHT);
+                }); 
             } else {
                 ucExt.form = param0.parentUc.ucExtends.form;
                 ucExt.PARENT = param0.parentUc;
@@ -614,7 +579,7 @@ export class Usercontrol {
                     }
                 } else {*/
                 let eleAr: HTMLElement[] = [];
-                if (StampNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
+                if (SourceNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
                     eleAr = Array.from(fromElement.querySelectorAll(`[${ATTR_OF.X_NAME}][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`)) as HTMLElement[];  // old one `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
                 } else {
                     eleAr = Array.from(fromElement.querySelectorAll(`.${ATTR_OF.__CLASS(uniqStamp, 'l')}[${ATTR_OF.X_NAME}]`)) as HTMLElement[];  // old one `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`

@@ -9,7 +9,8 @@ const out: string[] = [];
 
 out.push(`import { RM } from "./resourceManager";\n`);
 
-for (const r of getRegistry()) {
+for (const [key, r] of getRegistry()) {
+  const rw = r;
   if ("filePath" in r) {
     const buf = await fs.readFile(r.filePath);
     let value: string;
@@ -18,19 +19,17 @@ for (const r of getRegistry()) {
       value = `data:image/${ext};base64,${buf.toString("base64")}`;
     } else {
       value = buf.toString("utf8").replace(/`/g, "\\`");
-    } 
-    out.push(
-      `RM.set(${JSON.stringify(r.key)}, \`${value}\`, ${JSON.stringify(r.type)});`
-    );
+    }
+    out.push(  `RM.set(${JSON.stringify(key)}, \`${value}\`, ${JSON.stringify(r.type)});` );
   } else {
     out.push(
-      `RM.set(${JSON.stringify(r.key)}, ${JSON.stringify(r.value)}, ${JSON.stringify(r.type)});`
+      `RM.set(${JSON.stringify(key)}, ${JSON.stringify(rw.value)}, ${JSON.stringify(rw.type)});`
     );
   }
-} 
+}
 await fs.writeFile(
   "src/resources/resources.bundle.ts",
   out.join("\n"),
   "utf8"
-);  
+);
 console.log("✔ resources.bundle.ts generated");

@@ -38,14 +38,14 @@ export default function () {
     });
 
 
-    main.On('resource.all', (event, key: string) => {
+    main.On('resource.all', (event) => {
         event.returnValue = getRegistry()
-    }); 
-    main.On('resource.getFile', (event, key: string, filePathIfNotExist?: string, type?: ResourceType) => {
+    });
+    main.On('resource.getFile', (event, key: string, filePathIfNotExist: string, type: ResourceType, registerOnLoad: boolean=false) => {
         if (RM.has(key)) event.returnValue = RM.get(key);
         else {
             if (filePathIfNotExist != undefined && type != undefined)
-                event.returnValue = registerFileSync(key, filePathIfNotExist, type);
+                event.returnValue = registerFileSync(key, filePathIfNotExist, type, registerOnLoad);
             else event.returnValue = undefined;
         };
     });

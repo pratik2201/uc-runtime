@@ -11,14 +11,14 @@ export interface ResourceEntry {
   type: ResourceType;
   value: string;
   filePath: string;
-  loadOnStart: boolean;
+  registerOnLoad: boolean;
 }
 
 export class ResourceManager {
   private static map = new Map<string, ResourceEntry>();
 
-  static set(key: string, value: string, type: ResourceType = "raw", filePath?: string, loadOnStart?: boolean) {
-    this.map.set(key, { value, type, filePath, loadOnStart });
+  static set(key: string, value: string, type: ResourceType = "raw", filePath?: string, registerOnLoad?: boolean) {
+    this.map.set(key, { value, type, filePath, registerOnLoad });
   }
 
   static get(key: string): string | null {
@@ -38,7 +38,7 @@ export class ResourceManager {
   }
 
   static entries() {
-    return this.map.entries();
+    return Array.from(this.map.entries());
   }
   // helpers
   // static css(key: string) {

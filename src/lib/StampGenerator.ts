@@ -96,7 +96,6 @@ export class SourceNode {
         parentSrc.styler
             .pushChild(key, this.styler, accessName);
     }
-    //root: RootPathRow;
     project: ProjectRowR;
     cssObj: { [key: string]: StyleCodeNode } = {};
     pushCSSByContent(key: string, cssContent: string, /*project: ProjectRow,*/ localNodeElement?: HTMLElement) {
@@ -117,33 +116,17 @@ export class SourceNode {
         }
     }
 
-    pushCSS(cssFilePath: string, cssContent: string,/*importMetaUrl: string,*/ localNodeElement?: HTMLElement) {
-        // importMetaUrl = importMetaUrl ?? getMetaUrl(cssFilePath, ProjectManage.projects);
+    pushCSS(cssFilePath: string, cssContent: string, localNodeElement?: HTMLElement) {
         if (cssContent == undefined) {
             console.warn('cssContent not provided in `SourceNode.pushCSS`');
             return;
         }
-        /*  if (nodeFn.fs.existsSync(cssFilePath))
-              cssContent = nodeFn.fs.readFileSeync(cssFilePrath);*/
         this.pushCSSByContent(
             cssFilePath,
             cssContent,
-            //ProjectManage.getInfo(cssFilePath, importMetaUrl).project,
             localNodeElement
         );
     }
-    // pushCSSAsync = async (cssFilePath: string, importMetaUrl: string, localNodeElement?: HTMLElement) => {
-    //     importMetaUrl = importMetaUrl ?? getMetaUrl(cssFilePath, ProjectManage.projects);
-    //     let cssContent = '';
-    //     if (nodeFn.fs.existsSync(cssFilePath))
-    //         cssContent = nodeFn.fs.readFileSync(cssFilePath, undefined);
-    //     this.pushCSSByContent(
-    //         cssFilePath,
-    //         cssContent,
-    //         // ProjectManage.getInfo(cssFilePath, importMetaUrl).project,
-    //         localNodeElement
-    //     );
-    // }
     static resourcesHT: HTMLElement = document.createElement("programres");
     static init() {
         this.resourcesHT.setAttribute("stamp", 'program.stamp');
@@ -166,7 +149,7 @@ export class SourceNode {
     }
     setWrapper(ele: HTMLElement) {
         const k = this.styler.KEYS;
-        if (StampNode.MODE == STYLER_SELECTOR_TYPE.CLASS_SELECTOR) {
+        if (SourceNode.MODE == STYLER_SELECTOR_TYPE.CLASS_SELECTOR) {
             ele["#clearUcStyleClasses"]();
             ele.classList.add(ATTR_OF.__CLASS(k.LOCAL, 'm'), ATTR_OF.__CLASS(k.ROOT, 'r'));
         } else {
@@ -183,7 +166,7 @@ export class SourceNode {
         let stmpUnq: string = this.localStamp;
         let stmpRt = '' + this.project.id;//this.root.id;
         let ar = ucUtil.getArray(ele);
-        if (StampNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
+        if (SourceNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
             let keyToSet = options.groupKey != undefined ?
                 stmpUnq + "_" + options.groupKey + "_" + stmpRt
                 :
@@ -246,7 +229,7 @@ export class SourceNode {
         this.dataHT = SourceNode.tramsformForm(ucUtil.PHP_REMOVE(htCode.content)["#$"]());
 
         this.styler.nodeName = WRAPPER_TAG_NAME;// this.dataHT.nodeName;
-        if (StampNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
+        if (SourceNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
             this.dataHT.setAttribute(ATTR_OF.UC.ALL, this.localStamp);
         } else {
             this.dataHT.classList.add(ATTR_OF.__CLASS(this.localStamp, 'm'));
@@ -261,7 +244,7 @@ export class SourceNode {
 
     }
     release = async () => {
-        const states = await StampNode.deregisterSource(this.myObjectKey);
+        const states = await SourceNode.deregisterSource(this.myObjectKey);
         if ((states)) {
 
             if (this.cssObj == undefined) {
@@ -278,24 +261,18 @@ export class SourceNode {
             this.dataHT =
                 this.htmlCode = this.cssObj = undefined;
 
-            let _styler = StampNode.childs[this.myObjectKey].styler;
-            if (StampNode.cacheData[this.myObjectKey] == undefined)
-                StampNode.cacheData[this.myObjectKey] = Object.assign({}, _styler.KEYS);
-            delete StampNode.childs[this.myObjectKey];
+            let _styler = SourceNode.childs[this.myObjectKey].styler;
+            if (SourceNode.cacheData[this.myObjectKey] == undefined)
+                SourceNode.cacheData[this.myObjectKey] = Object.assign({}, _styler.KEYS);
+            delete SourceNode.childs[this.myObjectKey];
         }
     }
-}
-export class StampNode {
     static MODE: STYLER_SELECTOR_TYPE = STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR;
-
-    static dataHT: HTMLElement;
-    static GetKey(key: string, alice: string) { return key + "@" + alice; }
     static childs: { [key: string]: SourceNode; } = {};
     static cacheData: {
         [key: string]: IKeyStampNode
     } = {};
-
-    static registerSoruce({ key,
+    static registerSource({ key,
         accessName = '', cssKeyStamp,
         mode = '^', baseType = StyleBaseType.UserControl,
         cssFilePath = undefined, project, /*root,*/ generateStamp = true }: {
@@ -309,24 +286,24 @@ export class StampNode {
         //console.log(key);
 
         let myObjectKey = key; //this.GetKey(key, alices);
-        let rtrn: SourceNode = this.childs[myObjectKey];
+        let rtrn: SourceNode = SourceNode.childs[myObjectKey];
         if (rtrn == undefined) {
             rtrn = new SourceNode();
             rtrn.project = project;
             rtrn.cssFilePath = cssFilePath;
             rtrn.myObjectKey = myObjectKey;
             rtrn.accessKey = accessName;
-            this.childs[myObjectKey] = rtrn;
-            rtrn.styler = new StylerRegs(rtrn, generateStamp, cssKeyStamp ?? StampNode.cacheData[myObjectKey], baseType, mode);
+            SourceNode.childs[myObjectKey] = rtrn;
+            rtrn.styler = new StylerRegs(rtrn, generateStamp, cssKeyStamp ?? SourceNode.cacheData[myObjectKey], baseType, mode);
         } else rtrn.isNewSource = false;
         rtrn.counter++;
         //console.log([rtrn.counter,'open',myObjectKey]);
         return rtrn;
     }
-    static deregisterSource = async (key: string) => {
+     static deregisterSource = async (key: string) => {
         let result = false;
         let myObjectKey = key;
-        let rtrn: SourceNode = this.childs[myObjectKey];
+        let rtrn: SourceNode = SourceNode.childs[myObjectKey];
         if (rtrn != undefined) {
             rtrn.counter--;
             result = (rtrn.counter <= 0);
@@ -334,6 +311,54 @@ export class StampNode {
         return result; //{ result: result, count: rtrn.counter };
     }
 }
+// export class StampNode {
+//     static MODE: STYLER_SELECTOR_TYPE = STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR;
+//     static dataHT: HTMLElement;
+//     static GetKey(key: string, alice: string) { return key + "@" + alice; }
+//     static childs: { [key: string]: SourceNode; } = {};
+//     static cacheData: {
+//         [key: string]: IKeyStampNode
+//     } = {};
+
+//     static registerSource({ key,
+//         accessName = '', cssKeyStamp,
+//         mode = '^', baseType = StyleBaseType.UserControl,
+//         cssFilePath = undefined, project, /*root,*/ generateStamp = true }: {
+//             key: string, accessName?: string, /*root?: RootPathRow,*/
+//             cssFilePath?: string,
+//             cssKeyStamp?: IKeyStampNode,
+//             baseType?: StyleBaseType,
+//             mode?: CSSSearchAttributeCondition,
+//             generateStamp?: boolean, project: ProjectRowR,
+//         }): SourceNode {
+//         //console.log(key);
+
+//         let myObjectKey = key; //this.GetKey(key, alices);
+//         let rtrn: SourceNode = SourceNode.childs[myObjectKey];
+//         if (rtrn == undefined) {
+//             rtrn = new SourceNode();
+//             rtrn.project = project;
+//             rtrn.cssFilePath = cssFilePath;
+//             rtrn.myObjectKey = myObjectKey;
+//             rtrn.accessKey = accessName;
+//             SourceNode.childs[myObjectKey] = rtrn;
+//             rtrn.styler = new StylerRegs(rtrn, generateStamp, cssKeyStamp ?? SourceNode.cacheData[myObjectKey], baseType, mode);
+//         } else rtrn.isNewSource = false;
+//         rtrn.counter++;
+//         //console.log([rtrn.counter,'open',myObjectKey]);
+//         return rtrn;
+//     }
+//     static deregisterSource = async (key: string) => {
+//         let result = false;
+//         let myObjectKey = key;
+//         let rtrn: SourceNode = SourceNode.childs[myObjectKey];
+//         if (rtrn != undefined) {
+//             rtrn.counter--;
+//             result = (rtrn.counter <= 0);
+//         }
+//         return result; //{ result: result, count: rtrn.counter };
+//     }
+// }
 
 export class FilterContent {
     static select_inline_Pattern: RegExp = /(["=> \w\[\]-^|#~$*.+]*)(::|:)([-\w\(\)]+)/g;
@@ -350,14 +375,14 @@ export class FilterContent {
             input_string: string
         ): string {
             isReplaced = true;
-            return (StampNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) ?
+            return (SourceNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) ?
                 data.trim() + `[${ATTR_OF.UC.ALL}^='${_guid}_']`
                 :
                 data.trim() + `.${ATTR_OF.__CLASS(_guid, 'l')}`;
             //return `${selector.trim()}.${ATTR_OF.__CLASS(_guid, 'l')}${seperator}${pseudo}`;
         });
         if (isReplaced) return rtrn;
-        return (StampNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) ?
+        return (SourceNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) ?
             data.trim() + `[${ATTR_OF.UC.ALL}^='${_guid}_']`
             :
             data.trim() + `.${ATTR_OF.__CLASS(_guid, 'l')}`;

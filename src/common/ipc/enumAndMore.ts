@@ -313,6 +313,7 @@ export type IResolvePathResult<K = ProjectRowR> = {
     aliasPath?: string;
 };
 export class UserUCConfig<K = IDirDeclarations> {
+    guid: string;
     env: 'developer' | 'release' = 'developer';
     exports: 'types' | 'import' = 'import';
     mainAlias: string;

@@ -9,7 +9,7 @@ import { IpcRendererHelper } from "../../renderer/ipc/IpcRendererHelper.js";
 export class configManage {
     static filler = new ConfigFiller();
     static async init(importMetaPath: string) {
-        debugger;
+        //debugger;
         PathBridge.path = path as any;
         PathBridge.url = url as any;
         if (importMetaPath.startsWith('file:///')) importMetaPath = url.fileURLToPath(importMetaPath);

@@ -90,7 +90,6 @@ export class IpcMainHelper {
                 return undefined;
             }
         });
-        debugger;
         await configManage.init(importMetaPath);
         (await import('../nodeFn.ipc.js')).default();
 

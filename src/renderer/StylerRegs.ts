@@ -1,18 +1,13 @@
-import { GetDeclaration } from "../global/codeFileInfo.js";
+import { GetUniqueId, ProjectRowR } from "../common/ipc/enumAndMore.js";
 import { ATTR_OF, StyleClassScopeType } from "../global/runtimeOpt.js";
 import { ucUtil } from "../global/ucUtil.js";
+import { SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
 import { ProjectManage } from "./ipc/ProjectManage.js";
-import { GetUniqueId, ProjectRowR } from "../common/ipc/enumAndMore.js";
-import { SourceNode, StampNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
 import { nodeFn } from "./nodeFn.js";
 export type VariableList = { [key: string]: string };
 export const patternList = {
   styleTagSelector: /<style([\n\r\w\W.]*?)>([\n\r\w\W.]*?)<\/style>/gi,
-  MULTILINE_COMMENT_REGS: /\/\*([\s\S]*?)\*\//gi,
-  SINGLELINE_COMMENT_REGS: /\/\/.*/mg,
-  SPACE_REMOVER_REGS: /(;|,|:|{|})[\n\r ]*/gi,
   subUcFatcher: /\[inside=([\"'`])((?:\\.|(?!\1)[^\\])*)\1\]([\S\s]*)/gim,
-  themeCSSLoader: /@use\s*(["'`])((?:\\.|(?!\1)[^\\])*)\1\s*;/gim,
   mediaSelector: /^\s*@(media|keyframes|supports|container|document)\s+([\s\S]*)\s*/i,
   animationNamePattern: /animation-name\s*:\s*-([lgit])-(\w+)\s*;/gim,
   animationAccessPattern: /-([lgit])-(\w+)\s*/gim,
@@ -55,6 +50,31 @@ export type CSSVariableScope = "global" | "local" | "internal" | "template";
 export type CSSVariableScopeSort = "g" | "l" | "i" | "t";
 export type CSSSearchAttributeCondition = "*" | "^" | "$";
 export const WRAPPER_TAG_NAME = 'f' + GetUniqueId();
+export function dev$Use_loader(content: string, cssFilePath: string) {
+  content = (content.replace(/\/\*([\s\S]*?)\*\//gi, "")
+    .replace(/\/\/.*/mg, "")).replace(/(;|,|:|{|})[\n\r ]*/gi, "$1");
+  content = content.replace(/@use\s*(["'`])((?:\\.|(?!\1)[^\\])*)\1\s*;/gim,
+    (match: string, quationMark: string, path: string, offset: any, input_string: string) => {
+      let themecontents = '';
+      if (cssFilePath != undefined) {
+        const useFilePath = nodeFn.path.resolveFilePath(cssFilePath, path);
+        if (nodeFn.fs.existsSync(useFilePath)) {
+          themecontents = ucUtil.devEsc(nodeFn.fs.readFileSync(useFilePath));
+          if (themecontents != undefined) {
+            try {
+              themecontents = dev$Use_loader(themecontents, useFilePath);
+            } catch (ex) {
+              debugger;
+              console.log(ex);
+            }
+          }
+        }
+      }
+      return themecontents;
+    }
+  );
+  return content;
+}
 export class StylerRegs {
   static ScssExtractor(csscontent: string) {
     let ocHandler = new openCloser();
@@ -68,12 +88,14 @@ export class StylerRegs {
   static initProjectsStyle(/*callback: () => void*/): void {
     SourceNode.init();
     ProjectManage.projects.forEach((row) => {
+
       let cssPath = nodeFn.path.resolve(row.projectPath, 'styles.scss');
-      cssPath = nodeFn.fs.existsSync(cssPath) ? cssPath : nodeFn.path.resolve(row.projectPath, row.config.projectBaseCssPath);
+      cssPath = nodeFn.fs.existsSync(cssPath) ?
+        cssPath :
+        nodeFn.path.resolve(row.projectPath, row.config.projectBaseCssPath);
 
       let _stylepath: string = nodeFn.path.relativeFilePath(row.projectPath, cssPath);
-      //if (nodeFn.fs.existsSync(cssPath/*, row.importMetaURL*/)) {
-      row.stampSRC = StampNode.registerSoruce({
+      row.stampSRC = SourceNode.registerSource({
         key: _stylepath,
         baseType: StyleBaseType.Global,
         cssFilePath: cssPath,
@@ -81,7 +103,7 @@ export class StylerRegs {
         mode: '$',
         accessName: row.projectPrimaryAlice,
       });
-      row.stampSRC.pushCSS(cssPath, nodeFn.resource.getFile(_stylepath,cssPath,'css') , document.body);//row.importMetaURL,
+      row.stampSRC.pushCSS(cssPath, dev$Use_loader(nodeFn.resource.getFile(row.config.guid ?? _stylepath, cssPath, 'css', true), cssPath), document.body);//row.importMetaURL,
       //}
     });
   }
@@ -102,11 +124,12 @@ export class StylerRegs {
   }
   public set parent(value: StylerRegs) {
     this._parent = value;
-    if (this.generateStamp) {
+    this.KEYS.INTERNAL = 'IK'; //this.KEYS.LOCAL;
+    /*if (this.generateStamp) {
       this.KEYS.INTERNAL = 'IK'; //this.KEYS.LOCAL;
     } else {
       this.KEYS.INTERNAL = 'IK'; //this._parent.KEYS.LOCAL
-    }
+    }*/
   }
   children: StylerRegs[] = [];
   alices: string = "";
@@ -173,12 +196,7 @@ export class StylerRegs {
   }
   opnClsr: openCloser = new openCloser();
   static internalKey: string = 'int' + GetUniqueId();
-  static REMOVE_COMMENT(rtrn: string): string {
-    return rtrn.replace(patternList.MULTILINE_COMMENT_REGS, "")
-      .replace(patternList.SINGLELINE_COMMENT_REGS, "");
-  } static REMOVE_EXTRASPACE(rtrn: string): string {
-    return rtrn.replace(patternList.SPACE_REMOVER_REGS, "$1");
-  }
+
   parseStyleSeperator_sub(_args: IStyleSeperatorOptions): string {
     let _this = this;
     if (_args.data == undefined) return "";
@@ -187,7 +205,7 @@ export class StylerRegs {
     let _curProject: ProjectRowR = _this.projectInfo;
     //let rtrn = StylerRegs.REMOVE_COMMENT(_params.data);
     //rtrn = StylerRegs.REMOVE_EXTRASPACE(Use_loader(rtrn, this.main.cssFilePath));
-    let rtrn = Use_loader(_params.data, this.main.cssFilePath);
+    let rtrn = dev$Use_loader(_params.data, this.main.cssFilePath);
     rtrn = this.opnClsr.doTask("{", "}", rtrn,
       (selectorText: string, styleContent: string, count: number): string => {
         let excludeContentList = this.rootAndExcludeHandler.checkRoot(selectorText, styleContent, _params);
@@ -393,26 +411,8 @@ export class RootAndExcludeHandler {
     return externalStyles;
   }
 }
-export function Use_loader(content: string, cssFilePath: string) {
-  content = StylerRegs.REMOVE_EXTRASPACE(StylerRegs.REMOVE_COMMENT(content));
-  content = content.replace(
-    patternList.themeCSSLoader,
-    (match: string, quationMark: string, path: string, offset: any, input_string: string) => {
-      let themecontents = '';
-      if (cssFilePath != undefined) {
-        const useFilePath = nodeFn.path.resolveFilePath(cssFilePath, path);
-        if (nodeFn.fs.existsSync(useFilePath)) {
-          themecontents = ucUtil.devEsc(nodeFn.fs.readFileSync(useFilePath));
-          themecontents = Use_loader(themecontents, useFilePath);
-          //themecontents = StylerRegs.REMOVE_COMMENT(themecontents);
-          //themecontents = StylerRegs.REMOVE_EXTRASPACE(Use_loader(themecontents, useFilePath));
-        }
-      }
-      return themecontents;
-    }
-  );
-  return content;
-}
+
+
 
 // export class ThemeCssHandler {
 //   main: StylerRegs;
@@ -522,7 +522,7 @@ export class SelectorHandler {
     this.main = main;
     let dkey = this._DEFAULT_KEYS;
     const mainKey = this.main.KEYS;
-    if (StampNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
+    if (SourceNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
       switch (main.baseType) {
         case StyleBaseType.Template:
           dkey.MAIN_SELECTOR = `${main.nodeName}[${ATTR_OF.UC.ALL}="${mainKey.LOCAL}_${mainKey.TEMPLATE}_${mainKey.ROOT}"]`;
@@ -635,7 +635,7 @@ export class SelectorHandler {
         if (hasUcFound) {
           isStartWithSubUc = (i == 0);
           let nnode: string = '';
-          nnode = (StampNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) ?
+          nnode = (SourceNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) ?
             `${sub_styler.nodeName}[${ATTR_OF.UC.ALL}="${sub_styler.KEYS.LOCAL}"]`
             :
             `${sub_styler.nodeName}.${ATTR_OF.__CLASS(sub_styler.KEYS.LOCAL, 'm')}`;
@@ -738,7 +738,7 @@ export class SelectorHandler {
   MISC_SELECTOR_CONDITION(selector: string, xk: SelScopeMap) {
     let dbl: string[] = selector.split(/ *:: */);
     let sngl: string[] = dbl[0].split(/ *: */);
-    if (StampNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
+    if (SourceNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
       sngl[0] += `[${ATTR_OF.UC.ALL}${xk.selectorOperation}="${xk.key}"]`;
     } else {
       sngl[0] += `.${ATTR_OF.__CLASS(xk.key, xk.scope)}`;

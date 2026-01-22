@@ -270,11 +270,13 @@ export class nodeFn {
         },
     }
     static resource = {
-
+        all: () => {
+            return this.renderer.sendSync('resource.all', []);
+        },
         getFile: (key: string,
             filePath: string,
-            type: ResourceType): string => {
-            return this.renderer.sendSync('resource.getFile', [key, filePath, type]);
+            type: ResourceType, registerOnLoad: boolean = false): string => {
+            return this.renderer.sendSync('resource.getFile', [key, filePath, type, registerOnLoad]);
         },
         getValue: (key: string,
             value: string,

@@ -12,9 +12,9 @@ export class TemplateMaker {
     templateCache = new Map<string, Function>();
     constructor(public mainImportMeta: string) { }
 
-    private loadTemplate(filepath: string ) {
+    private loadTemplate(filepath: string) {
         filepath = ucUtil.devEsc(filepath);
-        return nodeFn.fs.readFileSync(filepath );   /// path.resolve(this.baseDir, filepath), 'utf-8'
+        return nodeFn.fs.readFileSync(filepath);   /// path.resolve(this.baseDir, filepath), 'utf-8'
     }
 
     compileTemplate(template: string/*, filePath = ''*/): Function {
@@ -40,19 +40,19 @@ export class TemplateMaker {
                 if (tag === "<?=") {
                     _code += `try { output.push(${codeTrimmed}); } catch (e) { output.push(undefined); }\n`;
                 } else {
-                     
-                                      
-                                                  //  /\binclude\s*\(?['"](.+?)['"]\)?\s*;/gm
+
+
+                    //  /\binclude\s*\(?['"](.+?)['"]\)?\s*;/gm
                     codeTrimmed = codeTrimmed.replace(/\binclude\s*([\"'`])((?:\\.|(?!\2)[^\\])*)\2\s*;/gm, (match, includePath) => {
                         console.log('TEMPLATE MAKER');
-                        
+
                         let fpath = nodeFn.path.resolveFilePath(imprtmta, includePath);
                         let funcName = fileCodeDict.get(fpath);
 
                         if (funcName !== undefined) {
                             return funcName + ';';
                         } else {
-                            
+
                             let ltpt = _this.loadTemplate(includePath);
                             let fcodes = tptbind(ltpt, imprtmta/* ltpt.info.project.importMetaURL*/);
                             funcName = RuntimeKEY + "_" + (_COUNTER++);
@@ -63,7 +63,7 @@ export class TemplateMaker {
                     });
 
                     _code += `${codeTrimmed}\n`;
-                    
+
                 }
 
                 lastIndex = offset + match.length;
@@ -82,10 +82,10 @@ export class TemplateMaker {
         jsCode = incCode + ' ' + jsCode;
         let renderFn: Function;
         try {
-             renderFn = new Function('output', jsCode);
+            renderFn = new Function('output', jsCode);
         } catch (ex) {
-            console.log(jsCode); 
-            console.log(ex); 
+            console.log(jsCode);
+            console.log(ex);
         }
 
         const finalFn = (ctx: any = {}) => {
@@ -99,7 +99,6 @@ export class TemplateMaker {
         return finalFn;
     }
 
-     
+
 }
 
- 

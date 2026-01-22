@@ -1,6 +1,7 @@
 import UcDefaultConfig from "./out/main/ipc/userConfigManage.js";
 export default UcDefaultConfig({
-    mainAlias:'ucbuilder',
+    guid: "097DF085-D799-43EC-A783-CBFA4F228820",
+    mainAlias: 'ucbuilder',
     preference: {
         build: {
             RuntimeResources: [

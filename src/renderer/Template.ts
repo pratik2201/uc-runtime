@@ -1,20 +1,14 @@
-import { codeFileInfo, GetDeclaration } from "../global/codeFileInfo.js";
-import { TemplateMaker } from "../global/TemplateMaker.js";
 import { ExtractArguments, ISourceOptions, ITemplatePathOptions, ITptOptions, TptOptions } from "../common/enumAndMore.js";
-import { FilterContent } from "../lib/StampGenerator.js";
+import { codeFileInfo } from "../global/codeFileInfo.js";
 import { ATTR_OF } from "../global/runtimeOpt.js";
+import { TemplateMaker } from "../global/TemplateMaker.js";
 import { ucUtil } from "../global/ucUtil.js";
-import { SourceNode, StampNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
+import { FilterContent, SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
 import { nodeFn } from "./nodeFn.js";
-import { CSSSearchAttributeCondition, CssVariableHandler, CSSVariableScope, StyleBaseType, StylerRegs, Use_loader, VariableList } from "./StylerRegs.js";
+import { CSSSearchAttributeCondition, CssVariableHandler, CSSVariableScope, StyleBaseType, StylerRegs, VariableList } from "./StylerRegs.js";
 import { ITransferDataNode, Usercontrol } from "./Usercontrol.js";
 
-
-
-interface TptTextObjectNode<K> {
-  content: string,
-  row: K
-}
+ 
 export class Template {
   static MATERIAL: ISourceOptions = {
     htmlContents: undefined as string,
@@ -22,11 +16,11 @@ export class Template {
   }
   static extractArgs = (args: any) => ExtractArguments(args);
 
-  static splitCSSById(cssContent: string, cssFilePath: string, importMetaUrl: string, rtrn: { [key: string]: ITemplatePathOptions }): string {
+  static splitCSSById(cssContent: string/*, cssFilePath: string, importMetaUrl: string*/, rtrn: { [key: string]: ITemplatePathOptions }): string {
     let rtrnKeys = Object.keys(rtrn);
     //  if (cssContent.includes('part2Size')) debugger;
     //cssContent = StylerRegs.REMOVE_EXTRASPACE(StylerRegs.REMOVE_COMMENT(useLoader(cssContent, cssFilePath, importMetaUrl)));
-    cssContent = Use_loader(cssContent, cssFilePath);
+    cssContent = cssContent;//dev$Use_loader(cssContent, cssFilePath);
     let cssExtrct = StylerRegs.ScssExtractor(cssContent);
 
     let outerRulesCSS = "";
@@ -41,8 +35,7 @@ export class Template {
       /*outerRulesCSS += */iItem.frontContent.replace(/([\s\S]*)\#(\w+)\s*$/mg, (m, prevCn: string, ids: string) => {
         let robj = rtrn[ids];
         if (robj != undefined) { // IF TEMPLATENODE FOUND
-          robj.cssContents = robj.cssContents == undefined ? iItem.betweenContent : robj.cssContents + `
-            `  + iItem.betweenContent;
+          robj.cssContents = robj.cssContents == undefined ? iItem.betweenContent : robj.cssContents + ` `  + iItem.betweenContent;
           hasFound = true;
           hasAnyId = true;
           gkeys.push(ids);
@@ -102,7 +95,7 @@ export class Template {
       return csscnt;
     }*/
   }
-  static GetOptionsByContent(htmlcontent: string, cssContent: string, cssFilePath: string, importMetaUrl: string): {
+  static GetOptionsByContent(htmlcontent: string, cssContent: string/*, cssFilePath: string, importMetaUrl: string*/): {
     outerCSS: string,
     tptObj: { [key: string]: ITemplatePathOptions }
   } {
@@ -140,11 +133,11 @@ export class Template {
       rtrnKeys = ["primary"];
       isSimpleMode = true;
     }
-    let outerCSS = this.splitCSSById(cssContent, cssFilePath, importMetaUrl, rtrn);
+    let outerCSS = this.splitCSSById(cssContent, /*cssFilePath, importMetaUrl,*/ rtrn);
     return { outerCSS: outerCSS, tptObj: rtrn };
   }
 
-  static GetObjectOfTemplate(cinfo: codeFileInfo, htContent?: string, cssdata?: string): { outerCSS: string, tptObj: { [key: string]: ITemplatePathOptions } } {
+  static GetObjectOfTemplate(cinfo: codeFileInfo, htContent: string, cssdata: string): { outerCSS: string, tptObj: { [key: string]: ITemplatePathOptions } } {
 
     let impUrl = cinfo.projectInfo.importMetaURL;
     htContent = htContent ?? nodeFn.fs.readFileSync(cinfo.pathOf.html);
@@ -156,8 +149,8 @@ export class Template {
 
 
     let robj = this.GetOptionsByContent(htContent,
-      cssdata,
-      cinfo.pathOf.scss, impUrl);
+      cssdata/*,
+      cinfo.pathOf.scss, impUrl*/);
     let _mainFile_RootPath = cinfo.fullWithoutExt('html');
     for (let i = 0, iObj = Object.values(robj.tptObj), ilen = iObj.length; i < ilen; i++) {
       const irow = iObj[i];
@@ -166,9 +159,9 @@ export class Template {
     return robj;
   }
 
-  static GetArrayOfTemplate(cinfo: codeFileInfo): ITemplatePathOptions[] {
+  static GetArrayOfTemplate(cinfo: codeFileInfo,htContent: string, cssdata: string): ITemplatePathOptions[] {
     let ar = [] as ITemplatePathOptions[];
-    let objs = Template.GetObjectOfTemplate(cinfo).tptObj;
+    let objs = Template.GetObjectOfTemplate(cinfo,htContent, cssdata).tptObj;
     for (let i = 0, iObj = Object.keys(objs), ilen = iObj.length; i < ilen; i++)
       ar.push(objs[iObj[i]]);
     return ar;
@@ -188,7 +181,7 @@ export class Template {
   pushTemplateCss(cssCode: string, cssPath: string, baseType?: StyleBaseType, mode: CSSSearchAttributeCondition = '*') {
     let accessName = `@`;
     let ext = this.extended;
-    let snode = StampNode.registerSoruce({
+    let snode = SourceNode.registerSource({
       key: ext.cfInfo.fullWithoutExt('html') + "@", // + accessName,
       accessName: accessName,
       cssFilePath: cssPath,
@@ -300,9 +293,9 @@ export class TemplateNode {
       let tptExt = this.extended;
       let param0 = Object.assign(Object.assign({}, TptOptions), _args);
       tptExt.accessName = tptPathOpt.accessKey;
-     
+
       //console.log(param0.cssBaseFilePath);
-      tptExt.srcNode = StampNode.registerSoruce(
+      tptExt.srcNode = SourceNode.registerSource(
         {
           key: tptPathOpt.objectKey /*+ "@" + tptPathOpt.accessKey*/,
           accessName: tptExt.accessName,
@@ -403,7 +396,7 @@ export class TemplateNode {
         specific.forEach((itmpath) => {
           if (!(itmpath in childs)) {
             let ele: HTMLElement;
-            if (StampNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
+            if (SourceNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
               ele = fromElement.querySelector(
                 `[${ATTR_OF.X_NAME}='${itmpath}'][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`  // old one  `[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
               ) as HTMLElement;
@@ -418,7 +411,7 @@ export class TemplateNode {
       } else {
         let uniqStamp = uExt.extended.srcNode.localStamp;
         let eleAr: HTMLElement[] = [];
-        if (StampNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
+        if (SourceNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
           eleAr = Array.from(
             fromElement.querySelectorAll(
               `[${ATTR_OF.X_NAME}][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`  // old one  `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
