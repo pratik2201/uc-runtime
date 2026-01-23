@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import { IpcMainGroup } from "./ipc/IpcMainHelper.js";
-import { ResourceType, RM } from "../resMng/resourceManager.js";
-import { getRegistry, registerFileSync, registerValue } from "../resMng/resource.dev.js";
+import { fileEntry, FileTypes, RM } from "../resMng/resourceManager.js";
 
 export default function () {
 
@@ -39,22 +38,17 @@ export default function () {
 
 
     main.On('resource.all', (event) => {
-        event.returnValue = getRegistry()
+        event.returnValue = RM.getEntriesOfFile();
     });
-    main.On('resource.getFile', (event, key: string, filePathIfNotExist: string, type: ResourceType, registerOnLoad: boolean=false) => {
-        if (RM.has(key)) event.returnValue = RM.get(key);
-        else {
-            if (filePathIfNotExist != undefined && type != undefined)
-                event.returnValue = registerFileSync(key, filePathIfNotExist, type, registerOnLoad);
-            else event.returnValue = undefined;
-        };
+    main.On('resource.getResource', (event, resKey: string,  type: FileTypes,valOrPath: string) => {
+        event.returnValue = RM.getResource(resKey, type, valOrPath);
     });
-    main.On('resource.getValue', (event, key: string, valueIfNotExist?: string, type?: ResourceType) => {
-        if (RM.has(key)) event.returnValue = RM.get(key);
-        else {
-            if (valueIfNotExist != undefined && type != undefined)
-                event.returnValue = registerValue(key, valueIfNotExist, type);
-            else event.returnValue = undefined;
-        };
-    });
+    // main.On('resource.getValue', (event, key: string, valueIfNotExist?: string, type?: FileTypes) => {
+    //     if (RM.hasValue(key)) event.returnValue = RM.getValue(key);
+    //     else {
+    //         if (valueIfNotExist != undefined && type != undefined)
+    //             event.returnValue = registerValue(key, valueIfNotExist, type);
+    //         else event.returnValue = undefined;
+    //     };
+    // });
 }

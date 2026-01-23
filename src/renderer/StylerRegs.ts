@@ -50,6 +50,11 @@ export type CSSVariableScope = "global" | "local" | "internal" | "template";
 export type CSSVariableScopeSort = "g" | "l" | "i" | "t";
 export type CSSSearchAttributeCondition = "*" | "^" | "$";
 export const WRAPPER_TAG_NAME = 'f' + GetUniqueId();
+export function dev$minifyCss(content: string) {
+  content = (content.replace(/\/\*([\s\S]*?)\*\//gi, "")
+    .replace(/\/\/.*/mg, "")).replace(/(;|,|:|{|})[\n\r ]*/gi, "$1");
+  return content;
+}
 export function dev$Use_loader(content: string, cssFilePath: string) {
   content = (content.replace(/\/\*([\s\S]*?)\*\//gi, "")
     .replace(/\/\/.*/mg, "")).replace(/(;|,|:|{|})[\n\r ]*/gi, "$1");
@@ -78,22 +83,24 @@ export function dev$Use_loader(content: string, cssFilePath: string) {
 export class StylerRegs {
   static ScssExtractor(csscontent: string) {
     let ocHandler = new openCloser();
-    ocHandler.ignoreList.push({ openingChar: `"`, closingChar: `"` },
+    ocHandler.ignoreList.push(
+      { openingChar: `"`, closingChar: `"` },
       { openingChar: `'`, closingChar: `'` },
       { openingChar: "`", closingChar: "`" },
-      { openingChar: "/*", closingChar: "*/" });
+      { openingChar: "/*", closingChar: "*/" }
+    );
     return ocHandler.parse({ openingChar: '{', closingChar: '}' }, csscontent);
   }
   baseType: StyleBaseType = StyleBaseType.UserControl;
   static initProjectsStyle(/*callback: () => void*/): void {
     SourceNode.init();
     ProjectManage.projects.forEach((row) => {
-
       let cssPath = nodeFn.path.resolve(row.projectPath, 'styles.scss');
-      cssPath = nodeFn.fs.existsSync(cssPath) ?
-        cssPath :
-        nodeFn.path.resolve(row.projectPath, row.config.projectBaseCssPath);
-
+      let cssContent = nodeFn.resource.getResource(row.config.guid ?? cssPath, 'cssFile', cssPath);
+      if (cssContent == undefined) {
+        cssPath = nodeFn.path.resolve(row.projectPath, row.config.projectBaseCssPath);
+        cssContent = nodeFn.resource.getResource(row.config.guid ?? cssPath, 'cssFile', cssPath);
+      }
       let _stylepath: string = nodeFn.path.relativeFilePath(row.projectPath, cssPath);
       row.stampSRC = SourceNode.registerSource({
         key: _stylepath,
@@ -103,7 +110,8 @@ export class StylerRegs {
         mode: '$',
         accessName: row.projectPrimaryAlice,
       });
-      row.stampSRC.pushCSS(cssPath, dev$Use_loader(nodeFn.resource.getFile(row.config.guid ?? _stylepath, cssPath, 'css', true), cssPath), document.body);//row.importMetaURL,
+
+      row.stampSRC.pushCSS(cssPath, dev$Use_loader(cssContent, cssPath), document.body);//row.importMetaURL,
       //}
     });
   }
@@ -148,6 +156,12 @@ export class StylerRegs {
     this.generateStamp = generateStamp;
     this.projectInfo = main.project;
     this.baseType = baseType;
+    this.opnClsr.ignoreList = [
+      { openingChar: `"`, closingChar: `"` },
+      { openingChar: `'`, closingChar: `'` },
+      { openingChar: "`", closingChar: "`" },
+
+    ]; 
     if (cached_keys == undefined) {
 
       StylerRegs.localID++;
@@ -205,9 +219,18 @@ export class StylerRegs {
     let _curProject: ProjectRowR = _this.projectInfo;
     //let rtrn = StylerRegs.REMOVE_COMMENT(_params.data);
     //rtrn = StylerRegs.REMOVE_EXTRASPACE(Use_loader(rtrn, this.main.cssFilePath));
+    //console.log([_params.data]);
+
     let rtrn = dev$Use_loader(_params.data, this.main.cssFilePath);
+    console.log(rtrn);
+
+    // const xrtrn = this.opnClsr.parse({ openingChar: '{', closingChar: '}' }, rtrn);
+    // console.log(xrtrn);
+
     rtrn = this.opnClsr.doTask("{", "}", rtrn,
       (selectorText: string, styleContent: string, count: number): string => {
+      //  console.log([selectorText, styleContent]);
+
         let excludeContentList = this.rootAndExcludeHandler.checkRoot(selectorText, styleContent, _params);
         if (excludeContentList.length == 0) {
           let trimSelector: string = selectorText.trim();
@@ -216,6 +239,7 @@ export class StylerRegs {
             let type = '@' + m[1].trim();
             switch (type) {
               case '@media':
+              case '@font-face':
               case '@supports':
               case '@container':
               case '@document':
@@ -236,30 +260,19 @@ export class StylerRegs {
               return '';
             });
             sel = sel.trim();
-
-
-            //console.log(sel);
-
             const res = _this.selectorHandler.parseScopeSeperator({
               selectorText: sel,
               scopeSelectorText: _params.scopeSelectorText,
               project: _curProject,
               isForRoot: _params.isForRoot
             });
-            //console.log(res);
-
-
             let grp = StylerRegs.groupByStyler(res);
             let finalreturn = '';
             grp.forEach(s => {
               styleContent = s.styler.varHandler.handlerVariable(styleContent);
               finalreturn += ` ${s.selectors.join(',')} {${styleContent}} `;
             });
-            //console.log(grp);
-            //console.log(finalreturn);
-
             return `${extraTextAtBegining} ${finalreturn}`;
-            // return `${extraTextAtBegining} ${res}{${styleContent}}`;
           }
         } else {
           return excludeContentList.join(' ');
@@ -303,6 +316,7 @@ export class StylerRegs {
       node.alices = accessKey.toLowerCase();
       node.path = key;
       node.parent = this;
+
       this.children.push(node);
     }
     node.parent = this;
@@ -342,7 +356,7 @@ export class RootAndExcludeHandler {
         filePath = fpath;
         UCselector = UCselector.trim();
         let tree: StylerRegs = this.main.children.find(
-          (s: StylerRegs) => nodeFn.path.isSamePath(s.path, filePath) || s.alices == filePath
+          (s: StylerRegs) => nodeFn.path.isSamePath(s.path, filePath) || s.controlXName == filePath
         );
         if (tree != undefined) {
           let nscope: string =
@@ -894,7 +908,15 @@ class openCloser {
 
       // If inside an ignored block, find closing delimiter
       if (ignored) {
-        let endIdx = str.indexOf(ignored.closingChar, i + ignored.openingChar.length);
+        let ignSearchStartAt = i + ignored.openingChar.length;
+        let endIdx = -1;
+        do {
+          endIdx = str.indexOf(ignored.closingChar, ignSearchStartAt);
+          if (endIdx == -1) break;
+          else if (str.at(endIdx - 1) == '\\') {
+            ignSearchStartAt = endIdx + 1;
+          } else break;
+        } while (true)
         if (endIdx !== -1) {
           // Skip ignored content entirely
           buffer += str.substring(i, endIdx + ignored.closingChar.length);
@@ -944,6 +966,14 @@ class openCloser {
 
     return result;
   }
+private isEscaped(text: string, endIndex: number): boolean {
+    let count = 0;
+    for (let i = endIndex - 1; i >= 0 && text[i] === "\\"; i--) {
+      count++;
+    }
+    return count % 2 === 1;
+  }
+
   doTask(
     openTxt: string,
     closeTxt: string,
@@ -952,70 +982,160 @@ class openCloser {
       outText: string,
       inText: string,
       txtCount: number
-    ) => void = (outText, inText, txtCount) => { }
+    ) => string = () => ""
   ): string {
+
     let opened = 0, closed = 0;
     let rtrn = "";
     let lastoutIndex = 0, lastinIndex = 0;
-    let iList = this.ignoreList;
-    if (iList.length == 0) {
-      let fcntnt = '';
-      let oLEN = openTxt.length;
-      let cLEN = closeTxt.length;
-      for (let index = 0, len = contents.length; index <= len; index++) {
-        if (opened == closed && index > 0 && opened > 0) {
-          let selector = contents.substring(lastoutIndex, lastinIndex - oLEN + 1);
-          let cssStyle = contents.substring(lastinIndex + 1, index - cLEN);
-          rtrn += callback(selector, cssStyle, opened);
-          lastoutIndex = index;
-          opened = closed = 0;
+
+    let buffer = "";
+
+    let state: "resume" | "pause" = "resume";
+    let activeIgnore: OpenCloseCharNode | null = null;
+
+    const oLEN = openTxt.length;
+    const cLEN = closeTxt.length;
+
+    for (let index = 0, len = contents.length; index <= len; index++) {
+
+      let ch = contents.charAt(index);
+      buffer += ch;
+
+      // ================= IGNORE MODE =================
+      if (state === "pause") {
+
+        if (
+          activeIgnore &&
+          buffer.endsWith(activeIgnore.closingChar)
+        ) {
+          let end = buffer.length - 1;
+
+          // skip escaped closing char like \" \' \`
+          if (!this.isEscaped(buffer, end)) {
+            state = "resume";
+            activeIgnore = null;
+          }
         }
-        let cnt = contents.charAt(index);
-        if (index == len) {
-          rtrn += contents.substring(lastoutIndex);
-        }
-        fcntnt += cnt;
-        if (fcntnt.slice(-oLEN) == openTxt) {
-          if (opened == 0) lastinIndex = index;
-          opened++;
-        } else if (fcntnt.slice(-cLEN) == closeTxt) {
-          closed++;
+        continue;
+      }
+
+      // ================= ENTER IGNORE =================
+      for (let ig of this.ignoreList) {
+        if (buffer.endsWith(ig.openingChar)) {
+          state = "pause";
+          activeIgnore = ig;
+          break;
         }
       }
-    } else {
-      let charNode: OpenCloseCharNode;
-      let state: "pause" | "resume" = "resume";
-      for (let index = 0, len = contents.length; index < len; index++) {
-        let cnt = contents.charAt(index);
-        switch (state) {
-          case "resume":
-            if (opened == closed && index > 0 && opened > 0) {
-              let selector = contents.substring(lastoutIndex, lastinIndex);
-              let cssStyle = contents.substring(lastinIndex + 1, index - 1);
-              rtrn += callback(selector, cssStyle, opened);
-              lastoutIndex = index;
-              opened = closed = 0;
-            }
-            switch (cnt) {
-              case openTxt:
-                if (opened == 0) lastinIndex = index;
-                opened++;
-                break;
-              case closeTxt:
-                closed++;
-                break;
-              default:
-                charNode = iList.find((s) => s.openingChar === cnt);
-                if (charNode != undefined) state = "pause";
-                break;
-            }
-            break;
-          case "pause":
-            if (cnt === charNode.closingChar) state = "resume";
-            break;
-        }
+
+      // ================= NORMAL COUNT =================
+      if (buffer.endsWith(openTxt)) {
+        if (opened === 0) lastinIndex = index;
+        opened++;
+      }
+      else if (buffer.endsWith(closeTxt)) {
+        closed++;
+      }
+
+      // ================= BLOCK COMPLETE =================
+      if (opened === closed && opened > 0) {
+
+        let selector = contents.substring(lastoutIndex, lastinIndex - oLEN + 1);
+        let cssStyle = contents.substring(lastinIndex + 1, index - cLEN + 1);
+
+        rtrn += callback(selector, cssStyle, opened);
+
+        lastoutIndex = index + 1;
+        opened = closed = 0;
+      }
+
+      // ================= END FILE =================
+      if (index === len) {
+        rtrn += contents.substring(lastoutIndex);
       }
     }
+
     return rtrn;
   }
+
+
+
+  // doTask(
+  //   openTxt: string,
+  //   closeTxt: string,
+  //   contents: string,
+  //   callback: (
+  //     outText: string,
+  //     inText: string,
+  //     txtCount: number
+  //   ) => void = (outText, inText, txtCount) => { }
+  // ): string {
+  //   let opened = 0, closed = 0;
+  //   let rtrn = "";
+  //   let lastoutIndex = 0, lastinIndex = 0;
+  //   let iList = this.ignoreList;
+  //   if (iList.length == 0) {
+  //     let fcntnt = '';
+  //     let oLEN = openTxt.length;
+  //     let cLEN = closeTxt.length;
+  //     for (let index = 0, len = contents.length; index <= len; index++) {
+  //       if (opened == closed && index > 0 && opened > 0) {
+  //         let selector = contents.substring(lastoutIndex, lastinIndex - oLEN + 1);
+  //         let cssStyle = contents.substring(lastinIndex + 1, index - cLEN);
+  //         rtrn += callback(selector, cssStyle, opened);
+  //         lastoutIndex = index;
+  //         opened = closed = 0;
+  //       }
+  //       let cnt = contents.charAt(index);
+  //       if (index == len) {
+  //         rtrn += contents.substring(lastoutIndex);
+  //       }
+  //       fcntnt += cnt;
+  //       if (fcntnt.slice(-oLEN) == openTxt) {
+  //         if (opened == 0) lastinIndex = index;
+  //         opened++;
+  //       } else if (fcntnt.slice(-cLEN) == closeTxt) {
+  //         closed++;
+  //       }
+  //     }
+  //   } else {
+  //     let charNode: OpenCloseCharNode;
+  //     let state: "pause" | "resume" = "resume";
+  //     for (let index = 0, len = contents.length; index < len; index++) {
+  //       let cnt = contents.charAt(index);
+  //       switch (state) {
+  //         case "resume":
+  //           if (opened == closed && index > 0 && opened > 0) {
+  //             let selector = contents.substring(lastoutIndex, lastinIndex);
+  //             let cssStyle = contents.substring(lastinIndex + 1, index - 1);
+  //             rtrn += callback(selector, cssStyle, opened);
+  //             lastoutIndex = index;
+  //             opened = closed = 0;
+  //           }
+  //           switch (cnt) {
+  //             case openTxt:
+  //               if (opened == 0) lastinIndex = index;
+  //               opened++;
+  //               break;
+  //             case closeTxt:
+  //               closed++;
+  //               break;
+  //             default:
+  //               charNode = iList.find((s) => s.openingChar === cnt);
+  //               if (charNode != undefined) state = "pause";
+  //               break;
+  //           }
+  //           break;
+  //         case "pause":
+  //           if (cnt === charNode.closingChar) {
+              
+  //               state = "resume";
+  //           }
+  //           break;
+  //       }
+  //     }
+  //   }
+  //   return rtrn;
+  // }
 }

@@ -2,8 +2,7 @@
   "include": [  "src" ],
   "exclude": [
     "node_modules",
-    "out",
-    "types"
+    "out"
   ],
   "compilerOptions": {     
     "module": "ESNext",
@@ -12,6 +11,7 @@
     "baseUrl": ".",
     "outDir": "out",
     "rootDir": "src",
+    "declarationDir": "out",
     "strict": true,
     "allowJs": true,
     "strictNullChecks": false,

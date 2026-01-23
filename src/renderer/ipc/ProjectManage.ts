@@ -2,25 +2,29 @@
 import { ucUtil } from "../../global/ucUtil.js";
 import { nodeFn } from "../nodeFn.js";
 import { IPC_API_KEY, PreloadFullFill, ProjectRowR } from "../../common/ipc/enumAndMore.js";
-import { IpcRendererHelper } from "./IpcRendererHelper.js"; 
+import { IpcRendererHelper } from "./IpcRendererHelper.js";
 
 export class ProjectManage {
     static projects: ProjectRowR[] = [];
     static PROJECT_COUNTER = 0;
     static PROJECT_PATH = "";
+    static MAIN_PROJECT: ProjectRowR;
     static wu: PreloadFullFill;
     static init() {
-        const prj = IpcRendererHelper.ucConfig;
+        const prj = IpcRendererHelper.ucConfig;       
         this.PROJECT_PATH = prj.projectPath;
         this.wu = window[IPC_API_KEY].fullFill;
         this.FILL_PROJECTS(prj as any);
     }
 
     static FILL_PROJECTS(_project: ProjectRowR): ProjectRowR {
-       // console.log(_project);
+        // console.log(_project);
         //return;
         let newProject = Object.assign(new ProjectRowR(), _project);
         newProject.id = ProjectManage.PROJECT_COUNTER++;
+        if (nodeFn.path.isSamePath(_project.projectPath, nodeFn.path.resolve())) {
+            this.MAIN_PROJECT = _project;
+        }
         ProjectManage.projects.push(newProject);
         ProjectManage.projects.sort((a, b) => b.importMetaURL.length - a.importMetaURL.length);
         let childs: ProjectRowR[] = [];
@@ -35,13 +39,13 @@ export class ProjectManage {
         return this.projects.find(row => fullPath.startsWith(row.projectPath))?.importMetaURL;
     }*/
     static getInfoByProjectPath(path: string): ProjectRowR | undefined {
-        let findex = this.projects.findIndex(s => nodeFn.path.isSamePath(path,s.projectPath));
+        let findex = this.projects.findIndex(s => nodeFn.path.isSamePath(path, s.projectPath));
         if (findex == -1) return undefined;
         return this.projects[findex];
     }
     static getInfoByAlices(alices: string): ProjectRowR | undefined {
 
-        let findex = this.projects.findIndex(s => ucUtil.equalIgnoreCase(alices,s.projectPrimaryAlice));
+        let findex = this.projects.findIndex(s => ucUtil.equalIgnoreCase(alices, s.projectPrimaryAlice));
         if (findex == -1) return undefined;
         return this.projects[findex];
     }

@@ -2,7 +2,7 @@ import fs from 'fs';
 import { PreloadFullFill } from "../common/ipc/enumAndMore.js";
 import { ucUtil } from "../global/ucUtil.js";
 import { IpcRendererHelper } from './ipc/IpcRendererHelper.js';
-import { ResourceType } from '../resMng/resourceManager.js';
+import { fileEntry, FileTypes } from '../resMng/resourceManager.js';
 // export interface I_WriteFileSyncPerameters { path: string, data: string, encode: fs.WriteFileOptions }
 // export interface I_ReadFileSyncPerameters { path: string, doCache?: boolean, encode: fs.WriteFileOptions }
 // export interface I_ExistsSyncPerameters { path: string, }
@@ -271,17 +271,20 @@ export class nodeFn {
     }
     static resource = {
         all: () => {
-            return this.renderer.sendSync('resource.all', []);
+            return this.renderer.sendSync('resource.all', []) as  [string, fileEntry][];
         },
-        getFile: (key: string,
-            filePath: string,
-            type: ResourceType, registerOnLoad: boolean = false): string => {
-            return this.renderer.sendSync('resource.getFile', [key, filePath, type, registerOnLoad]);
+        getResource: (resKey: string, type: FileTypes, valOrPath: string): string => {
+            const res = this.renderer.sendSync('resource.getResource', [resKey, type, valOrPath]) as fileEntry;
+            if (res == undefined) {
+                console.log(`!!!! AT 'nodeFn.resource.getFile' NO FILE FOUND '${valOrPath}' `);
+                return undefined;
+            }
+            ////console.log(res);
+            return res?.value;
         },
         getValue: (key: string,
-            value: string,
-            type: ResourceType): string => {
-            return this.renderer.sendSync('resource.getValue', [key, value, type]);
+            value: string): string => {
+            return this.renderer.sendSync('resource.getValue', [key, value]);
         }
     }
 }
