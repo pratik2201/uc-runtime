@@ -131,7 +131,8 @@ export type WhatToDoWithTargetElement = "replace" | "append";
 
 export interface IUcOptions {
     cfInfo?: codeFileInfo;
-    cssKeyStamp?: IKeyStampNode,
+  cssKeyStamp?: IKeyStampNode,
+  guid?: string;
     mode?: UCGenerateMode;
     // session?: SessionOptions;
     source?: ISourceOptions;

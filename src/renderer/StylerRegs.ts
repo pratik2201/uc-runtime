@@ -105,7 +105,7 @@ export class StylerRegs {
       row.stampSRC = SourceNode.registerSource({
         key: _stylepath,
         baseType: StyleBaseType.Global,
-        cssFilePath: cssPath,
+        //cssFilePath: cssPath,
         project: row,
         mode: '$',
         accessName: row.projectPrimaryAlice,
@@ -222,7 +222,7 @@ export class StylerRegs {
     //console.log([_params.data]);
 
     let rtrn = dev$Use_loader(_params.data, this.main.cssFilePath);
-    console.log(rtrn);
+    //console.log(rtrn);
 
     // const xrtrn = this.opnClsr.parse({ openingChar: '{', closingChar: '}' }, rtrn);
     // console.log(xrtrn);

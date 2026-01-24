@@ -13,6 +13,7 @@ import { CSSVariableScope, CssVariableHandler, StyleBaseType, VariableList } fro
 export type UcDialogResult = "none" | "ok" | 'cancel' | 'close';
 export type ucVisibility = 'inherit' | 'visible' | 'hidden';
 export class Usercontrol {
+    static readonly guid: string;
     static MATERIAL: ISourceOptions = {
         htmlContents: undefined as string,
         cssContents: undefined as string,
@@ -81,7 +82,7 @@ export class Usercontrol {
         //console.log(uc.ucExtends.controls);
 
     }
-      
+
     static HiddenSpace: HTMLElement = document.createElement('hspc' + GetUniqueId());
 
     static UcOptionsStc: IUcOptions;
@@ -237,7 +238,7 @@ export class Usercontrol {
         cssVarStampKey: '0',
         initializecomponent: (param0: IUcOptions): void => {
             let ucExt = this.ucExtends;
-            ucExt.mode = param0.mode;
+            ucExt.mode = param0.mode;             
             if (param0.events.beforeInitlize != undefined) param0.events.beforeInitlize(this);
             ucExt.isForm = (param0.parentUc == undefined);
             ucExt.fileInfo = param0.cfInfo;
@@ -250,7 +251,7 @@ export class Usercontrol {
             }
             if (ucExt.isForm) {
                 ucExt.dialogForm.ucExtends.___META.CONTEXT = param0.context;
-            }  
+            }
             ucExt.srcNode = SourceNode.registerSource({
                 key: ucExt.fileInfo.pathOf.scss,
                 cssKeyStamp: param0.cssKeyStamp,
@@ -258,35 +259,35 @@ export class Usercontrol {
                 accessName: param0.accessName,
                 project: ucExt.fileInfo.projectInfo,
                 baseType: StyleBaseType.UserControl,
-                mode: '^', 
+                mode: '^',
             });
             let htPathToRead = param0.source.htmlFilePath ?? ucExt.fileInfo.pathOf.html;
             let htContent = param0.source.htmlContents;
-             
+
 
             let tmkr = Usercontrol.templateMkr.get(htPathToRead);
-            if (tmkr == undefined) { 
+            if (tmkr == undefined) {
                 let t = new TemplateMaker(htPathToRead);
                 tmkr = t.compileTemplate(htContent)(param0.source.htmlRow ?? {});
                 Usercontrol.templateMkr.set(htPathToRead, tmkr);
             }
             let isAlreadyExist = ucExt.srcNode.htmlCode.load(
-                tmkr 
+                tmkr
             );
             if (!isAlreadyExist)
-                ucExt.srcNode.loadHTML(); 
+                ucExt.srcNode.loadHTML();
             ucExt.wrapperHT = ucExt.srcNode.dataHT.cloneNode(true) as HTMLElement;
- 
+
             if (ucExt.isForm) {
                 ucExt.PARENT = this;
-                ucExt.form = this; 
+                ucExt.form = this;
                 ucExt.srcNode.config({
                     parentUc: ucExt.PARENT,
                     parentSrc: ucExt.fileInfo.projectInfo.stampSRC,
                     wrapper: ucExt.wrapperHT,
                     key: ucExt.fileInfo.pathWithExt('html'),
                     accessName: param0.accessName
-                }); 
+                });
             } else {
                 ucExt.form = param0.parentUc.ucExtends.form;
                 ucExt.PARENT = param0.parentUc;
@@ -364,7 +365,7 @@ export class Usercontrol {
         finalizeInitAsync: async (param0: IUcOptions) => {
             let ext = this.ucExtends;
             //ext.srcNode.pushCSS(ext.srcNode.cssFilePath ?? ext.fileInfo.pathOf.scss, ext.fileInfo.projectInfo.importMetaURL, ext.self);
-            
+
             ext.srcNode.pushCSS(
                 ext.srcNode.cssFilePath ?? ext.fileInfo.pathOf.scss,
                 param0.source.cssContents,
