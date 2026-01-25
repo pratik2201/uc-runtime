@@ -55,9 +55,7 @@ export function dev$minifyCss(content: string) {
     .replace(/\/\/.*/mg, "")).replace(/(;|,|:|{|})[\n\r ]*/gi, "$1");
   return content;
 }
-export function dev$Use_loader(content: string, cssFilePath: string) {
-  content = (content.replace(/\/\*([\s\S]*?)\*\//gi, "")
-    .replace(/\/\/.*/mg, "")).replace(/(;|,|:|{|})[\n\r ]*/gi, "$1");
+export function dev$Use_loader(content: string, cssFilePath: string) {  
   content = content.replace(/@use\s*(["'`])((?:\\.|(?!\1)[^\\])*)\1\s*;/gim,
     (match: string, quationMark: string, path: string, offset: any, input_string: string) => {
       let themecontents = '';
@@ -105,7 +103,6 @@ export class StylerRegs {
       row.stampSRC = SourceNode.registerSource({
         key: _stylepath,
         baseType: StyleBaseType.Global,
-        //cssFilePath: cssPath,
         project: row,
         mode: '$',
         accessName: row.projectPrimaryAlice,
@@ -220,7 +217,8 @@ export class StylerRegs {
     //let rtrn = StylerRegs.REMOVE_COMMENT(_params.data);
     //rtrn = StylerRegs.REMOVE_EXTRASPACE(Use_loader(rtrn, this.main.cssFilePath));
     //console.log([_params.data]);
-
+   // console.log( this.main.cssFilePath);
+    
     let rtrn = dev$Use_loader(_params.data, this.main.cssFilePath);
     //console.log(rtrn);
 

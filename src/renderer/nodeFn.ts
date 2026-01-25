@@ -271,7 +271,10 @@ export class nodeFn {
     }
     static resource = {
         all: () => {
-            return this.renderer.sendSync('resource.all', []) as  [string, fileEntry][];
+            return this.renderer.sendSync('resource.all', []) as [string, fileEntry][];
+        },
+        setResource: (resKey: string, fe: fileEntry) => {
+            this.renderer.sendSync('resource.setResource', [resKey, fe]);
         },
         getResource: (resKey: string, type: FileTypes, valOrPath: string): string => {
             const res = this.renderer.sendSync('resource.getResource', [resKey, type, valOrPath]) as fileEntry;

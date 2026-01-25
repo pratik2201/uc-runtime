@@ -24,15 +24,12 @@ export interface valueEntry {
 }
 export class fileEntry {
   type: FileTypes = 'textFile';
-  value = '';
-  resourceKey = undefined;
-  filePath: string;
-  // preloadRenderer = false;
-  // preloadMain = false;
+  value = ''; 
+  filePath: string; 
 }
 
 export class ResourceManager {
-  //private static map = new Map<string, ResourceEntry>();
+   
   private static valueMap = new Map<string, valueEntry>();
   static setValue(key: string, value, type: ValueType = "string") {
     this.valueMap.set(key, {
@@ -53,6 +50,12 @@ export class ResourceManager {
     return Array.from(this.valueMap.entries());
   }
 
+  static setResource(resourceKey: string, fentry: fileEntry) {
+    this.fileSource.delete(resourceKey);
+    const fe = new fileEntry();
+    Object.assign(fe, fentry);
+    this.fileSource.set(resourceKey, fe);
+  }
 
   static fileSource = new Map<string, fileEntry>();
   static getResource(resourceKey: string, type: FileTypes, valOrPath?: string) {
@@ -65,18 +68,22 @@ export class ResourceManager {
         case 'htmlFile':
         case 'rawFile':
         case 'textFile':
-          valOrPath = path.normalize(valOrPath);
-          if (!fs.existsSync(valOrPath)) return undefined;
-          buf = fs.readFileSync(valOrPath);
-          finfo.filePath = valOrPath;
-          finfo.value = buf.toString("utf8");
-          break;
         case 'imageFile':
           valOrPath = path.normalize(valOrPath);
           if (!fs.existsSync(valOrPath)) return undefined;
           buf = fs.readFileSync(valOrPath);
-          const ext = path.extname(valOrPath).slice(1);
           finfo.filePath = valOrPath;
+          break;
+      }
+      switch (type) {
+        case 'cssFile':
+        case 'htmlFile':
+        case 'rawFile':
+        case 'textFile':
+          finfo.value = buf.toString("utf8");
+          break;
+        case 'imageFile':
+          const ext = path.extname(valOrPath).slice(1);
           finfo.value = `data:image/${ext};base64,${buf.toString("base64")}`;
           break;
         case 'string':

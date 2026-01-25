@@ -40,8 +40,12 @@ export default function () {
     main.On('resource.all', (event) => {
         event.returnValue = RM.getEntriesOfFile();
     });
-    main.On('resource.getResource', (event, resKey: string,  type: FileTypes,valOrPath: string) => {
+    main.On('resource.getResource', (event, resKey: string, type: FileTypes, valOrPath: string) => {
         event.returnValue = RM.getResource(resKey, type, valOrPath);
+    });
+    main.On('resource.setResource', (event, resKey: string, fe: fileEntry) => {
+        RM.setResource(resKey, fe);
+        event.returnValue = undefined;
     });
     // main.On('resource.getValue', (event, key: string, valueIfNotExist?: string, type?: FileTypes) => {
     //     if (RM.hasValue(key)) event.returnValue = RM.getValue(key);
