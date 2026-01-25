@@ -1,0 +1,31 @@
+{
+    "folders": [
+        {
+            "name": "SARE BAJAR P & L HELPER",
+            "path": "sharepnl"
+        },
+        {
+            "name": "sharepnl-middleLib",
+            "path": "sharepnl-middleLib"
+        },
+        {
+            "name": "UC Builder",
+            "path": "ucbuilder"
+        },
+        {
+            "name": "Builder Test",
+            "path": "builderTest"
+        },
+		{
+			"name":"UC devtools",
+			"path":"ucbuilder-devtools",
+		}
+    ],
+    "settings": {
+        "cSpell.words": [
+            "ucbuilder"
+        ],
+        "svg.preview.background": "dark-transparent",
+        
+    }
+}

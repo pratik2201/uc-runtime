@@ -276,7 +276,7 @@ export class nodeFn {
         setResource: (resKey: string, fe: fileEntry) => {
             this.renderer.sendSync('resource.setResource', [resKey, fe]);
         },
-        getResource: (resKey: string, type: FileTypes, valOrPath: string): string => {
+        getResource: (resKey: string, type: FileTypes, valOrPath?: string): string => {
             const res = this.renderer.sendSync('resource.getResource', [resKey, type, valOrPath]) as fileEntry;
             if (res == undefined) {
                 console.log(`!!!! AT 'nodeFn.resource.getFile' NO FILE FOUND '${valOrPath}' `);

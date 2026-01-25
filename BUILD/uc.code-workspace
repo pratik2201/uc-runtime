@@ -1,0 +1,33 @@
+{
+    "folders": [ 
+	
+        {
+            "name": "Sharepnl",
+            "path": "sharepnl"
+        }, 
+		{
+            "name": "sharepnl-middleLib",
+            "path": "sharepnl-middleLib"
+        },
+		{
+			"name":"Builder Test",
+			"path":"builder-test",
+		},
+        {
+            "name": "UC Builder",
+            "path": "ucbuilder"
+        }, 
+		{
+			"name":"UC devtools",
+			"path":"ucbuilder-devtools",
+		}
+
+    ],
+    "settings": {
+        "cSpell.words": [
+            "ucbuilder"
+        ],
+        "svg.preview.background": "dark-transparent",
+        
+    }
+}
