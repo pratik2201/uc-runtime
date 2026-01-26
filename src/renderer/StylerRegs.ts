@@ -3,7 +3,8 @@ import { ATTR_OF, StyleClassScopeType } from "../global/runtimeOpt.js";
 import { ucUtil } from "../global/ucUtil.js";
 import { SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
 import { ProjectManage } from "./ipc/ProjectManage.js";
-import { nodeFn } from "./nodeFn.js";
+import { nodeFn } from "./nodeFn.js"; 
+import { Resources } from "./resMng.js";
 export type VariableList = { [key: string]: string };
 export const patternList = {
   styleTagSelector: /<style([\n\r\w\W.]*?)>([\n\r\w\W.]*?)<\/style>/gi,
@@ -55,7 +56,8 @@ export function dev$minifyCss(content: string) {
     .replace(/\/\/.*/mg, "")).replace(/(;|,|:|{|})[\n\r ]*/gi, "$1");
   return content;
 }
-export function dev$Use_loader(content: string, cssFilePath: string) {  
+export function dev$Use_loader(content: string, cssFilePath: string) {
+  
   content = content.replace(/@use\s*(["'`])((?:\\.|(?!\1)[^\\])*)\1\s*;/gim,
     (match: string, quationMark: string, path: string, offset: any, input_string: string) => {
       let themecontents = '';
@@ -94,10 +96,10 @@ export class StylerRegs {
     SourceNode.init();
     ProjectManage.projects.forEach((row) => {
       let cssPath = nodeFn.path.resolve(row.projectPath, 'styles.scss');
-      let cssContent = nodeFn.resource.getResource(row.config.guid ?? cssPath, 'cssFile', cssPath);
+      let cssContent = Resources.getResource(row.config.guid ?? cssPath, 'cssFile', cssPath);
       if (cssContent == undefined) {
         cssPath = nodeFn.path.resolve(row.projectPath, row.config.projectBaseCssPath);
-        cssContent = nodeFn.resource.getResource(row.config.guid ?? cssPath, 'cssFile', cssPath);
+        cssContent = Resources.getResource(row.config.guid ?? cssPath, 'cssFile', cssPath);
       }
       let _stylepath: string = nodeFn.path.relativeFilePath(row.projectPath, cssPath);
       row.stampSRC = SourceNode.registerSource({
@@ -107,8 +109,7 @@ export class StylerRegs {
         mode: '$',
         accessName: row.projectPrimaryAlice,
       });
-
-      row.stampSRC.pushCSS(cssPath, dev$Use_loader(cssContent, cssPath), document.body);//row.importMetaURL,
+      row.stampSRC.pushCSS(cssPath, dev$Use_loader(dev$minifyCss(cssContent), cssPath), document.body);//row.importMetaURL,
       //}
     });
   }
@@ -158,7 +159,7 @@ export class StylerRegs {
       { openingChar: `'`, closingChar: `'` },
       { openingChar: "`", closingChar: "`" },
 
-    ]; 
+    ];
     if (cached_keys == undefined) {
 
       StylerRegs.localID++;
@@ -217,8 +218,8 @@ export class StylerRegs {
     //let rtrn = StylerRegs.REMOVE_COMMENT(_params.data);
     //rtrn = StylerRegs.REMOVE_EXTRASPACE(Use_loader(rtrn, this.main.cssFilePath));
     //console.log([_params.data]);
-   // console.log( this.main.cssFilePath);
-    
+    // console.log( this.main.cssFilePath);
+
     let rtrn = dev$Use_loader(_params.data, this.main.cssFilePath);
     //console.log(rtrn);
 
@@ -227,7 +228,7 @@ export class StylerRegs {
 
     rtrn = this.opnClsr.doTask("{", "}", rtrn,
       (selectorText: string, styleContent: string, count: number): string => {
-      //  console.log([selectorText, styleContent]);
+        //  console.log([selectorText, styleContent]);
 
         let excludeContentList = this.rootAndExcludeHandler.checkRoot(selectorText, styleContent, _params);
         if (excludeContentList.length == 0) {
@@ -352,6 +353,7 @@ export class RootAndExcludeHandler {
         filePath = ucUtil.devEsc(filePath);
         let fpath = nodeFn.path.resolveFilePath(this.main.main.cssFilePath, filePath);
         filePath = fpath;
+        ucUtil.changeExtension(fpath, '.scss', '');  // remobe .scss
         UCselector = UCselector.trim();
         let tree: StylerRegs = this.main.children.find(
           (s: StylerRegs) => nodeFn.path.isSamePath(s.path, filePath) || s.controlXName == filePath
@@ -964,7 +966,7 @@ class openCloser {
 
     return result;
   }
-private isEscaped(text: string, endIndex: number): boolean {
+  private isEscaped(text: string, endIndex: number): boolean {
     let count = 0;
     for (let i = endIndex - 1; i >= 0 && text[i] === "\\"; i--) {
       count++;
@@ -1127,7 +1129,7 @@ private isEscaped(text: string, endIndex: number): boolean {
   //           break;
   //         case "pause":
   //           if (cnt === charNode.closingChar) {
-              
+
   //               state = "resume";
   //           }
   //           break;

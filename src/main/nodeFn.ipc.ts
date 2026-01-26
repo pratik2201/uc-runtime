@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import { IpcMainGroup } from "./ipc/IpcMainHelper.js";
-import { fileEntry, FileTypes, RM } from "../resMng/resourceManager.js";
 
 export default function () {
 
@@ -28,31 +27,18 @@ export default function () {
             fileContent = fs.readFileSync(_path, options) as any;
         event.returnValue = fileContent;
     });
-    main.On('fs.readFileBase64Sync', (event, _path, options: (fs.ObjectEncodingOptions & {
-        flag?: string | undefined;
-    })) => {
-        if (fs.existsSync(_path))
-            event.returnValue = fs.readFileSync(_path, options).toString('base64');
-        else event.returnValue = undefined;
+    main.On('fs.readFileBufferSync', (event, filePath:string) => {
+        const buf = fs.readFileSync(filePath);
+
+        // Convert Buffer → ArrayBuffer (exact slice, no extra bytes)
+        const ab = buf.buffer.slice(
+            buf.byteOffset,
+            buf.byteOffset + buf.byteLength
+        );
+
+        event.returnValue = ab; // must be sync value
     });
 
 
-    main.On('resource.all', (event) => {
-        event.returnValue = RM.getEntriesOfFile();
-    });
-    main.On('resource.getResource', (event, resKey: string, type: FileTypes, valOrPath: string) => {
-        event.returnValue = RM.getResource(resKey, type, valOrPath);
-    });
-    main.On('resource.setResource', (event, resKey: string, fe: fileEntry) => {
-        RM.setResource(resKey, fe);
-        event.returnValue = undefined;
-    });
-    // main.On('resource.getValue', (event, key: string, valueIfNotExist?: string, type?: FileTypes) => {
-    //     if (RM.hasValue(key)) event.returnValue = RM.getValue(key);
-    //     else {
-    //         if (valueIfNotExist != undefined && type != undefined)
-    //             event.returnValue = registerValue(key, valueIfNotExist, type);
-    //         else event.returnValue = undefined;
-    //     };
-    // });
+
 }

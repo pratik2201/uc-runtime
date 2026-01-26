@@ -1,5 +1,3 @@
-import fs from 'fs';
-import { PreloadFullFill } from "../common/ipc/enumAndMore.js";
 import { ucUtil } from "../global/ucUtil.js";
 import { IpcRendererHelper } from './ipc/IpcRendererHelper.js';
 // export interface I_WriteFileSyncPerameters { path: string, data: string, encode: fs.WriteFileOptions }
@@ -8,15 +6,12 @@ import { IpcRendererHelper } from './ipc/IpcRendererHelper.js';
 // export interface I_PathBaseName { path: string, suffix: string }
 // export interface I_PathRelative { from: string, to: string }
 // export interface I_ModuleAlice { alice: string, path: string }
-
 export class nodeFn {
     static renderer = IpcRendererHelper.Group('ucbuilder/src/renderer/nodeFn');
-
     // static fullfill: PreloadFullFill = undefined;
     // static onReady(callback: () => void) {
     //     this.renderer.loaded(callback);
     // }
-
     // static crypto = {
     //     toString: (size: number, encoding?: BufferEncoding): string => {
     //         return this.renderer.sendSync('crypto.toString', [size, encoding]);
@@ -34,15 +29,11 @@ export class nodeFn {
     //         return this.crypto.convert(data, 'hex', 'utf8');
     //     }
     // }
-
-
-
     // static url = {
     //     fileURLToPath: (path: string): string => {
     //         if (!path.startsWith('file:')) return path;
     //         return nodeFn.fullfill.url.fileURLToPath(path);
     //         //return renderer.sendSync('url.fileURLToPath', [path]) as string;
-
     //     }, pathToFileURL: (path: string): string => {
     //         if (path.startsWith('file:')) return path;
     //         return nodeFn.fullfill.url.pathToFileURL(path);
@@ -79,7 +70,6 @@ export class nodeFn {
     //     resolve: (...paths: string[]): string => {
     //         return nodeFn.fullfill.path.resolve(...paths);
     //     },
-
     //     resolveFilePath: (fromFilePath: string, toFilePath: string): string => {
     //         let ius = this.fullfill.path.dirname(fromFilePath.startsWith('file:') ? this.fullfill.url.fileURLToPath(fromFilePath) : fromFilePath);
     //         let fspath = ucUtil.toFilePath(this.fullfill.path.resolve(ius, toFilePath));
@@ -108,7 +98,6 @@ export class nodeFn {
     //         const absB = nodeExp.path.resolve(path2);
     //         return (nodeExp.path.normalize(absA) === nodeExp.path.normalize(absB));
     //     },
-
     //     join: (...paths: string[]): string => {
     //         return nodeFn.fullfill.path.join(...paths);
     //     },
@@ -122,81 +111,76 @@ export class nodeFn {
     //     //     return this.renderer.sendSync('path.intersectAndReplacePath', [basePath, targetPath]);
     //     // },
     // }
-    private static readFileSyncStorage = new Map<string, string>();
+    static readFileSyncStorage = new Map();
     //private static readFileSyncStorageCounter = 0;
-    static fullfill: PreloadFullFill = undefined;
+    static fullfill = undefined;
     static url = {
-        fileURLToPath: (path: string): string => {
-            if (!path.startsWith('file:')) return path;
+        fileURLToPath: (path) => {
+            if (!path.startsWith('file:'))
+                return path;
             return nodeFn.fullfill.url.fileURLToPath(path);
             //return renderer.sendSync('url.fileURLToPath', [path]) as string;
-
-        }, pathToFileURL: (path: string): string => {
-            if (path.startsWith('file:')) return path;
+        }, pathToFileURL: (path) => {
+            if (path.startsWith('file:'))
+                return path;
             return nodeFn.fullfill.url.pathToFileURL(path);
             //return renderer.sendSync('url.pathToFileURL', [path]) as string;
         },
-    }
+    };
     static path = {
-        startsWith: (thisPath: string, startWithThisPath: string) => {
+        startsWith: (thisPath, startWithThisPath) => {
             const base = nodeFn.path.resolve(startWithThisPath).toLowerCase();
             const target = nodeFn.path.resolve(thisPath).toLowerCase();
             const relative = nodeFn.path.relative(base, target);
             return relative && !relative.startsWith("..") && !nodeFn.path.isAbsolute(relative);
         },
-
-        extname: (path: string): string => {
-            return this.fullfill.path.extname(path);
-        },
-        dirname: (path: string): string => {
+        dirname: (path) => {
             return this.fullfill.path.dirname(path);
         },
-        isAbsolute: (path: string) => {
+        isAbsolute: (path) => {
             return this.fullfill.path.isAbsolute(path);
         },
-        basename: (path: string, suffix?: string): string => {
+        basename: (path, suffix) => {
             return nodeFn.fullfill.path.basename(path, suffix);
         },
-        relative: (from: string, to: string): string => {
+        relative: (from, to) => {
             return this.fullfill.path.relative(from, to);
         },
-        resolve: (...paths: string[]): string => {
+        resolve: (...paths) => {
             return nodeFn.fullfill.path.resolve(...paths);
         },
-
-        resolveFilePath: (fromFilePath: string, toFilePath: string): string => {
+        resolveFilePath: (fromFilePath, toFilePath) => {
             let ius = this.fullfill.path.dirname(fromFilePath.startsWith('file:') ? this.fullfill.url.fileURLToPath(fromFilePath) : fromFilePath);
             let fspath = ucUtil.toFilePath(this.fullfill.path.resolve(ius, toFilePath));
             return fspath;
         },
-        relativeFilePath: (fromFilePath: string, path: string): string => {
+        relativeFilePath: (fromFilePath, path) => {
             path = ucUtil.devEsc(path);
             let ius = this.fullfill.path.dirname(fromFilePath.startsWith('file:') ? this.fullfill.url.fileURLToPath(fromFilePath) : fromFilePath);
             let fspath = ucUtil.toFilePath(this.fullfill.path.relative(ius, path));
             return fspath;
         },
-        getPathOnly: (pth: string) => {
+        getPathOnly: (pth) => {
             return pth.startsWith('file:') ? this.fullfill.url.fileURLToPath(pth) : pth;
         },
-        getUrlOnly: (pth: string) => {
+        getUrlOnly: (pth) => {
             return pth.startsWith('file:') ? pth : this.fullfill.url.pathToFileURL(pth);
         },
-        subtractPath: (basePath: string, targetPath: string): string => {
+        subtractPath: (basePath, targetPath) => {
             const absBase = this.fullfill.path.resolve(basePath);
             const absTarget = this.fullfill.path.resolve(targetPath);
             const relative = this.fullfill.path.relative(absBase, absTarget);
             return relative;
         },
-        isSamePath: (path1: string, path2: string) => {
+        isSamePath: (path1, path2) => {
             const absA = nodeFn.path.resolve(path1);
             const absB = nodeFn.path.resolve(path2);
             return (nodeFn.path.normalize(absA) === nodeFn.path.normalize(absB));
         },
-
-        join: (...paths: string[]): string => {
+        join: (...paths) => {
             return nodeFn.fullfill.path.join(...paths);
         },
-        normalize: (path: string): string => {
+        normalize: (path) => {
             return nodeFn.fullfill.path.normalize(path);
         },
         // intersectPath: (path1: string, path2: string): boolean => {
@@ -205,8 +189,7 @@ export class nodeFn {
         // intersectAndReplacePath: (basePath: string, targetPath: string): boolean => {
         //     return this.renderer.sendSync('path.intersectAndReplacePath', [basePath, targetPath]);
         // },
-    }
-
+    };
     static fs = {
         /*openSync: (path: fs.PathLike, flags: fs.OpenMode, mode?: fs.Mode | null) => {
             return this.renderer.sendSync('fs.openSync', [path, flags, mode]);
@@ -230,7 +213,6 @@ export class nodeFn {
             return this.renderer.sendSync('fs.readdirSyncDirent', [path, recursive]);
         },
         */
-
         // rmSync: (path: fs.PathLike, options?: fs.RmOptions) => {
         //     return this.renderer.sendSync('fs.rmSync', [path, options]);
         // },
@@ -246,31 +228,33 @@ export class nodeFn {
         // writeFileSync: (path: string, data: string, encode: import('fs').WriteFileOptions = 'utf-8') => {
         //     return this.renderer.sendSync('fs.writeFileSync', [{ path: path, data: data, encode: encode } as I_WriteFileSyncPerameters]);
         // },
-        isDirectory: (path: fs.PathLike, options?: fs.StatSyncOptions): boolean => {
+        isDirectory: (path, options) => {
             return this.renderer.sendSync('fs.statSync.isDirectory', [path, options]);
         },
-        existsSync: (path: string): boolean => {
+        existsSync: (path) => {
             return this.renderer.sendSync('fs.existsSync', [path]);
         },
-        readFileSync: (path: string, encode: import('fs').WriteFileOptions = 'utf-8', doCache = false): string | null => {
+        readFileSync: (path, encode = 'utf-8', doCache = false) => {
             let _finalpath = nodeFn.path.normalize(path);
             if (doCache) {
                 let rtrn = this.readFileSyncStorage.get(_finalpath);
-                if (rtrn != undefined) return rtrn;
+                if (rtrn != undefined)
+                    return rtrn;
                 else {
                     rtrn = this.renderer.sendSync('fs.readFileSync', [_finalpath, encode,]);
                     if (rtrn != undefined)
                         this.readFileSyncStorage.set(_finalpath, rtrn);
                     return rtrn;
                 }
-            } else {
+            }
+            else {
                 return this.renderer.sendSync('fs.readFileSync', [_finalpath, encode,]);
             }
         },
-        readFileBufferSync: (path: string) => {
-            const ab = this.renderer.sendSync("readFileBufferSync", [path]);
-            return new Uint8Array(ab);
+        readFileBase64Sync: (path, encode = 'utf-8') => {
+            let _finalpath = nodeFn.path.normalize(path);
+            return this.renderer.sendSync('fs.readFileBase64Sync', [_finalpath, encode]);
         },
-    }
-
+    };
 }
+//# sourceMappingURL=nodeFn.js.map

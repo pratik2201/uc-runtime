@@ -4,6 +4,28 @@ import { IKeyStampNode } from "../renderer/StylerRegs.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
 export type UCGenerateMode = "client" | "designer";
 export type UcStates = "normal" | "dock" | "minimize" | "maximize";
+export interface RuntimeResource {
+  key: string;        // sharepnl:css:UUID
+  type: string;       // css | image | data | html | text | raw
+  content: string;
+  source?: string;   // optional debug
+}
+export type FileTypes =
+  | "cssFile"
+  | "htmlFile"
+  | "imageFile"
+  | "textFile"
+  | "rawFile"
+  | "string"
+  | "integer"
+  | "float"
+  | "boolean";
+  
+export class FileEntry {
+  type: FileTypes = 'textFile';
+  value = ''; 
+  filePath: string; 
+}
 
 export const getC = (c: any): string | undefined => {
   if (c === undefined || c === null || isNaN(c)) return "";

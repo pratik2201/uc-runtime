@@ -93,6 +93,8 @@ export class IpcMainHelper {
         await configManage.init(importMetaPath);
         (await import('../nodeFn.ipc.js')).default();
 
+        (await import('../resMng.ipc.js')).default();
+
 
         if (!app.isPackaged) {
             try {

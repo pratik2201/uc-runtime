@@ -1,0 +1,282 @@
+import { CommonEvent } from "../global/commonEvent.js";
+import { GetUniqueId } from "../common/ipc/enumAndMore.js";
+import { Usercontrol } from "../renderer/Usercontrol.js";
+import { TabIndexManager } from "./TabIndexManager.js";
+export class ShortcutNode {
+    shortcutMap = {};
+    register(keys, callback, override = false) {
+        const rtrn = [];
+        keys.forEach(key => {
+            const combo = key.slice().sort().join("+");
+            if (!(combo in this.shortcutMap)) {
+                this.shortcutMap[combo] = callback;
+                console.log(`${combo} Registered`);
+                rtrn.push(combo);
+            }
+            else {
+                if (override) {
+                    this.shortcutMap[combo] = callback;
+                    console.log(`[${combo}] Registered`);
+                    rtrn.push(combo);
+                }
+            }
+        });
+        return rtrn;
+    }
+    /** Unregister a shortcut */
+    unregister(keys) {
+        const rtrn = [];
+        const combo = keys.slice().sort().join("+");
+        if (combo in this.shortcutMap) {
+            delete this.shortcutMap[combo];
+            rtrn.push(combo);
+        }
+        return rtrn;
+    }
+    /** Clear all shortcuts */
+    clear() {
+        this.shortcutMap = {};
+    }
+    callTask(combo, e) {
+        if (combo in this.shortcutMap) {
+            const cb = this.shortcutMap[combo];
+            if (cb)
+                cb(e);
+            return true;
+        }
+        else
+            return false;
+    }
+}
+export class ShortcutManager {
+    pressedKeys = new Set();
+    source = [];
+    CreateLayer() {
+        const layer = new ShortcutNode();
+        this.source.unshift(layer);
+        return layer;
+    }
+    constructor() {
+        this.pressedKeys = new Set();
+        WinManager.event.keydown.on(this._keydown);
+        WinManager.event.keyup.on(this._keyup);
+        window.addEventListener("blur", this._blur);
+    }
+    /** Destroy manager and remove all listeners */
+    destroy() {
+        WinManager.event.keydown.off(this._keydown);
+        WinManager.event.keyup.off(this._keyup);
+        window.removeEventListener("blur", this._blur);
+        this.pressedKeys.clear();
+        this.source.forEach(s => s.clear());
+    }
+    /** Normalize key combination to string */
+    static getComboString(keys) {
+        return [...keys].sort().join("+");
+    }
+    // --- PRIVATE EVENT HANDLERS ---
+    _keydown = (e) => {
+        // console.log(Array.from(this.pressedKeys.entries()).join('\n') + '\n.................. KEYS ARE DOWN');
+        if (this.pressedKeys.has(e.code))
+            return;
+        this.pressedKeys.add(e.code);
+        //console.log('down.');
+        const combo = ShortcutManager.getComboString(this.pressedKeys);
+        const src = this.source;
+        for (let i = 0, ilen = src.length; i < ilen; i++) {
+            const iItem = src[i];
+            if (iItem.callTask(combo, e))
+                return;
+        }
+    };
+    _keyup = (e) => {
+        this.pressedKeys.delete(e.code);
+        //this.pressedKeys.clear();
+    };
+    _blur() {
+        this.pressedKeys?.clear();
+    }
+}
+export class FocusManager {
+    currentElement;
+    Event = {
+        onFatch: new CommonEvent(),
+        onFocus: new CommonEvent(),
+    };
+    fetch(ele) {
+        this.currentElement = undefined;
+        //console.log(ele);
+        this.currentElement = ele ?? document.activeElement;
+        this.Event.onFatch.fire([this.currentElement]);
+        //this.currentElement.fireEvent('blur');
+    }
+    /**
+     *
+     * @param containerElement if last focused element not insde `contaierElement` than direct focus to `containerElement`
+     */
+    focus(containerElement) {
+        if (containerElement != undefined && !containerElement.contains(this.currentElement)) {
+            if (containerElement.hasAttribute('tabindex')) {
+                containerElement.focus();
+            }
+            else {
+                TabIndexManager.moveNext(containerElement, undefined);
+            }
+        }
+        else {
+            if (this.currentElement == undefined)
+                return;
+            this.currentElement.focus();
+        }
+        this.Event.onFocus.fire([this.currentElement]);
+    }
+}
+export class WinManager {
+    static IS_REPEAT = false;
+    static RepeatPauseInMilliSeconds = 1000;
+    static shortcutManage;
+    static isSameKey = (arr1, arr2) => {
+        if (arr1.length !== arr2.length)
+            return false; // lengths must be same
+        for (let i = 0; i < arr1.length; i++) {
+            if (arr1[i] !== arr2[i])
+                return false; // check each element
+        }
+        return true;
+    };
+    static initEvent() {
+        const _this = this;
+        //.log('======================>WinManager.initEvent');
+        this.shortcutManage = new ShortcutManager();
+        window.addEventListener('keydown', async (e) => {
+            if (WinManager.IS_REPEAT || e.code == undefined)
+                return;
+            if (e.repeat)
+                WinManager.IS_REPEAT = true;
+            await _this.event.keydown.fireAsync([e]);
+            //requestAnimationFrame(() => {
+            WinManager.IS_REPEAT = false;
+            //}, WinManager.RepeatPauseInMilliSeconds)
+        });
+        window.addEventListener('keyup', async (e) => {
+            WinManager.IS_REPEAT = false;
+            if (e.code == undefined)
+                return;
+            await _this.event.keyup.fireAsync([e]);
+        });
+    }
+    static event = {
+        onFreez: (uc) => {
+        },
+        onUnFreez: (uc) => {
+        },
+        keydown: new CommonEvent(),
+        keyup: new CommonEvent(),
+    };
+    static ACCESS_KEY = 'WinManager_' + GetUniqueId();
+    static getNode(htNode) { return htNode["#data"](WinManager.ACCESS_KEY); }
+    static setNode(htNode) {
+        const dta = {};
+        dta.uc = Usercontrol.parse(htNode);
+        htNode["#data"](WinManager.ACCESS_KEY, dta);
+        return dta;
+    }
+    static focusMng = new FocusManager();
+    static push = async (form) => {
+        let _this = this;
+        const mainHT = form.ucExtends.wrapperHT;
+        if (form.ucExtends.isForm) {
+            const prevNode = mainHT.previousElementSibling;
+            if (prevNode != null) {
+                const wn = WinManager.getNode(prevNode) ?? WinManager.setNode(prevNode);
+                const activeElement = wn.uc.ucExtends.lastFocuedElement; // document.activeElement;
+                if (prevNode.contains(activeElement))
+                    wn.lastFocusedAt = activeElement;
+                wn.display = prevNode.style.display;
+                let doStyleDisplay = form.ucExtends.Events.beforeUnFreez.fire([wn?.uc]);
+                await this.setfreez(true, wn /*, doStyleDisplay*/);
+            }
+        }
+        await form.ucExtends.Events.activate.fireAsync([]);
+    };
+    static pop = async (form) => {
+        form?.ucExtends.Events.deactivate.fireAsync([]);
+        const freezedHT = form.ucExtends.wrapperHT.previousElementSibling;
+        if (freezedHT != undefined) {
+            const wn = WinManager.getNode(freezedHT);
+            if (wn != undefined) {
+                await this.setfreez(false, wn /*, res*/);
+            }
+        }
+    };
+    static ATTR = {
+        DISABLE: {
+            NEW_VALUE: "disnval" + GetUniqueId(),
+            OLD_VALUE: "disoval" + GetUniqueId(),
+        },
+        INERT: {
+            NEW_VALUE: "inrtnval" + GetUniqueId(),
+            OLD_VALUE: "inrtoval" + GetUniqueId(),
+        }
+    };
+    static setfreez = async (freez, wnode /*, handeledDisplay: boolean*/) => {
+        const uc = wnode.uc;
+        const element = uc.ucExtends.wrapperHT;
+        if (freez) {
+            this.event.onFreez(uc);
+            this.focusMng.fetch(uc.ucExtends.lastFocuedElement);
+            wnode.lastFocusedAt = this.focusMng.currentElement;
+            wnode.display = element.style.display;
+            uc.ucExtends.Events.deactivate.fireAsync([]);
+            await this.FreezThese(true, element);
+            if (!uc.ucExtends.keepVisible)
+                element.style.display = 'none';
+        }
+        else {
+            this.event.onUnFreez(uc);
+            await this.FreezThese(false, element);
+            element.style.display = wnode.display;
+            this.focusMng.currentElement = wnode.lastFocusedAt;
+            requestAnimationFrame(() => {
+                this.focusMng.focus(element);
+            });
+            await uc.ucExtends.Events.activate.fireAsync([]);
+        }
+    };
+    static async FreezThese(freez, ...elements) {
+        if (freez) {
+            for (let i = 0, ilen = elements.length; i < ilen; i++) {
+                const element = elements[i];
+                let inertAttr = element.getAttribute("inert");
+                if (inertAttr != null)
+                    element["#data"](WinManager.ATTR.INERT.OLD_VALUE, inertAttr);
+                element.setAttribute('inert', 'true');
+            }
+        }
+        else {
+            for (let i = 0, ilen = elements.length; i < ilen; i++) {
+                const element = elements[i];
+                element.setAttribute('active', '1');
+                let inertAttr = element["#data"](WinManager.ATTR.INERT.OLD_VALUE);
+                if (inertAttr != undefined)
+                    element.setAttribute('inert', inertAttr);
+                else
+                    element.removeAttribute('inert');
+            }
+        }
+    }
+    static captureElementAsImage(element) {
+        // const element = document.getElementById(elementId);
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        // Set canvas dimensions to match the element
+        canvas.width = element.offsetWidth;
+        canvas.height = element.offsetHeight;
+        // Draw the element onto the canvas
+        ctx.drawImage(element, 0, 0);
+        // Get the image data as a data URL
+        const imageData = canvas.toDataURL('image/png');
+        return imageData;
+    }
+}
+//# sourceMappingURL=WinManager.js.map

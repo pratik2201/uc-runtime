@@ -1,21 +1,5 @@
-import { Usercontrol } from "../renderer/Usercontrol.js";
 import { ATTR_OF } from "./runtimeOpt.js";
-
-export interface FILE_WARCHER_FILE_ROW {
-    unlink: { [key: string]: number },
-    modified: { [key: string]: number },
-    add: { [key: string]: number },
-    moved: { from: string, to: string }[],
-    renamed: { from: string, to: string }[],
-}
-
-
 export class ucUtil {
-    static bufferToString = (arrayBuffer: Uint8Array<any>, encoding?: BufferEncoding) => {
-        const uint8 = new Uint8Array(arrayBuffer);
-        const text = new TextDecoder(encoding).decode(uint8);
-        return text;
-    }
     /** old one
      selectAllText(elem: HTMLElement): void {
         if ((elem as HTMLInputElement).select) (elem as HTMLInputElement).select();
@@ -35,61 +19,50 @@ export class ucUtil {
     }
      */
     //
-    static selectAllText(elem: HTMLElement): void {
-        if (!elem) return;
-
+    static selectAllText(elem) {
+        if (!elem)
+            return;
         // Input & textarea
-        if (
-            elem instanceof HTMLInputElement ||
-            elem instanceof HTMLTextAreaElement
-        ) {
+        if (elem instanceof HTMLInputElement ||
+            elem instanceof HTMLTextAreaElement) {
             elem.select();
             return;
         }
-
         // Contenteditable or normal elements
         if (elem.isContentEditable) {
             const range = document.createRange();
             range.selectNodeContents(elem);
-
             const sel = window.getSelection();
-            if (!sel) return;
-
+            if (!sel)
+                return;
             sel.removeAllRanges();
             sel.addRange(range);
         }
     }
-
-    static getArray(obj: any): any[] {
-        if (obj == null) return [];
-
+    static getArray(obj) {
+        if (obj == null)
+            return [];
         // Single DOM element (HTML or SVG)
         if (obj instanceof Element) {
             return [obj];
         }
-
         // DOM collections
-        if (
-            obj instanceof HTMLCollection ||
-            obj instanceof NodeList
-        ) {
+        if (obj instanceof HTMLCollection ||
+            obj instanceof NodeList) {
             return Array.from(obj);
         }
-
         // Already an array
         if (Array.isArray(obj)) {
             return obj;
         }
-
         // Any other iterable (Map, Set, arguments, etc.)
         if (typeof obj[Symbol.iterator] === "function") {
             return Array.from(obj);
         }
-
         // Fallback: wrap single value
         return [obj];
     }
-    static setProp = function <K>(obj: Object, path: string, value: K) {
+    static setProp = function (obj, path, value) {
         try {
             const keys = path.split('.');
             let o = obj;
@@ -98,121 +71,117 @@ export class ucUtil {
             }
             o[keys.at(-1)] = value;
             return true;
-        } catch (ex) {
+        }
+        catch (ex) {
             return false;
         }
     };
-    static getProp = (obj: Object, path: string | any): any => {
+    static getProp = (obj, path) => {
         const keys = path.split('.');
         let o = obj;
         for (let key of keys) {
-            if (o == null) return undefined;
+            if (o == null)
+                return undefined;
             o = o[key];
         }
         return o;
     };
-    static _getSelectedValuee = (_txt: HTMLInputElement | HTMLTextAreaElement): string => {
-        let child = _txt as HTMLInputElement;
+    static _getSelectedValuee = (_txt) => {
+        let child = _txt;
         if (child.tagName === "TEXTAREA" ||
             (child.tagName === "INPUT" && child.type === "text")) {
             return child.value.substring(child.selectionStart, child.selectionEnd);
             // or return the return value of Tim Down's selection code here
-        } else return child.innerText.substring(child.selectionStart, child.selectionEnd);
+        }
+        else
+            return child.innerText.substring(child.selectionStart, child.selectionEnd);
     };
-    static currentStyles(htmlEle: HTMLElement) {
-        let ele = htmlEle as HTMLElement;
-        let css = ele["#data"](ATTR_OF.UC.CSSStyleDeclarations) as CSSStyleDeclaration;
+    static currentStyles(htmlEle) {
+        let ele = htmlEle;
+        let css = ele["#data"](ATTR_OF.UC.CSSStyleDeclarations);
         if (css == undefined) {
             css = window.getComputedStyle(ele);
             ele["#data"](ATTR_OF.UC.CSSStyleDeclarations, css);
         }
         return css;
     }
-    static parseUc(ele: HTMLElement, val: Usercontrol) {
+    static parseUc(ele, val) {
         if (val) {
             val.ucExtends.passElement(ele);
         }
         return ele;
     }
-    static equalIgnoreCase(s1: string, s2: string) {
+    static equalIgnoreCase(s1, s2) {
         return s1.toLowerCase() === s2.toLowerCase();
     }
-    static parseStrByUc(content: string, val: Usercontrol) {
+    static parseStrByUc(content, val) {
         var div = document.createElement('pre');
         div.innerHTML = content;
         if (val) {
-            (val as Usercontrol).ucExtends.passElement(div);
+            val.ucExtends.passElement(div);
             return div.innerHTML;
-        } return content;
+        }
+        return content;
     }
-
-
-
-
-    static GetType(obj: any): string { return Object.getPrototypeOf(obj).constructor.name; }
-    static PHP_REMOVE(text: string) {
+    static GetType(obj) { return Object.getPrototypeOf(obj).constructor.name; }
+    static PHP_REMOVE(text) {
         return text.replace(/<\?(=|php| )(.*?)\?>/gm, '&lt;!--?$1$2?--&gt;');
     }
-    static PHP_ADD(text: string) {
+    static PHP_ADD(text) {
         return text.replace(/&lt;!--\?(=|php| )(.*?)\?--&gt;/gm, '<?$1$2?>');
     }
-
-    static trimPath(pth: string) {
+    static trimPath(pth) {
         return pth.replace(/^\.?\/*|\/*$/g, '');
     }
-    static JsonCopy<K>(obj: K): K {
+    static JsonCopy(obj) {
         return JSON.parse(JSON.stringify(obj));
     }
-    static distinct<T>(ar: Array<T>): Array<T> {
-        return [...new Set(ar)] as unknown as Array<T>;
+    static distinct(ar) {
+        return [...new Set(ar)];
     }
-    static resolveSubNode(path: string) {
+    static resolveSubNode(path) {
         return path.replace(/(?:\.\.[\/\\])+node_modules[\/\\]/i, '');
     }
-    static changeExtension(path: string, fromExt: string, toExt: string) {
+    static changeExtension(path, fromExt, toExt) {
         // Ensure extensions start with a dot
-        if (!fromExt.startsWith('.')) fromExt = '.' + fromExt;
-        if (!toExt.startsWith('.')) toExt = '.' + toExt;
-
+        if (!fromExt.startsWith('.'))
+            fromExt = '.' + fromExt;
+        if (!toExt.startsWith('.'))
+            toExt = '.' + toExt;
         // Replace the extension only if it matches
         if (path.endsWith(fromExt)) {
             return path.slice(0, -fromExt.length) + toExt;
         }
-
         // Otherwise, just append the new one
-        return path;// + toExt;
+        return path; // + toExt;
     }
-    static toFilePath(path: string, trim = true) {
+    static toFilePath(path, trim = true) {
         let ns = path.replace(/[\\\/]+/gi, "/");
         return trim ? this._trim_(ns, "/") : ns;
     }
-
-    static _trim_ = (str: string, charlist?: string): string => {
-
+    static _trim_ = (str, charlist) => {
         if (charlist === undefined)
             charlist = "\s";
         charlist = this.escapeRegs(charlist);
         return str.replace(new RegExp("^[" + charlist + "]+$", 'ig'), "");
-    }
-    static escapeRegs = (str: string) => {
+    };
+    static escapeRegs = (str) => {
         return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    }
-
-    static devEsc = (str: string): string => {
+    };
+    static devEsc = (str) => {
         // debugger;
         return str.replace(/(.{0,1}){:(.*?)}/gm, (m, fchar, url) => {
             //  console.log([m,fchar,url]);
             let rtrn = (fchar == "\\") ? `{:${url}}` : (fchar ?? '') + "" + url;
             return rtrn;
         });
-    }
+    };
 }
-
-export type SpecialExtType = "none" | ".uc" | ".tpt" /*| ".t"*/;
-export enum SpecialExtEnum {
-    none = "none",
-    uc = ".uc",
-    tpt = ".tpt",
+export var SpecialExtEnum;
+(function (SpecialExtEnum) {
+    SpecialExtEnum["none"] = "none";
+    SpecialExtEnum["uc"] = ".uc";
+    SpecialExtEnum["tpt"] = ".tpt";
     // t = ".t"
-}
-
+})(SpecialExtEnum || (SpecialExtEnum = {}));
+//# sourceMappingURL=ucUtil.js.map

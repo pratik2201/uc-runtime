@@ -56,7 +56,7 @@ export class intenseGenerator {
     }
     static GetResource = (guid: string) => {
         const rtrn: { htmlFile: string, cssFile: string } = { htmlFile: undefined, cssFile: undefined };
-        rtrn.htmlFile = nodeFn.resource.getResource(`html-${guid}`, 'htmlFile');
+      //  rtrn.htmlFile = nodeFn.resource.getResource(`html-${guid}`, 'htmlFile');
         return rtrn;
     }
     static generateTPT(path: string, classObj: any, callerMetaUrl: string, pera: ITptOptions, ...args: any[]): Template {
