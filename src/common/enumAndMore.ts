@@ -20,11 +20,11 @@ export type FileTypes =
   | "integer"
   | "float"
   | "boolean";
-  
+
 export class FileEntry {
   type: FileTypes = 'textFile';
-  value = ''; 
-  filePath: string; 
+  value = '';
+  filePath: string;
 }
 
 export const getC = (c: any): string | undefined => {
@@ -121,88 +121,153 @@ export class objectOpt {
 
 export type WrapperNodeNameAs = "wrapper" | "targetElement" | "random";
 export type StringExchangerCallback = (content: string) => string;
+export class ResourceKeyBridge {
+
+  // how placeholders look in text
+  static PREFIX = "__RES::";
+  static SUFFIX = "__";
+
+  // __RES::sharepnl:css:uuid__
+  static PLACEHOLDER_RE = /__RES::([a-zA-Z0-9._:-]+)__/g;
+
+  // ----------------------------
+  // make "__RES::key__"
+  // ----------------------------
+  static makeKey(key: string): string {
+    return `${this.PREFIX}${key}${this.SUFFIX}`;
+  }
+
+  // ----------------------------
+  // extract "sharepnl:css:uuid"
+  // ----------------------------
+  static extractKey(placeholder: string): string | null {
+    if (!placeholder.startsWith(this.PREFIX) || !placeholder.endsWith(this.SUFFIX))
+      return null;
+
+    return placeholder.slice(
+      this.PREFIX.length,
+      placeholder.length - this.SUFFIX.length
+    );
+  }
+
+  // ----------------------------
+  // find all keys inside text
+  // ----------------------------
+  static findAll(text: string): string[] {
+    const out: string[] = [];
+    let m: RegExpExecArray | null;
+
+    this.PLACEHOLDER_RE.lastIndex = 0;
+
+    while ((m = this.PLACEHOLDER_RE.exec(text))) {
+      out.push(m[1]);
+    }
+    return out;
+  }
+
+  // ----------------------------
+  // replace placeholders
+  // ----------------------------
+  static replace(
+    text: string,
+    resolver: (key: string) => string
+  ): string {
+    return text.replace(this.PLACEHOLDER_RE, (_m, key) => {
+      return resolver(key);
+    });
+  }
+
+  // ----------------------------
+  // quick check
+  // ----------------------------
+  static isPlaceholder(value: string): boolean {
+    return value.startsWith(this.PREFIX) && value.endsWith(this.SUFFIX);
+  }
+}
 export interface ISourceOptions {
-    htmlRow?: any;
-   //htmlImportMetaUrl?: string;
-    htmlContents?: string;
-    cssContents?: string;
-    cssFilePath?: string;
-    htmlFilePath?: string;
-    //beforeContentAssign: StringExchangerCallback;
+  htmlRow?: any;
+  //htmlImportMetaUrl?: string;
+  htmlGuid?: string;
+  cssGuid?: string;
+  htmlContents?: string;
+  cssContents?: string;
+  cssFilePath?: string;
+  htmlFilePath?: string;
+  //beforeContentAssign: StringExchangerCallback;
 }
 export const SourceOptions: ISourceOptions = {
-    /*beforeContentAssign: (content) => {
-        return content;
-    },*/
+  /*beforeContentAssign: (content) => {
+      return content;
+  },*/
 };
 
 export interface ITemplatePathOptions {
-    accessKey: string;
-    objectKey: string;
-    htmlContents?: string;
-    cssContents?: string;
-    tptCSSContents?: string;
+  accessKey: string;
+  objectKey: string;
+  htmlContents?: string;
+  cssContents?: string;
+  tptCSSContents?: string;
 }
 export const TemplatePathOptions: ITemplatePathOptions = {
-    accessKey: "",
-    objectKey: "",
-    htmlContents: "",
-    cssContents: "",
+  accessKey: "",
+  objectKey: "",
+  htmlContents: "",
+  cssContents: "",
 };
 export type WhatToDoWithTargetElement = "replace" | "append";
 
 export interface IUcOptions {
-    cfInfo?: codeFileInfo;
+  cfInfo?: codeFileInfo;
   cssKeyStamp?: IKeyStampNode,
   guid?: string;
-    mode?: UCGenerateMode;
-    // session?: SessionOptions;
-    source?: ISourceOptions;
-    parentUc?: Usercontrol;
-    accessName?: string,
-    context?: any,
-    events?: {
-        beforeFinalize?: (uc: Usercontrol) => void;
-        beforeInitlize?: (uc: Usercontrol) => void;
-        afterInitlize?: (uc: Usercontrol) => void;
-    };
-    dialogUnder?: Usercontrol,
-    //decisionForTargerElement?: WhatToDoWithTargetElement;
-    targetElement?: HTMLElement;
+  mode?: UCGenerateMode;
+  // session?: SessionOptions;
+  source?: ISourceOptions;
+  parentUc?: Usercontrol;
+  accessName?: string,
+  context?: any,
+  events?: {
+    beforeFinalize?: (uc: Usercontrol) => void;
+    beforeInitlize?: (uc: Usercontrol) => void;
+    afterInitlize?: (uc: Usercontrol) => void;
+  };
+  dialogUnder?: Usercontrol,
+  //decisionForTargerElement?: WhatToDoWithTargetElement;
+  targetElement?: HTMLElement;
 }
 export const UcOptions: IUcOptions = {
-    mode: 'client',
-    accessName: '',
-    //session: newObjectOpt.clone<SessionOptions>(sessionOptions),
-    source: objectOpt.clone<ISourceOptions>(SourceOptions),
-    //loadAt: document.body,
-    // decisionForTargerElement: 'append',  // waitForDecision
-    events: {
-        beforeInitlize: async (uc) => {
+  mode: 'client',
+  accessName: '',
+  //session: newObjectOpt.clone<SessionOptions>(sessionOptions),
+  source: objectOpt.clone<ISourceOptions>(SourceOptions),
+  //loadAt: document.body,
+  // decisionForTargerElement: 'append',  // waitForDecision
+  events: {
+    beforeInitlize: async (uc) => {
 
-        },
-        afterInitlize: async (uc) => {
-
-        }
     },
+    afterInitlize: async (uc) => {
+
+    }
+  },
 };
 
 export function ExtractArguments(args: IArguments): IArguments {
-    let cargs = args[0];
-    if (cargs.toString() === '[object Arguments]') {
-        return ExtractArguments(cargs);
-    } else return args;
+  let cargs = args[0];
+  if (cargs.toString() === '[object Arguments]') {
+    return ExtractArguments(cargs);
+  } else return args;
 }
 
 export interface ITptOptions {
-    cfInfo?: codeFileInfo;
-    MakeEmptyTemplate?: boolean;
-    source?: ISourceOptions;
-    cssBaseFilePath?: string;
-    parentUc?: Usercontrol;
+  cfInfo?: codeFileInfo;
+  MakeEmptyTemplate?: boolean;
+  source?: ISourceOptions;
+  cssBaseFilePath?: string;
+  parentUc?: Usercontrol;
 }
 export const TptOptions: ITptOptions = {
-    MakeEmptyTemplate: false,
+  MakeEmptyTemplate: false,
 };
 //namespace ucbuilder.global.objectOptions {
 

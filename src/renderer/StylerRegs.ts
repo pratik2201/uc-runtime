@@ -2,8 +2,9 @@ import { GetUniqueId, ProjectRowR } from "../common/ipc/enumAndMore.js";
 import { ATTR_OF, StyleClassScopeType } from "../global/runtimeOpt.js";
 import { ucUtil } from "../global/ucUtil.js";
 import { SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
+import { CssRuntimeResolver } from "./CssRuntimeResolver.js";
 import { ProjectManage } from "./ipc/ProjectManage.js";
-import { nodeFn } from "./nodeFn.js"; 
+import { nodeFn } from "./nodeFn.js";
 import { Resources } from "./resMng.js";
 export type VariableList = { [key: string]: string };
 export const patternList = {
@@ -57,7 +58,7 @@ export function dev$minifyCss(content: string) {
   return content;
 }
 export function dev$Use_loader(content: string, cssFilePath: string) {
-  
+
   content = content.replace(/@use\s*(["'`])((?:\\.|(?!\1)[^\\])*)\1\s*;/gim,
     (match: string, quationMark: string, path: string, offset: any, input_string: string) => {
       let themecontents = '';
@@ -140,7 +141,7 @@ export class StylerRegs {
   children: StylerRegs[] = [];
   alices: string = "";
 
-  path: string = "";
+  cssGuid: string = "";
   wrapperHT: HTMLElement = undefined;
   templateHT: HTMLElement = undefined;
   main: SourceNode;
@@ -208,7 +209,7 @@ export class StylerRegs {
   }
   opnClsr: openCloser = new openCloser();
   static internalKey: string = 'int' + GetUniqueId();
-
+  cssResolver = new CssRuntimeResolver();
   parseStyleSeperator_sub(_args: IStyleSeperatorOptions): string {
     let _this = this;
     if (_args.data == undefined) return "";
@@ -220,7 +221,8 @@ export class StylerRegs {
     //console.log([_params.data]);
     // console.log( this.main.cssFilePath);
 
-    let rtrn = dev$Use_loader(_params.data, this.main.cssFilePath);
+    //let rtrn = dev$Use_loader(_params.data, this.main.cssFilePath);
+    let rtrn = this.cssResolver.resolveImports(_params.data);
     //console.log(rtrn);
 
     // const xrtrn = this.opnClsr.parse({ openingChar: '{', closingChar: '}' }, rtrn);
@@ -280,6 +282,8 @@ export class StylerRegs {
     );
 
     rtrn = _this.varHandler.handlerVariable(rtrn);
+
+    rtrn = this.cssResolver.resolveUrls(rtrn);
     //    console.log(rtrn);
 
     /// console.log(extraTextAtBegining);
@@ -308,12 +312,11 @@ export class StylerRegs {
   }
 
 
-  pushChild(path: string, node: StylerRegs, accessKey: string): void {
-    let key: string = path.toLowerCase();
-    let sreg: StylerRegs = this.children.find((s: StylerRegs) => s.path == key);
+  pushChild(cssGuid: string, node: StylerRegs, accessKey: string): void {
+    let sreg: StylerRegs = this.children.find((s: StylerRegs) => s.cssGuid == cssGuid);
     if (sreg == undefined) {
       node.alices = accessKey.toLowerCase();
-      node.path = key;
+      node.cssGuid = cssGuid;
       node.parent = this;
 
       this.children.push(node);
@@ -349,14 +352,15 @@ export class RootAndExcludeHandler {
     let externalStyles: string[] = [];
     selectorText.replace(
       patternList.subUcFatcher,
-      (match: string, quationMark: string, filePath: string, UCselector: string) => {
-        filePath = ucUtil.devEsc(filePath);
+      (match: string, quationMark: string, cssGuid: string, UCselector: string) => {
+        /*filePath = ucUtil.devEsc(filePath);
         let fpath = nodeFn.path.resolveFilePath(this.main.main.cssFilePath, filePath);
         filePath = fpath;
         ucUtil.changeExtension(fpath, '.scss', '');  // remobe .scss
-        UCselector = UCselector.trim();
+        UCselector = UCselector.trim();*/
+        //nodeFn.path.isSamePath(s.cssGuid, cssGuid)
         let tree: StylerRegs = this.main.children.find(
-          (s: StylerRegs) => nodeFn.path.isSamePath(s.path, filePath) || s.controlXName == filePath
+          (s: StylerRegs) => s.cssGuid == cssGuid || s.controlXName == cssGuid
         );
         if (tree != undefined) {
           let nscope: string =
@@ -402,7 +406,6 @@ export class RootAndExcludeHandler {
                   rootAlices // `@${rootAlices}:`
                 );
                 if (rInfo != undefined) {
-
                   externalStyles.push(
                     _this.main.parseStyleSeperator_sub({
                       data: _params.scopeSelectorText + styleContent,

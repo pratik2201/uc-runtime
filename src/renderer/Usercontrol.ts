@@ -9,6 +9,7 @@ import { FilterContent, IPassElementOptions, STYLER_SELECTOR_TYPE, SourceNode } 
 import { TabIndexManager } from "../lib/TabIndexManager.js";
 import { WinManager } from "../lib/WinManager.js";
 import { nodeFn } from "./nodeFn.js";
+import { Resources } from "./resMng.js";
 import { CSSVariableScope, CssVariableHandler, StyleBaseType, VariableList } from "./StylerRegs.js";
 export type UcDialogResult = "none" | "ok" | 'cancel' | 'close';
 export type ucVisibility = 'inherit' | 'visible' | 'hidden';
@@ -238,10 +239,14 @@ export class Usercontrol {
         cssVarStampKey: '0',
         initializecomponent: (param0: IUcOptions): void => {
             let ucExt = this.ucExtends;
-            ucExt.mode = param0.mode;             
+            ucExt.mode = param0.mode;
             if (param0.events.beforeInitlize != undefined) param0.events.beforeInitlize(this);
             ucExt.isForm = (param0.parentUc == undefined);
             ucExt.fileInfo = param0.cfInfo;
+            //console.log(param0.source.htmlGuid);
+
+            //console.log(Resources.get(param0.source.htmlGuid));
+
             if (ucExt.isForm) {
                 ucExt.dialogForm = this;
                 ucExt.show = () => { throw new Error('Parent Free Usercontrol SHOULD be CALL by `showDialog` \n ' + param0.cfInfo.pathOf.html) };
@@ -262,7 +267,7 @@ export class Usercontrol {
                 mode: '^',
             });
             let htPathToRead = param0.source.htmlFilePath ?? ucExt.fileInfo.pathOf.html;
-            let htContent = param0.source.htmlContents;
+            let htContent = Resources.getContent(param0.source.htmlGuid); //param0.source.htmlContents;
 
 
             let tmkr = Usercontrol.templateMkr.get(htPathToRead);
@@ -365,11 +370,12 @@ export class Usercontrol {
         finalizeInitAsync: async (param0: IUcOptions) => {
             let ext = this.ucExtends;
             //ext.srcNode.pushCSS(ext.srcNode.cssFilePath ?? ext.fileInfo.pathOf.scss, ext.fileInfo.projectInfo.importMetaURL, ext.self);
-
+            const cssContent = Resources.getContent(param0.source.cssGuid);
             ext.srcNode.pushCSS(
                 ext.srcNode.cssFilePath ?? ext.fileInfo.pathOf.scss,
-                param0.source.cssContents,
+                cssContent,//param0.source.cssContents,
                 ext.self);
+            console.log(cssContent);
 
             if (ext.isDialogBox) {
                 ext.Events.afterInitlize.on(param0.events.afterInitlize);
@@ -379,12 +385,14 @@ export class Usercontrol {
         finalizeInit: (param0: IUcOptions) => {
             let ext = this.ucExtends;
             //ext.srcNode.pushCSS(ext.srcNode.cssFilePath ?? ext.fileInfo.pathOf.scss, ext.fileInfo.projectInfo.importMetaURL, ext.self);
+            const cssContent = Resources.getContent(param0.source.cssGuid);
             ext.srcNode.pushCSS(
                 ext.srcNode.cssFilePath ??
                 ext.fileInfo.pathOf.scss,
-                param0.source.cssContents,
+                cssContent,//param0.source.cssContents,
                 ext.self);
 
+            
             if (ext.isDialogBox) {
                 ext.Events.afterInitlize.on(param0.events.afterInitlize);
                 ext.Events.afterInitlize.fire([this]);
