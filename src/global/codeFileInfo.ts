@@ -2,7 +2,7 @@ import { SpecialExtType, ucUtil } from "./ucUtil.js";
 import { IFileDeclarationTypesMap, FileDeclarationTypes, ProjectRowR, DirDeclarationTypes, getMetaUrl, IResolvePathResult, IDirDeclarationTypesMap, SourceFileTypeMap, GetProject, IFileDeclaration } from "../common/ipc/enumAndMore.js";
 import { ProjectManage } from "../renderer/ipc/ProjectManage.js";
 import { nodeFn } from "../renderer/nodeFn.js";
-import { PathBridge } from "./pathBridge.js"; 
+import { PathBridge } from "./pathBridge.js";
 // export type ISourceTypeMap = {
 //     [s in Partial<SourceType>]: string;
 // };
@@ -58,14 +58,15 @@ export function GetDeclaration(filepath: string, projectRows = ProjectManage.pro
     const cfg = rtrn.project.config;
     const pref = cfg.preference;
     const dirDec = Object.entries(pref.dirDeclaration);
+    const fpathToLower = filepath.toLowerCase();
     for (const [k, ddn] of dirDec) {
         const joinedDDN = np.join(projPath, ddn.dirPath);
         if (np.startsWith(filepath, joinedDDN)) {
             rtrn.dirDec = k as any;
             let isFileFound = false;
-            const fpathToLower = filepath.toLowerCase();
+
             const fileDec = Object.entries(ddn.fileDeclaration)
-                .sort((a, b) => b[1].extension.length - a[1].extension.length);
+                .sort((a, b) => a[1].extension.length - b[1].extension.length);
             for (const [j, fdn] of fileDec) {
                 if (fpathToLower.endsWith(fdn.extension.toLowerCase())) {
                     if (fdn.subDirPath != '' && !np.startsWith(filepath, np.join(joinedDDN, fdn.subDirPath))) continue;
@@ -113,6 +114,7 @@ export class codeFileInfo {
     get projectInfo() { return this.callerProject; /*this.resolvePathResult?.project;*/ }
     parseUrl(_path: string, demandType: DirDeclarationTypes | string, callerMetaUrl?: string): boolean {
         this.callerMetaUrl = callerMetaUrl;
+
         let fullpath = PathBridge.GetFullPath(_path, callerMetaUrl);
 
         let dec = GetDeclaration(fullpath);
@@ -120,7 +122,7 @@ export class codeFileInfo {
         this.callerProject = dec.project as any;
         _path = fullpath;
         if (dec.fileDec == undefined || this.callerProject == undefined) {
-            
+
             console.info(`'${_path}' is not valid file type for codeFileInfo.parseUrl`);
             return false;
         }

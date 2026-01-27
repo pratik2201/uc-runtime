@@ -1,31 +1,36 @@
 // import { IpcRendererHelper } from "ucbuilder/out/renderer/ipc/IpcRendererHelper.js";
 // import { FileEntry, FileTypes } from "../main/resMng/resourceManager.js";
-// import { RuntimeResource } from "../main/resMng/resourceManagerNew.js";
- 
-import { FileEntry, FileTypes, RuntimeResource } from "../enumAndMore.js"; 
+// import { BuildResource } from "../main/resMng/resourceManagerNew.js";
+
+import { FileEntry, FileTypes, BuildResource } from "../enumAndMore.js";
 import { IpcRendererHelper } from "./ipc/IpcRendererHelper.js";
 
-export class Resources {
+export class ResourceManage {
     static renderer = IpcRendererHelper.Group('ucbuilderdevtools/src/renderer/resMng');
 
-    static register = (res: RuntimeResource) => {
+
+    static x1 = (res: string) => { return this.renderer.sendSync('x1', [res]); }
+    static x0 = (res: string) => { return this.renderer.sendSync('x0', [res]); };
+
+
+    static register = (res: BuildResource) => {
         this.renderer.sendSync('register', [res]);
     }
-    static bulkRegister = (list: RuntimeResource[]) => {
+    static bulkRegister = (list: BuildResource[]) => {
         return this.renderer.sendSync('bulkRegister', [list]);
     }
     static has = (key: string) => {
         return this.renderer.sendSync('has', [key]) as boolean;
     }
     static get = (key: string) => {
-        return this.renderer.sendSync('get', [key]) as RuntimeResource;
+        return this.renderer.sendSync('get', [key]) as BuildResource;
     }
     static getContent = (key: string) => {
         return this.renderer.sendSync('getContent', [key]) as string;
-    } 
+    }
     static keys = () => {
         return this.renderer.sendSync('keys', []) as string[];
-    } 
+    }
     static clear = () => {
         this.renderer.sendSync('clear', []);
     }

@@ -25,7 +25,7 @@ export async function ImportUserConfig(fpath: string): Promise<UserUCConfig> {
     try {
         let res = (await import(fpath));
         let rtrn = res?.default;
-        checkUc(rtrn, fpath);
+        checkUc(rtrn, fpath);``
         return rtrn;
     } catch (e) {
         console.log(e);

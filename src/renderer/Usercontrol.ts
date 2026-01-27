@@ -9,7 +9,7 @@ import { FilterContent, IPassElementOptions, STYLER_SELECTOR_TYPE, SourceNode } 
 import { TabIndexManager } from "../lib/TabIndexManager.js";
 import { WinManager } from "../lib/WinManager.js";
 import { nodeFn } from "./nodeFn.js";
-import { Resources } from "./resMng.js";
+import { ResourceManage } from "./ResourceManage.js";
 import { CSSVariableScope, CssVariableHandler, StyleBaseType, VariableList } from "./StylerRegs.js";
 export type UcDialogResult = "none" | "ok" | 'cancel' | 'close';
 export type ucVisibility = 'inherit' | 'visible' | 'hidden';
@@ -267,7 +267,7 @@ export class Usercontrol {
                 mode: '^',
             });
             let htPathToRead = param0.source.htmlFilePath ?? ucExt.fileInfo.pathOf.html;
-            let htContent = Resources.getContent(param0.source.htmlGuid); //param0.source.htmlContents;
+            let htContent = ResourceManage.getContent(param0.source.htmlGuid); //param0.source.htmlContents;
 
 
             let tmkr = Usercontrol.templateMkr.get(htPathToRead);
@@ -370,7 +370,7 @@ export class Usercontrol {
         finalizeInitAsync: async (param0: IUcOptions) => {
             let ext = this.ucExtends;
             //ext.srcNode.pushCSS(ext.srcNode.cssFilePath ?? ext.fileInfo.pathOf.scss, ext.fileInfo.projectInfo.importMetaURL, ext.self);
-            const cssContent = Resources.getContent(param0.source.cssGuid);
+            const cssContent = ResourceManage.getContent(param0.source.cssGuid);
             ext.srcNode.pushCSS(
                 ext.srcNode.cssFilePath ?? ext.fileInfo.pathOf.scss,
                 cssContent,//param0.source.cssContents,
@@ -385,7 +385,7 @@ export class Usercontrol {
         finalizeInit: (param0: IUcOptions) => {
             let ext = this.ucExtends;
             //ext.srcNode.pushCSS(ext.srcNode.cssFilePath ?? ext.fileInfo.pathOf.scss, ext.fileInfo.projectInfo.importMetaURL, ext.self);
-            const cssContent = Resources.getContent(param0.source.cssGuid);
+            const cssContent = ResourceManage.getContent(param0.source.cssGuid);
             ext.srcNode.pushCSS(
                 ext.srcNode.cssFilePath ??
                 ext.fileInfo.pathOf.scss,

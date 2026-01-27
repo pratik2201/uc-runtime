@@ -122,7 +122,7 @@ export interface valueEntry {
   type: ValueType;
   value: string;
 }
-export class ResourceManager {
+export class RM {
    
   private static valueMap = new Map<string, valueEntry>();
   static setValue(key: string, value, type: ValueType = "string") {
@@ -202,5 +202,4 @@ function isSamePath(path1: string, path2: string) {
   const absA = path.resolve(path1);
   const absB = path.resolve(path2);
   return (path.normalize(absA) === path.normalize(absB));
-}
-export const RM = ResourceManager;
+} 

@@ -1,4 +1,4 @@
-import { IpcRendererEvent } from "electron"; 
+import { IpcRendererEvent } from "electron";
 import { KeyboardKey } from "../../lib/hardware.js";
 export const UC_ACCESS_KEY = '_____UC____';
 export interface ProjectPrimaryAlias { alice?: string; aliceValue?: string; projectPath?: string; }
@@ -332,10 +332,16 @@ export class UserUCConfig<K = IDirDeclarations> {
     projectBaseCssPath?: string = "styles.scss";
 
 }
- 
+
 export class UcBuildOptions<K = IDirDeclarations> {
     keyBind?: KeyboardKey[] = ['ControlRight', 'F12'];
     ignorePath?: string[] = ["node_modules", ".vscode", "out", "dist", ".git"];
+    /**
+     * specify path for generate resource file inside `src` declaration
+     * this file will store all resources in string format
+     * please import this file just after ucbuilder mainhelper init
+     */
+    ResourceDeclarationFile?: string = "./Resources.ts";
     RuntimeResources: RuntimeFileManage<K>[] = [];
     // ResourcesRegister: {
 
@@ -348,7 +354,7 @@ class RuntimeFileManage<K = IDirDeclarations> {
     fromDeclare: keyof K;
     toDeclares: Array<keyof K>;
 }
-export type FileDeclarationTypes = 'code' | 'designer' | 'dynamicDesign' | 'html' | 'scss';
+export type FileDeclarationTypes = 'code' | 'designer' | 'tsLayout' | 'htmlLayout'   | 'html' | 'scss';
 export type DirDeclarationTypes = 'out' | 'src' | 'dist';
 export type IFileDeclarationTypesMap = {
     [s in Partial<FileDeclarationTypes>]: string;
@@ -359,7 +365,8 @@ export const SourceFileTypeMap: IFileDeclarationTypesMap = {
     scss: '',
     code: '',
     designer: '',
-    dynamicDesign: ''
+    tsLayout: '', 
+    htmlLayout: ''
 }
 // export type IQuickDirDeclaration = {
 //     [dirPath: string]: Partial<{ [s in FileDeclarationTypes]: IFileDeclaration }>

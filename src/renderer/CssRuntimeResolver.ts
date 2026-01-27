@@ -1,5 +1,5 @@
 import { ResourceKeyBridge } from "../enumAndMore.js";
-import { Resources } from "./resMng.js";
+import { ResourceManage } from "./ResourceManage.js";
 
  
 
@@ -18,7 +18,7 @@ export class CssRuntimeResolver {
   resolveFromKey(cssKey: string): string {
     this.loaded.clear();
 
-    const res = Resources.get(cssKey);
+    const res = ResourceManage.get(cssKey);
     if (!res || res.type !== "css") {
       console.warn("CSS resource missing:", cssKey);
       return "";
@@ -55,7 +55,7 @@ export class CssRuntimeResolver {
       if (this.loaded.has(realKey)) return "";
       this.loaded.add(realKey);
 
-      const res = Resources.get(realKey);
+      const res = ResourceManage.get(realKey);
       if (!res || res.type !== "css") {
         console.warn("CSS import missing:", realKey);
         return "";
@@ -76,7 +76,7 @@ export class CssRuntimeResolver {
       const realKey = ResourceKeyBridge.extractKey(value);
       if (!realKey) return _m;
 
-      const asset = Resources.get(realKey);
+      const asset = ResourceManage.get(realKey);
       if (!asset) {
         console.warn("Asset missing:", realKey);
         return _m;

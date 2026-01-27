@@ -5,7 +5,7 @@ import { SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
 import { CssRuntimeResolver } from "./CssRuntimeResolver.js";
 import { ProjectManage } from "./ipc/ProjectManage.js";
 import { nodeFn } from "./nodeFn.js";
-import { Resources } from "./resMng.js";
+import { ResourceManage } from "./ResourceManage.js";
 export type VariableList = { [key: string]: string };
 export const patternList = {
   styleTagSelector: /<style([\n\r\w\W.]*?)>([\n\r\w\W.]*?)<\/style>/gi,
@@ -93,14 +93,14 @@ export class StylerRegs {
     return ocHandler.parse({ openingChar: '{', closingChar: '}' }, csscontent);
   }
   baseType: StyleBaseType = StyleBaseType.UserControl;
-  static initProjectsStyle(/*callback: () => void*/): void {
+  static initProjectsStyle(): void {
     SourceNode.init();
     ProjectManage.projects.forEach((row) => {
       let cssPath = nodeFn.path.resolve(row.projectPath, 'styles.scss');
-      let cssContent = Resources.getResource(row.config.guid ?? cssPath, 'cssFile', cssPath);
+      let cssContent = ResourceManage.getResource(row.config.guid ?? cssPath, 'cssFile', cssPath);
       if (cssContent == undefined) {
         cssPath = nodeFn.path.resolve(row.projectPath, row.config.projectBaseCssPath);
-        cssContent = Resources.getResource(row.config.guid ?? cssPath, 'cssFile', cssPath);
+        cssContent = ResourceManage.getResource(row.config.guid ?? cssPath, 'cssFile', cssPath);
       }
       let _stylepath: string = nodeFn.path.relativeFilePath(row.projectPath, cssPath);
       row.stampSRC = SourceNode.registerSource({

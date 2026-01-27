@@ -18,7 +18,8 @@ export default UcDefaultConfig({
                 fileDeclaration: {
                     code: { extension: '.ts' },
                     designer: { extension: '.designer.ts' },
-                    dynamicDesign: { extension: '.html.ts' }
+                    tsLayout: { extension: '.html.ts' },
+                    htmlLayout: { extension: '.htm' },                    
                 }
             },
             out: {
@@ -26,7 +27,7 @@ export default UcDefaultConfig({
                 fileDeclaration: {
                     code: { extension: '.js' },
                     designer: { extension: '.designer.js' },
-                    dynamicDesign: { extension: '.html.js' },
+                    tsLayout: { extension: '.html.js' },
                 }
             }
         },

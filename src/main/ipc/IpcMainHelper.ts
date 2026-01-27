@@ -92,10 +92,7 @@ export class IpcMainHelper {
         });
         await configManage.init(importMetaPath);
         (await import('../nodeFn.ipc.js')).default();
-
-        (await import('../resMng.ipc.js')).default();
-
-
+        (await import('../ResourceManage.ipc.js')).default();
         if (!app.isPackaged) {
             try {
                 const { initDevTools } = await import("ucbuilder-devtools/out/main/index.js");
@@ -107,8 +104,6 @@ export class IpcMainHelper {
                 console.warn("ucbuilder: devtools not available.");
             }
         }
-
-
         // (await import('../../build/fileWatcher.ipc.js')).default();
         // if (configManage.filler.MAIN_CONFIG.config.env == 'developer') {
         //     (await import('../../build/buildTimeFn.ipc.js')).default();

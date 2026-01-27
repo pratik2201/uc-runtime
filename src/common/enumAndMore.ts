@@ -4,11 +4,14 @@ import { IKeyStampNode } from "../renderer/StylerRegs.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
 export type UCGenerateMode = "client" | "designer";
 export type UcStates = "normal" | "dock" | "minimize" | "maximize";
-export interface RuntimeResource {
-  key: string;        // sharepnl:css:UUID
-  type: string;       // css | image | data | html | text | raw
+
+export type BuildResourceType = "css" | "html" | "image" | "text" | "raw" | "data";
+
+export interface BuildResource {
+  guid: string;
+  type: BuildResourceType;
   content: string;
-  source?: string;   // optional debug
+  source?: string;
 }
 export type FileTypes =
   | "cssFile"
