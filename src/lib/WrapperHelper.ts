@@ -1,4 +1,4 @@
-import { codeFileInfo } from "../global/codeFileInfo.js"; 
+import { codeFileInfo } from "../global/codeFileInfo.js";
 import ucWinFrame$Dynamic from "../renderer/controls/ucWinFrame.uc.html.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
 import { nodeFn } from "../renderer/nodeFn.js";
@@ -386,14 +386,20 @@ export class HTMLx {
     static Usercontrol = (name: string, targetUc: IHTMLxSource, outDynamicJsPath: string, ucProps: HTMLTagMapper<'WRAPPER'>, ...childs: string[]) => {
         let relpath: string;
         const targetCinfo = new codeFileInfo();
-     //   debugger;
+        //   debugger;
         targetCinfo.parseUrl(nodeFn.url.fileURLToPath(targetUc.dynamicFilePath), undefined, undefined);  // DESIGNER OUT
         const outDynamicCinfo = new codeFileInfo();
         outDynamicCinfo.parseUrl(nodeFn.url.fileURLToPath(outDynamicJsPath), undefined, undefined);  // DESIGNER OUT
+        const pref = outDynamicCinfo.projectInfo.config.preference;
+        const dirDec = pref.dirDeclaration;
 
-        const pref = targetCinfo.projectInfo?.config?.preference;
         if (targetCinfo.pathOf != undefined) {
-            relpath = nodeFn.path.relativeFilePath(outDynamicCinfo.pathOf.html, targetCinfo.pathOf.html);
+            //relpath = nodeFn.path.relativeFilePath(outDynamicCinfo.pathOf.html, targetCinfo.pathOf.html);
+            relpath = nodeFn.path.relativeFilePath(
+                outDynamicCinfo.allPathOf[pref.srcDir].html,
+                targetCinfo.allPathOf[pref.srcDir].html
+            );
+
             ucProps = ucProps ?? {};
             if (name != undefined)
                 ucProps["x-name"] = name as any;
