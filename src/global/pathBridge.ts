@@ -1,5 +1,9 @@
 import { DirDeclarationTypes, FileDeclarationTypes, GetProject, IDirDeclarationTypesMap, ProjectRowBase, correctpath, subtractPath } from "../common/ipc/enumAndMore.js";
 import { ucUtil } from "./ucUtil.js";
+interface ConvertedPathRow {
+    paths: IDirDeclarationTypesMap;
+    project: ProjectRowBase<unknown>;
+}
 export class PathBridge {
     static path: (typeof import("../renderer/nodeFn.js").nodeFn)['path'];
     static url: (typeof import("../renderer/nodeFn.js").nodeFn)['url'];
@@ -16,14 +20,17 @@ export class PathBridge {
 
 
             function givaAll(givenType: FileDeclarationTypes, path: string, fromSrcType: DirDeclarationTypes = 'src', toSrcType: DirDeclarationTypes = 'src') {
-                let rtrn: IDirDeclarationTypesMap = {};
+                let rtrn: ConvertedPathRow = {
+                    paths: {},
+                    project: undefined,
+                };
                 //debugger;
                 //console.log(PathBridge.source);
 
-                let prj = GetProject(path, PathBridge.source as any, PathBridge.url as any);
-                if (givenType == undefined || prj == undefined) { console.log(path); return undefined; }
-                const pref = prj.config.preference;
-                const rootDir = prj.projectPath;
+                rtrn.project = GetProject(path, PathBridge.source as any, PathBridge.url as any);
+                if (givenType == undefined || rtrn.project == undefined) { console.log(path); return undefined; }
+                const pref = rtrn.project.config.preference;
+                const rootDir = rtrn.project.projectPath;
                 const dirDeclaration = pref.dirDeclaration;
                 let right = '';
                 const givenDirectoryDeclaration = dirDeclaration[fromSrcType];
@@ -34,8 +41,8 @@ export class PathBridge {
                 right = subtractPath(correctpath(`${rootDir}/${givenDirectoryDeclaration.dirPath}/${givenFileDeclaration.subDirPath}`), path, _this.path as any);
 
                 for (const [key, typeDec] of Object.entries(dirDeclaration)) {
-                    rtrn[key] = {} as any;
-                    const fWisePath = rtrn[key];
+                    rtrn.paths[key] = {} as any;
+                    const fWisePath = rtrn.paths[key];
                     for (const [fileType, fileDec] of Object.entries(typeDec.fileDeclaration)) {
 
                         fWisePath[fileType] = PathBridge.changeExt(PathBridge.path.join(rootDir, typeDec.dirPath, fileDec.subDirPath, right),
@@ -57,8 +64,7 @@ export class PathBridge {
         }
 
     }
-    static Convert: (path: string, pathDeclare: DirDeclarationTypes, givenFileType: FileDeclarationTypes, demandPathtype?: DirDeclarationTypes)
-        => IDirDeclarationTypesMap;
+    static Convert: (path: string, pathDeclare: DirDeclarationTypes, givenFileType: FileDeclarationTypes, demandPathtype?: DirDeclarationTypes) => ConvertedPathRow;
 
     static changeExt = (path: string, from: FileDeclarationTypes, to: FileDeclarationTypes): string => {
         return ucUtil.changeExtension(path, from, to);

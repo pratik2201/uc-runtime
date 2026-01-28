@@ -2,9 +2,8 @@
 // import { FileEntry, FileTypes } from "../main/resMng/resourceManager.js";
 // import { BuildResource } from "../main/resMng/resourceManagerNew.js";
 
-import { FileEntry, FileTypes, BuildResource } from "../enumAndMore.js";
+import { FileEntry, FileTypes, BuildResource, ResourceKeyList, ResourceAliasList, ResourceAliasRegistry } from "../enumAndMore.js";
 import { IpcRendererHelper } from "./ipc/IpcRendererHelper.js";
-
 export class ResourceManage {
     static renderer = IpcRendererHelper.Group('ucbuilderdevtools/src/renderer/resMng');
 
@@ -19,23 +18,40 @@ export class ResourceManage {
     static bulkRegister = (list: BuildResource[]) => {
         return this.renderer.sendSync('bulkRegister', [list]);
     }
-    static has = (key: string) => {
+    static has = (key: ResourceKeyList) => {
         return this.renderer.sendSync('has', [key]) as boolean;
     }
-    static get = (key: string) => {
+    static get = (key: ResourceKeyList) => {
         return this.renderer.sendSync('get', [key]) as BuildResource;
     }
-    static getContent = (key: string) => {
+    static getContent = (key: ResourceKeyList) => {
         return this.renderer.sendSync('getContent', [key]) as string;
     }
+
     static keys = () => {
         return this.renderer.sendSync('keys', []) as string[];
     }
     static clear = () => {
         this.renderer.sendSync('clear', []);
     }
-
-
+    /**
+     * 
+     * @param alias 
+     * @param CHECK_RESOURCE_PATH_IS_CORRECT_OR_NOT this is for check the alias path is correct (in case other resource already bound this alias)
+     * @returns {BuildResource}
+     */
+    static getByAlias = <K extends keyof ResourceAliasRegistry>(alias: K,CHECK_RESOURCE_PATH_IS_CORRECT_OR_NOT?:ResourceAliasRegistry[K]) => {
+        return this.renderer.sendSync('getByAlias', [alias]) as BuildResource;
+    }
+    /**
+     * 
+     * @param alias 
+     * @param CHECK_RESOURCE_PATH_IS_CORRECT_OR_NOT this is for check the alias path is correct (in case other resource already bound this alias)
+     * @returns 
+     */
+    static getContentByAlias = <K extends keyof ResourceAliasRegistry>(alias: K,CHECK_RESOURCE_PATH_IS_CORRECT_OR_NOT?:ResourceAliasRegistry[K]) => {
+        return this.renderer.sendSync('getContentByAlias', [alias]) as string;
+    }
 
 
 

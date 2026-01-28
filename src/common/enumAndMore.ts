@@ -1,5 +1,6 @@
 import { codeFileInfo } from "../global/codeFileInfo.js";
 import { SourceNode } from "../lib/StampGenerator.js";
+import { ResourceKeyList } from "ucbuilder/enumAndMore.js";
 import { IKeyStampNode } from "../renderer/StylerRegs.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
 export type UCGenerateMode = "client" | "designer";
@@ -9,6 +10,7 @@ export type BuildResourceType = "css" | "html" | "image" | "text" | "raw" | "dat
 
 export interface BuildResource {
   guid: string;
+  name?: string;
   type: BuildResourceType;
   content: string;
   source?: string;
@@ -190,8 +192,8 @@ export class ResourceKeyBridge {
 export interface ISourceOptions {
   htmlRow?: any;
   //htmlImportMetaUrl?: string;
-  htmlGuid?: string;
-  cssGuid?: string;
+  htmlGuid?: ResourceKeyList;
+  cssGuid?: ResourceKeyList;
   htmlContents?: string;
   cssContents?: string;
   cssFilePath?: string;

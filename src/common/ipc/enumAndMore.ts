@@ -354,7 +354,7 @@ class RuntimeFileManage<K = IDirDeclarations> {
     fromDeclare: keyof K;
     toDeclares: Array<keyof K>;
 }
-export type FileDeclarationTypes = 'code' | 'designer' | 'tsLayout' | 'htmlLayout'   | 'html' | 'scss';
+export type FileDeclarationTypes = 'code' | 'designer' | 'tsLayout' | 'htmlLayout' | 'html' | 'scss';
 export type DirDeclarationTypes = 'out' | 'src' | 'dist';
 export type IFileDeclarationTypesMap = {
     [s in Partial<FileDeclarationTypes>]: string;
@@ -365,7 +365,7 @@ export const SourceFileTypeMap: IFileDeclarationTypesMap = {
     scss: '',
     code: '',
     designer: '',
-    tsLayout: '', 
+    tsLayout: '',
     htmlLayout: ''
 }
 // export type IQuickDirDeclaration = {

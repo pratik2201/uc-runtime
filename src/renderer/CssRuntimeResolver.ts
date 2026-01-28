@@ -1,3 +1,4 @@
+import { ResourceKeyList } from "ucbuilder/enumAndMore.js";
 import { ResourceKeyBridge } from "../enumAndMore.js";
 import { ResourceManage } from "./ResourceManage.js";
 
@@ -15,7 +16,7 @@ export class CssRuntimeResolver {
 
   // ---------- ENTRY POINTS ----------
 
-  resolveFromKey(cssKey: string): string {
+  resolveFromKey(cssKey: ResourceKeyList ): string {
     this.loaded.clear();
 
     const res = ResourceManage.get(cssKey);
@@ -48,7 +49,7 @@ export class CssRuntimeResolver {
 
       if (!ResourceKeyBridge.isPlaceholder(value)) return "";
 
-      const realKey = ResourceKeyBridge.extractKey(value);
+      const realKey = ResourceKeyBridge.extractKey(value) as ResourceKeyList;
       if (!realKey) return "";
 
       // circular safe
@@ -73,7 +74,7 @@ export class CssRuntimeResolver {
 
       if (!ResourceKeyBridge.isPlaceholder(value)) return _m;
 
-      const realKey = ResourceKeyBridge.extractKey(value);
+      const realKey = ResourceKeyBridge.extractKey(value) as ResourceKeyList;
       if (!realKey) return _m;
 
       const asset = ResourceManage.get(realKey);

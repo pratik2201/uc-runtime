@@ -375,7 +375,7 @@ export class Usercontrol {
                 ext.srcNode.cssFilePath ?? ext.fileInfo.pathOf.scss,
                 cssContent,//param0.source.cssContents,
                 ext.self);
-            console.log(cssContent);
+            //console.log(cssContent);
 
             if (ext.isDialogBox) {
                 ext.Events.afterInitlize.on(param0.events.afterInitlize);

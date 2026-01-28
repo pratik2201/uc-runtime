@@ -127,7 +127,7 @@ export class codeFileInfo {
             return false;
         }
         else {
-            this.allPathOf = PathBridge.Convert(_path, dec.dirDec as any, dec.fileDec as any, dirDec as any/*sourceType as any, GIVEN_PATH_TYPE*/);
+            this.allPathOf = PathBridge.Convert(_path, dec.dirDec as any, dec.fileDec as any, dirDec as any).paths;
             this.pathOf = this.allPathOf[dirDec];
             this.extCode = codeFileInfo.getExtType(this.pathOf.code);
             if (this.pathOf == undefined) {
