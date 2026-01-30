@@ -7,9 +7,10 @@ export type UcStates = "normal" | "dock" | "minimize" | "maximize";
 // ResourceManage.d.ts
 
 
-export interface ResourceNamedRegistry { }
-export type ResourceProjectNamesList = keyof ResourceNamedRegistry;
+export interface ResourceProjectNameRegistry { }
 
+export type ResourceProjectNameList = keyof ResourceProjectNameRegistry;
+export interface ResourceNamedRegistry { }
 export type ResourceNamedList = keyof ResourceNamedRegistry;
 
 
@@ -34,7 +35,7 @@ export class UserResource extends BuildResource {
    * THAT CSS AS PROJECT'S GLOBAL CSS
    */
   isGlobalCss? = false;
-  project?: ResourceProjectNamesList;
+  project?: ResourceProjectNameList;
 }
 
 export type FileTypes =
