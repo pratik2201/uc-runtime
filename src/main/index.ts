@@ -7,7 +7,7 @@ const __dirname = dirname(__filename);
 let win: Electron.BrowserWindow;
 app.on('ready', async () => {
      debugger;
-    await IpcMainHelper.init(import.meta.url);
+    await IpcMainHelper.init(import.meta.url,undefined);
     let mainScreen: Electron.Display = screen.getPrimaryDisplay();
     win = new BrowserWindow({
         width: mainScreen.size.width,

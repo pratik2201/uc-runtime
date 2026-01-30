@@ -1,6 +1,7 @@
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { deepAssign, GetProjectName, IDirDeclarations, IFileDeclaration, UcBuildOptions, UserUCConfig } from "../../common/ipc/enumAndMore.js";
+import { BuildTimeGuidMeta, deepAssign, GetProjectName, IDirDeclarations, IFileDeclaration, UcBuildOptions, UserUCConfig } from "../../common/ipc/enumAndMore.js";
 import path, { dirname } from "node:path";
+import crypto from "node:crypto";
 import fs from "node:fs";
 export async function GetUcConfig(projectdir: string): Promise<UserUCConfig> {
     let config_file_path = path.join(projectdir, 'ucconfig.js');
@@ -23,21 +24,33 @@ export async function ImportUserConfig(fpath: string): Promise<UserUCConfig> {
     //console.log(fpath);
     if (!fpath.startsWith('file:/')) fpath = pathToFileURL(fpath).href;
     try {
-        let res = (await import(fpath));
-        let rtrn = res?.default;
-        checkUc(rtrn, fpath);``
-        return rtrn;
+        // let res = (await import(fpath));
+        // let rtrn = res?.default;
+        // checkUc(rtrn, fpath); 
+        // return rtrn;
+        return await checkUc(fpath);
     } catch (e) {
         console.log(e);
     }
 }
-function checkUc(cfg: UserUCConfig, filePath: string) {
+async function checkUc(filePath: string) {
+    let res = (await import(filePath));
+    let cfg = res?.default as UserUCConfig;
     if (cfg == undefined) throw new Error('EMPTY CONFIG');
+    /*if (cfg.guid == '' || cfg.guid == undefined) {
+        cfg.guid = crypto.randomUUID();
+        fs.writeFileSync(filePath, JSON.stringify(cfg), 'utf-8');
+        res = (await import(filePath));
+        cfg = res?.default as UserUCConfig;
+        if (cfg.guid == '' || cfg.guid == undefined) return undefined;
+    }*/
+
+
     const pref = cfg?.preference;
     let dirDeclaration = pref?.dirDeclaration;
     if (dirDeclaration != undefined) {
 
-        
+
         const fileWisePath = pref.fileCommonDeclaration;
         if (fileWisePath != undefined) {
             for (const [fileDeckey, fileDec] of Object.entries(fileWisePath)) {
@@ -62,7 +75,9 @@ function checkUc(cfg: UserUCConfig, filePath: string) {
     }
     pref.build = pref.build ?? new UcBuildOptions();
     if (filePath.startsWith('file:///')) filePath = fileURLToPath(filePath);
-    cfg.browser = cfg.browser ?? {  importmap: {} };
+    cfg.browser = cfg.browser ?? { importmap: {} };
+    pref.build.guidOptions = pref.build.guidOptions ?? new BuildTimeGuidMeta();
+
     const prjName = GetProjectName(dirname(filePath), path, fs);
     if (cfg.browser.importmap['ucbuilder'] == undefined) {
         cfg.browser = cfg.browser ?? { importmap: {} };
@@ -73,6 +88,6 @@ function checkUc(cfg: UserUCConfig, filePath: string) {
         cfg.browser.importmap['ucbuilder-devtools'] = "node_modules/ucbuilder-devtools";
     }
 
-
+    return cfg;
     // "ucbuilder": "node_modules/ucbuilder",  
 }

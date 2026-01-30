@@ -30,6 +30,13 @@ export class ResourceStorage {
   static getContent(key: string) {
     return this.map.get(key)?.content ?? null;
   }
+  static getByName(name: string) {
+    return this.map.values().find(s => s.name == name) ?? null;
+  }
+
+  static getContentByName(name: string) {
+     return this.map.values().find(s => s.name == name)?.content ?? null;
+  }
 
   static keys() {
     return [...this.map.keys()];

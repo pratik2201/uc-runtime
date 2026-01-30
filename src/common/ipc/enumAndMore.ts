@@ -313,8 +313,15 @@ export type IResolvePathResult<K = ProjectRowR> = {
     alias?: string;
     aliasPath?: string;
 };
+
 export class UserUCConfig<K = IDirDeclarations> {
-    guid: string;
+
+    /**
+     * undefined guid will generate random new uuid on build time
+     */
+    guid = undefined as string;
+    projectName = undefined as string;
+
     env: 'developer' | 'release' = 'developer';
     exports: 'types' | 'import' = 'import';
     mainAlias: string;
@@ -332,9 +339,14 @@ export class UserUCConfig<K = IDirDeclarations> {
     projectBaseCssPath?: string = "styles.scss";
 
 }
-
+export type GuidSequenceType = "sequenceAndSameGuid" | "randomGuidAndNoSequence";
+export class BuildTimeGuidMeta {
+    guidType = "sequenceAndSameGuid" as GuidSequenceType;
+    sequencePadSize = 8;
+}
 export class UcBuildOptions<K = IDirDeclarations> {
     keyBind?: KeyboardKey[] = ['ControlRight', 'F12'];
+    guidOptions = new BuildTimeGuidMeta();
     ignorePath?: string[] = ["node_modules", ".vscode", "out", "dist", ".git"];
     /**
      * specify path for generate resource file inside `src` declaration

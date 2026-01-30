@@ -1,20 +1,42 @@
 import { codeFileInfo } from "../global/codeFileInfo.js";
 import { SourceNode } from "../lib/StampGenerator.js";
-import { ResourceKeyList } from "ucbuilder/enumAndMore.js";
 import { IKeyStampNode } from "../renderer/StylerRegs.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
 export type UCGenerateMode = "client" | "designer";
 export type UcStates = "normal" | "dock" | "minimize" | "maximize";
+// ResourceManage.d.ts
+
+
+export interface ResourceNamedRegistry { }
+export type ResourceProjectNamesList = keyof ResourceNamedRegistry;
+
+export type ResourceNamedList = keyof ResourceNamedRegistry;
+
+
+
+export interface ResourceKeyRegistry { }
+export type ResourceKeyList = keyof ResourceKeyRegistry;
+
+
+
 
 export type BuildResourceType = "css" | "html" | "image" | "text" | "raw" | "data";
-
-export interface BuildResource {
+export class BuildResource {
   guid: string;
   name?: string;
   type: BuildResourceType;
   content: string;
   source?: string;
 }
+export class UserResource extends BuildResource {
+  /**
+   * ONLY ONE RESOURCE SHOULD ASSIGN THIS OPTION TRUE TO USE
+   * THAT CSS AS PROJECT'S GLOBAL CSS
+   */
+  isGlobalCss? = false;
+  project?: ResourceProjectNamesList;
+}
+
 export type FileTypes =
   | "cssFile"
   | "htmlFile"
@@ -192,8 +214,8 @@ export class ResourceKeyBridge {
 export interface ISourceOptions {
   htmlRow?: any;
   //htmlImportMetaUrl?: string;
-  htmlGuid?: ResourceKeyList;
-  cssGuid?: ResourceKeyList;
+  htmlGuid?: string; //ResourceKeyList;
+  cssGuid?: string;// ResourceKeyList;
   htmlContents?: string;
   cssContents?: string;
   cssFilePath?: string;

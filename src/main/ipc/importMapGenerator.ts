@@ -98,11 +98,11 @@ export function createImportMap(htmlPath: string, projects: ProjectEntry[], base
     .relative(htmlDirPath, projectRoot)
     .replace(/\\/g, '/')*/
 
-  console.log([
-    projectRoot,
-    htmlDirPath,
-    relFromHtml
-  ]);
+  // console.log([
+  //   projectRoot,
+  //   htmlDirPath,
+  //   relFromHtml
+  // ]);
 
 
   const importMap: {
@@ -133,7 +133,7 @@ export function createImportMap(htmlPath: string, projects: ProjectEntry[], base
       scope[a] = v
     }
   }
-  console.log(importMap);
+  // console.log(importMap);
 
   return importMap
 }

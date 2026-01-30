@@ -3,11 +3,8 @@ import { IpcMainGroup } from "./ipc/IpcMainHelper.js";
 import { RM } from "./RM.js";
 import { ResourceStorage } from "./ResourceStorage.js";
 import { decryptResource, encryptResource } from "./cryptoResource.js";
-
-
 export default function () {
-
-    const main = IpcMainGroup('ucbuilderdevtools/src/renderer/resMng');
+    const main = IpcMainGroup('ucbuilder/src/renderer/ResourceManage');
     const cache = new Map<string, string>();
     function getCache(key: string, content: string) {
         if (cache.has(key)) return cache.get(key);
@@ -39,13 +36,25 @@ export default function () {
         let v = ResourceStorage.get(key);
         if (v != undefined) {
             v = JSON.parse(JSON.stringify(v));
-            v.content = getCache(key,v.content);
+            v.content = getCache(key, v.content);
         }
         event.returnValue = v;
     });
     main.On('getContent', (event, key: string) => {
         let v = ResourceStorage.getContent(key);
         event.returnValue = getCache(key, v);
+    });
+    main.On('getByName', (event, name: string) => {
+        let v = ResourceStorage.getByName(name);
+        if (v != undefined) {
+            v = JSON.parse(JSON.stringify(v));
+            v.content = getCache(name, v.content);
+        }
+        event.returnValue = v;
+    });
+    main.On('getContentByName', (event, name: string) => {
+        let v = ResourceStorage.getContentByName(name);
+        event.returnValue = getCache(name, v);
     });
     main.On('keys', (event) => {
         event.returnValue = ResourceStorage.keys();

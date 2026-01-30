@@ -13,8 +13,7 @@ export async function initRenderer() {
   if (isExecuted) return;
   isExecuted = true;
   IpcRendererHelper.init(window);
-  nodeFn.fullfill = window[IPC_API_KEY].fullFill;
-  //nodeFn.fullfill = window[IPC_API_KEY].fullFill;
+  nodeFn.fullfill = window[IPC_API_KEY].fullFill; 
   ProjectManage.init();
   PathBridge.path = nodeFn.path;
   PathBridge.url = nodeFn.url;

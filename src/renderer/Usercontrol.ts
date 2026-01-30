@@ -267,7 +267,7 @@ export class Usercontrol {
                 mode: '^',
             });
             let htPathToRead = param0.source.htmlFilePath ?? ucExt.fileInfo.pathOf.html;
-            let htContent = ResourceManage.getContent(param0.source.htmlGuid); //param0.source.htmlContents;
+            let htContent = ResourceManage.getContent(param0.source.htmlGuid as never); //param0.source.htmlContents;
 
 
             let tmkr = Usercontrol.templateMkr.get(htPathToRead);
@@ -370,7 +370,7 @@ export class Usercontrol {
         finalizeInitAsync: async (param0: IUcOptions) => {
             let ext = this.ucExtends;
             //ext.srcNode.pushCSS(ext.srcNode.cssFilePath ?? ext.fileInfo.pathOf.scss, ext.fileInfo.projectInfo.importMetaURL, ext.self);
-            const cssContent = ResourceManage.getContent(param0.source.cssGuid);
+            const cssContent = ResourceManage.getContent(param0.source.cssGuid as never);
             ext.srcNode.pushCSS(
                 ext.srcNode.cssFilePath ?? ext.fileInfo.pathOf.scss,
                 cssContent,//param0.source.cssContents,
@@ -385,7 +385,7 @@ export class Usercontrol {
         finalizeInit: (param0: IUcOptions) => {
             let ext = this.ucExtends;
             //ext.srcNode.pushCSS(ext.srcNode.cssFilePath ?? ext.fileInfo.pathOf.scss, ext.fileInfo.projectInfo.importMetaURL, ext.self);
-            const cssContent = ResourceManage.getContent(param0.source.cssGuid);
+            const cssContent = ResourceManage.getContent(param0.source.cssGuid as never);
             ext.srcNode.pushCSS(
                 ext.srcNode.cssFilePath ??
                 ext.fileInfo.pathOf.scss,

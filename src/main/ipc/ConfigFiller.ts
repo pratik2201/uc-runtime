@@ -9,7 +9,7 @@ import { app } from "electron";
 export class ConfigFiller {
     MAIN_CONFIG: ProjectRowBase;
     MAIN_PROJECT_PATH: string;
-      ucConfigList: ProjectRowBase[] = [];
+    ucConfigList: ProjectRowBase[] = [];
 
     _setRootDirecory(row: ProjectRowBase, projPath: string) {
         row.projectPath = projPath;
@@ -82,10 +82,11 @@ export class ConfigFiller {
         pref.build = Object.assign(new UcBuildOptions(), pref.build);
 
         const bld = pref.build;
+        
         if (bld.keyBind == undefined || bld.keyBind.length == 0)
             bld.keyBind = ['ControlRight', 'F12'];
 
-         this.ucConfigList.sort((a, b) => b.importMetaURL.length - a.importMetaURL.length);
+        this.ucConfigList.sort((a, b) => b.importMetaURL.length - a.importMetaURL.length);
         this.updateAliceToPath(this.ucConfigList);
         if (!app.isPackaged) {
             this.generateResource();
@@ -98,8 +99,7 @@ export class ConfigFiller {
         const pref = cfg.preference;
         const dirDeclaration = pref.dirDeclaration;
         const runtimeRes = pref.build?.RuntimeResources ?? [];
-        // const dirDeclaration = pref.dirDeclaration;
-
+        // const dirDeclaration = pref.dirDeclaration; 
         runtimeRes.forEach(res => {
             const SRC_DIR = pref.dirDeclaration[res.fromDeclare].dirPath;
             function copyAssets(fromDir: string) {
@@ -117,7 +117,6 @@ export class ConfigFiller {
                             let OUT_DIR = dirDeclaration[pref.outDir].dirPath;
                             const dest = path.join(OUT_DIR, commonPath);
                             fs.mkdirSync(path.dirname(dest), { recursive: true });
-                            //console.log([full,dest]);
 
                             fs.copyFileSync(full, dest);
                         });
@@ -152,8 +151,9 @@ export class ConfigFiller {
                     this.MAIN_PROJECT_PATH = projectDirPath;
                 }
                 row.projectName = projectName;
+                row.config.projectName = row.config?.projectName ?? row.projectName;
                 this._setRootDirecory(row, correctpath(projectDirPath));
-                 this.ucConfigList.push(row);
+                this.ucConfigList.push(row);
                 row.importMetaURL = url.pathToFileURL(projectDirPath).href;
                 let dirs = this.listProjectPath(projectDirPath);
                 for (let i = 0, ilen = dirs.length; i < ilen; i++) {

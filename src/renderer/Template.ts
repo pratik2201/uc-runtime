@@ -1,14 +1,15 @@
-import { ExtractArguments, ISourceOptions, ITemplatePathOptions, ITptOptions, TptOptions } from "../common/enumAndMore.js";
+import { ExtractArguments, ISourceOptions, ITemplatePathOptions, ITptOptions, ResourceKeyRegistry, TptOptions } from "../common/enumAndMore.js";
 import { codeFileInfo } from "../global/codeFileInfo.js";
 import { ATTR_OF } from "../global/runtimeOpt.js";
 import { TemplateMaker } from "../global/TemplateMaker.js";
 import { ucUtil } from "../global/ucUtil.js";
 import { FilterContent, SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
 import { nodeFn } from "./nodeFn.js";
+import { ResourceManage } from "./ResourceManage.js";
 import { CSSSearchAttributeCondition, CssVariableHandler, CSSVariableScope, StyleBaseType, StylerRegs, VariableList } from "./StylerRegs.js";
 import { ITransferDataNode, Usercontrol } from "./Usercontrol.js";
 
- 
+
 export class Template {
   static MATERIAL: ISourceOptions = {
     htmlContents: undefined as string,
@@ -35,7 +36,7 @@ export class Template {
       /*outerRulesCSS += */iItem.frontContent.replace(/([\s\S]*)\#(\w+)\s*$/mg, (m, prevCn: string, ids: string) => {
         let robj = rtrn[ids];
         if (robj != undefined) { // IF TEMPLATENODE FOUND
-          robj.cssContents = robj.cssContents == undefined ? iItem.betweenContent : robj.cssContents + ` `  + iItem.betweenContent;
+          robj.cssContents = robj.cssContents == undefined ? iItem.betweenContent : robj.cssContents + ` ` + iItem.betweenContent;
           hasFound = true;
           hasAnyId = true;
           gkeys.push(ids);
@@ -137,7 +138,17 @@ export class Template {
     return { outerCSS: outerCSS, tptObj: rtrn };
   }
 
-  static GetObjectOfTemplate(cinfo: codeFileInfo, htContent: string, cssdata: string): { outerCSS: string, tptObj: { [key: string]: ITemplatePathOptions } } {
+  /**
+   * !!!! THIS METHOD USED IN DESIGNER FILES
+   * @param cinfo 
+   * @param htContent 
+   * @param cssdata 
+   * @returns 
+   */
+  static GetObjectOfTemplate(cinfo: codeFileInfo, htmlResKey: keyof ResourceKeyRegistry, cssResKey: keyof ResourceKeyRegistry) {
+    return this._GetObjectOfTemplate(cinfo, ResourceManage.getContent(htmlResKey), ResourceManage.getContent(cssResKey))
+  }
+  private static _GetObjectOfTemplate(cinfo: codeFileInfo, htContent: string, cssdata: string): { outerCSS: string, tptObj: { [key: string]: ITemplatePathOptions } } {
 
     let impUrl = cinfo.projectInfo.importMetaURL;
     htContent = htContent ?? nodeFn.fs.readFileSync(cinfo.pathOf.html);
@@ -159,9 +170,9 @@ export class Template {
     return robj;
   }
 
-  static GetArrayOfTemplate(cinfo: codeFileInfo,htContent: string, cssdata: string): ITemplatePathOptions[] {
+  static GetArrayOfTemplate(cinfo: codeFileInfo, htContent: string, cssdata: string): ITemplatePathOptions[] {
     let ar = [] as ITemplatePathOptions[];
-    let objs = Template.GetObjectOfTemplate(cinfo,htContent, cssdata).tptObj;
+    let objs = Template._GetObjectOfTemplate(cinfo, htContent, cssdata).tptObj;
     for (let i = 0, iObj = Object.keys(objs), ilen = iObj.length; i < ilen; i++)
       ar.push(objs[iObj[i]]);
     return ar;
