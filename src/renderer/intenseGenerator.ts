@@ -58,7 +58,7 @@ export class intenseGenerator {
         return rtrn;
     }
     static generateTPT(path: string, classObj: any, callerMetaUrl: string, pera: ITptOptions, ...args: any[]): Template {
-        let param0: ITptOptions = Object.assign(pera, TptOptions);
+        let param0: ITptOptions = objectOpt.copyProps(pera, TptOptions);
         param0.cfInfo = new codeFileInfo();
         param0.cfInfo.parseUrl(path, 'out', callerMetaUrl);
         let uc: Template = (new (classObj)());

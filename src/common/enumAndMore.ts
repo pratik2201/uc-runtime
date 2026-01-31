@@ -296,6 +296,8 @@ export interface ITptOptions {
 }
 export const TptOptions: ITptOptions = {
   MakeEmptyTemplate: false,
+
+  source: objectOpt.clone<ISourceOptions>(SourceOptions),
 };
 //namespace ucbuilder.global.objectOptions {
 

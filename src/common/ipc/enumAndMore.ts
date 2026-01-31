@@ -209,47 +209,42 @@ export function GetProject<K>(_path: string, projectsArray: ProjectRowBase<K>[],
     callerFilePath = correctpath(callerFilePath);
     return projectsArray.find(proj => callerFilePath.startsWith(proj.projectPath));
 }
-export function resolvePathObject<K>(filePath: string, callerMetaUrl: string, projectsArray: ProjectRowBase<K>[], project: ProjectRowBase<K>, path: typeof import('path'), url: typeof import('url')): IResolvePathResult | undefined {
-    let rtrn: IResolvePathResult<K> = {};
-    if (callerMetaUrl == undefined) return {
-        result: filePath,
-        isFullPath: true
-    }
-    project = project ?? GetProject(callerMetaUrl, projectsArray, url);
-    // if (project == undefined) {
-    //     let callerFilePath = callerMetaUrl.startsWith('file:///') ? url.fileURLToPath(callerMetaUrl) : callerMetaUrl;
-    //     callerFilePath = correctpath(callerFilePath);
-    //     project = projectsArray.find(proj => callerFilePath.startsWith(proj.projectPath));
-    // }
-    if (!project) {
-        throw Error("filePath is miss match (OUT OF syllabus)");
-        return undefined;
-    }
-    rtrn.project = project as any;
-    for (const [alias, relativeAliasPath] of Object.entries(project.config.browser.importmap)) {
-        if (filePath.startsWith(alias)) {
-            const relativeFilePath = filePath.replace(alias, `/${relativeAliasPath}/`);
-            const absoluteFilePath = path.normalize(path.join(project.projectPath, relativeFilePath));
-            rtrn.alias = alias;
-            rtrn.aliasPath = relativeAliasPath;
-            rtrn.result = absoluteFilePath;
-            rtrn.isFullPath = false;
-            return rtrn as any;
-        }
-    }
-    //console.log(filePath);
+// export function resolvePathObject<K>(filePath: string, callerMetaUrl: string, projectsArray: ProjectRowBase<K>[], project: ProjectRowBase<K>, path: typeof import('path'), url: typeof import('url')): IResolvePathResult | undefined {
+//     let rtrn: IResolvePathResult<K> = {};
+//     if (callerMetaUrl == undefined) return {
+//         result: filePath,
+//         isFullPath: true
+//     }
+//     project = project ?? GetProject(callerMetaUrl, projectsArray, url);    
+//     if (!project) {
+//         throw Error("filePath is miss match (OUT OF syllabus)");
+//         return undefined;
+//     }
+//     rtrn.project = project as any;
+//     for (const [alias, relativeAliasPath] of Object.entries(project.config.browser.importmap)) {
+//         if (filePath.startsWith(alias)) {
+//             const relativeFilePath = filePath.replace(alias, `/${relativeAliasPath}/`);
+//             const absoluteFilePath = path.normalize(path.join(project.projectPath, relativeFilePath));
+//             rtrn.alias = alias;
+//             rtrn.aliasPath = relativeAliasPath;
+//             rtrn.result = absoluteFilePath;
+//             rtrn.isFullPath = false;
+//             return rtrn as any;
+//         }
+//     }
+//     //console.log(filePath);
 
-    if (filePath.match(/^\.{1,2}[\/\\]/) != null) {
+//     if (filePath.match(/^\.{1,2}[\/\\]/) != null) {
 
-        rtrn.isFullPath = false;
-        let pdir = project.projectPath;// callerMetaUrl.substring(0, callerMetaUrl.lastIndexOf('/')); // project.projectPath;
-        rtrn.result = path.resolve(pdir, filePath);
-        return rtrn as any;
-    }
-    rtrn.isFullPath = true;
-    rtrn.result = filePath;
-    return rtrn as any;
-}
+//         rtrn.isFullPath = false;
+//         let pdir = project.projectPath;// callerMetaUrl.substring(0, callerMetaUrl.lastIndexOf('/')); // project.projectPath;
+//         rtrn.result = path.resolve(pdir, filePath);
+//         return rtrn as any;
+//     }
+//     rtrn.isFullPath = true;
+//     rtrn.result = filePath;
+//     return rtrn as any;
+// }
 function isAbsolutePath(p: string): boolean {
     if (!p) return false;
 
