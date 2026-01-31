@@ -23,9 +23,7 @@ export class PathBridge {
                 let rtrn: ConvertedPathRow = {
                     paths: {},
                     project: undefined,
-                };
-                //debugger;
-                //console.log(PathBridge.source);
+                }; 
 
                 rtrn.project = GetProject(path, PathBridge.source as any, PathBridge.url as any);
                 if (givenType == undefined || rtrn.project == undefined) { console.log(path); return undefined; }

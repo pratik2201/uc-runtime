@@ -177,21 +177,16 @@ export class ProjectRowR extends ProjectRowBase<ProjectRowR> {
     defaultLoadAt: HTMLElement = undefined;
     stampSRC: import("../../lib/StampGenerator.js").SourceNode = undefined; 
 } 
-export function getMetaUrl<K>(fullPath: string, ar: ProjectRowBase<K>[]): string {
-    fullPath = correctpath(fullPath);
-    return ar.find((row: ProjectRowBase<K>) => fullPath.startsWith(row.projectPath))?.importMetaURL;
-}
+// export function getMetaUrl<K>(fullPath: string, ar: ProjectRowBase<K>[]): string {
+//     fullPath = correctpath(fullPath);
+//     return ar.find((row: ProjectRowBase<K>) => fullPath.startsWith(row.projectPath))?.importMetaURL;
+// }
 export function subtractPath(basePath: string, targetPath: string, pathModule: typeof import('path')) {
     const absBase = pathModule.resolve(basePath);
-    const absTarget = pathModule.resolve(targetPath);
-
-    // Get relative path from base to target
-    const relative = pathModule.relative(absBase, absTarget);
-
-    //  return relative;
+    const absTarget = pathModule.resolve(targetPath); 
+    const relative = pathModule.relative(absBase, absTarget);  
     return relative;
-}
-
+} 
 export function GetPackage(projectdir: string, path: typeof import('path'), fs: typeof import('fs')): string | undefined {
     let package_file_path = path.join(projectdir, 'package.json');
     if (fs.existsSync(package_file_path)) {
@@ -201,8 +196,6 @@ export function GetPackage(projectdir: string, path: typeof import('path'), fs: 
 }
 export function GetProjectName(projectdir: string, path: typeof import('path'), fs: typeof import('fs')): string | undefined {
     let package_file_path = path.join(projectdir, 'package.json');
-    //console.log(package_file_path);
-
     if (fs.existsSync(package_file_path)) {
         let packageContent = JSON.parse(fs.readFileSync(package_file_path, 'binary'));
         if (packageContent != undefined)

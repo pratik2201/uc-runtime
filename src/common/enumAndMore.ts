@@ -215,8 +215,8 @@ export class ResourceKeyBridge {
 export interface ISourceOptions {
   htmlRow?: any;
   //htmlImportMetaUrl?: string;
-  htmlGuid?: string; //ResourceKeyList;
-  cssGuid?: string;// ResourceKeyList;
+  htmlGuid?: keyof ResourceKeyRegistry;
+  cssGuid?: keyof ResourceKeyRegistry;
   htmlContents?: string;
   cssContents?: string;
   cssFilePath?: string;
