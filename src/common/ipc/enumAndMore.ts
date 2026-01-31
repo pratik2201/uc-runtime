@@ -36,58 +36,36 @@ export function GetRandomNo(min: number = 0, max: number = 1000000): number {
     rand = rand + min;
     return rand;
 }
-export function getRemainingPath(longPath: string, pathRemoveFromPathAtStart: string) {
-    longPath = longPath.replace(/\\/g, "/");
-    pathRemoveFromPathAtStart = pathRemoveFromPathAtStart.replace(/\\/g, "/");
+// export function getRemainingPath(longPath: string, pathRemoveFromPathAtStart: string) {
+//     longPath = longPath.replace(/\\/g, "/");
+//     pathRemoveFromPathAtStart = pathRemoveFromPathAtStart.replace(/\\/g, "/");
 
-    const baseParts = longPath.split("/");
-    const targetParts = pathRemoveFromPathAtStart.split("/");
+//     const baseParts = longPath.split("/");
+//     const targetParts = pathRemoveFromPathAtStart.split("/");
 
-    let commonLength = 0;
-    for (let i = 0; i < Math.min(baseParts.length, targetParts.length); i++) {
-        if (baseParts[i] === targetParts[i]) {
-            commonLength = i + 1;
-        } else {
-            break;
-        }
-    }
-
-    return baseParts.slice(commonLength).join("/");
-
-
-}
+//     let commonLength = 0;
+//     for (let i = 0; i < Math.min(baseParts.length, targetParts.length); i++) {
+//         if (baseParts[i] === targetParts[i]) {
+//             commonLength = i + 1;
+//         } else {
+//             break;
+//         }
+//     }
+//     return baseParts.slice(commonLength).join("/");
+// }
 export function _trim_(mstr: string, charlist: string) {
     if (charlist === undefined)
         charlist = "\s";
     return mstr.replace(new RegExp("^[" + charlist + "]+$", 'ig'), "");
 }
 export type IPC_REGISTER_KEY = string;
-/*export interface IPC_ROOT_RENDERER_API_KEY_NODE {
-    key: string;
-    sortpath: string;
-    url: string;
-    fileurl?: string;
-    project?: ProjectRowM;
-}*/
+ 
 export function isSamePath(a: string, b: string, pathModule: typeof import('path')) {
     const absA = pathModule.resolve(a);
     const absB = pathModule.resolve(b);
     return (pathModule.normalize(absA) === pathModule.normalize(absB));
 }
-// export function GetRootPathByUrl_M(urlPath: string, ucConfigList: ProjectRowM[]) {
-//     let rtrn: IPC_REGISTER_KEY = { sortpath: "", url: "", project: undefined };
-
-//     rtrn.project = ucConfigList.find(cfg => urlPath.startsWith(cfg.importMetaURL)) || null;
-//     if (rtrn.project == null) {
-//         console.log('notsafafs found');
-//         return undefined;
-//     }
-//     rtrn.sortpath = correctpath(rtrn.project.projectPrimaryAlice + '/' + urlPath.substring(rtrn.project.importMetaURL.length));
-//     rtrn.url = rtrn.project.importMetaURL;
-//     rtrn.fileurl = urlPath;
-//     //console.log(rtrn);
-//     return rtrn;
-// }
+ 
 export function getCloneableObject(obj, seen = new WeakMap(), path = '') {
     if (obj === null || typeof obj !== 'object') return obj;
     if (seen.has(obj)) {
@@ -149,9 +127,7 @@ export function IPC_SPLIT_KEY(actionKey: string): { action: string, regKey: stri
     let rtrn = actionKey.split(';');
     return { action: rtrn[0], regKey: rtrn[1] };
 }
-
-
-
+ 
 export interface IImportMap {
     imports?: { [alice: string]: string; };
     scopes?: {
@@ -191,26 +167,16 @@ export class ProjectRowBase<K = any> {
     importMetaURL: string = "";
     projectPath?: string = "";
     rootPath?: string = "";
-
-    // pathToAlice?: { [projectPath: string]: string; } = {};
     aliceToPath?: { [alice: string]: string; } = {};
     projectPrimaryAlice?: string = "";
-
-    //directoryOfFileType: ISourceFileTypeMap = JSON.parse(JSON.stringify(SourceFileTypeMap));
-    //directoryOfType: ISourceTypeMap = JSON.parse(JSON.stringify(SourceTypeMap));
-
     children?: K[] = [];
     config? = new UserUCConfig();
 }
 export class ProjectRowR extends ProjectRowBase<ProjectRowR> {
     id: number;
     defaultLoadAt: HTMLElement = undefined;
-    stampSRC: import("../../lib/StampGenerator.js").SourceNode = undefined;
-    //children?: ProjectRowR[] = [];
-}
-// export class ProjectRowM extends ProjectRowBase<ProjectRowM> {
-//     //children?: ProjectRowM[] = [];
-// }
+    stampSRC: import("../../lib/StampGenerator.js").SourceNode = undefined; 
+} 
 export function getMetaUrl<K>(fullPath: string, ar: ProjectRowBase<K>[]): string {
     fullPath = correctpath(fullPath);
     return ar.find((row: ProjectRowBase<K>) => fullPath.startsWith(row.projectPath))?.importMetaURL;

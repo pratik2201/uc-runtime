@@ -1,5 +1,5 @@
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { BuildTimeGuidMeta, deepAssign, GetProjectName, IDirDeclarations, IFileDeclaration, UcBuildOptions, UserUCConfig } from "../../common/ipc/enumAndMore.js";
+import { BuildTimeGuidMeta, deepAssign, GetProjectName, IDirDeclarations, IFileDeclaration, IUCConfigPreference, UcBuildOptions, UserUCConfig } from "../../common/ipc/enumAndMore.js";
 import path, { dirname } from "node:path";
 import crypto from "node:crypto";
 import fs from "node:fs";
@@ -45,12 +45,16 @@ async function checkUc(filePath: string) {
         if (cfg.guid == '' || cfg.guid == undefined) return undefined;
     }*/
 
+    const pref = cfg.preference = cfg.preference ?? {} as IUCConfigPreference;
 
-    const pref = cfg?.preference;
+
+    //let pref = cfg.preference = cfg.preference ?? {} as IUCConfigPreference;         
+    pref.srcDir = (pref.srcDir ?? "") as any;
+    pref.outDir = (pref.outDir ?? "") as any;
+    cfg.projectBaseCssPath = (cfg.projectBaseCssPath ?? "");
+
     let dirDeclaration = pref?.dirDeclaration;
     if (dirDeclaration != undefined) {
-
-
         const fileWisePath = pref.fileCommonDeclaration;
         if (fileWisePath != undefined) {
             for (const [fileDeckey, fileDec] of Object.entries(fileWisePath)) {

@@ -1,7 +1,16 @@
 import { BuildResource } from "../enumAndMore.js";
 import { decryptResource } from "./cryptoResource.js";
 
-
+const cache = new Map<string, string>();
+function getCache(key: string, content: string) {
+  if (cache.has(key)) return cache.get(key);
+  else {
+    if (content == undefined) return undefined;
+    const v = decryptResource(content);
+    cache.set(key, v);
+    return v;
+  }
+}
 export class ResourceStorage {
 
   private static map = new Map<string, BuildResource>();
@@ -24,18 +33,31 @@ export class ResourceStorage {
   }
 
   static get(key: string) {
-    return this.map.get(key) ?? null;
+    let v = this.map.get(key);
+    if (v != undefined) {
+      v = JSON.parse(JSON.stringify(v));
+      v.content = getCache(key, v.content);
+    }
+    return v ?? null;
   }
 
   static getContent(key: string) {
-    return this.map.get(key)?.content ?? null;
+    let v = this.map.get(key);
+    return getCache(key, v.content) ?? null; // this.map.get(key)?.content ?? null;
   }
   static getByName(name: string) {
-    return this.map.values().find(s => s.name == name) ?? null;
+    let v = this.map.values().find(s => s.name == name);
+    if (v != undefined) {
+      v = JSON.parse(JSON.stringify(v));
+      v.content = getCache(name, v.content);
+    }
+    return v;
+    //return this.map.values().find(s => s.name == name) ?? null;
   }
 
   static getContentByName(name: string) {
-     return this.map.values().find(s => s.name == name)?.content ?? null;
+    let v = this.map.values().find(s => s.name == name)?.content ?? null;
+    return getCache(name,v);//this.map.values().find(s => s.name == name)?.content ?? null;
   }
 
   static keys() {
@@ -44,5 +66,6 @@ export class ResourceStorage {
 
   static clear() {
     this.map.clear();
+    cache.clear();
   }
 }

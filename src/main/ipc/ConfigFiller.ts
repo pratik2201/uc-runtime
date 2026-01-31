@@ -10,51 +10,13 @@ export class ConfigFiller {
     MAIN_CONFIG: ProjectRowBase;
     MAIN_PROJECT_PATH: string;
     ucConfigList: ProjectRowBase[] = [];
-
-    _setRootDirecory(row: ProjectRowBase, projPath: string) {
-        row.projectPath = projPath;
-        const cfg = row.config;
-        let mainProjPath = this.MAIN_PROJECT_PATH; //;path.resolve();
-        row.rootPath = correctpath(path.normalize(path.relative(mainProjPath, row.projectPath)));
-        row.rootPath = row.rootPath == '.' ? '.' : `./${row.rootPath}/`;
-        /*if (row.rootPath == '.') {
-            let kys = Object.keys(cfg.browser.globalAlias);
-            for (let i = 0, iObj = kys, ilen = iObj.length; i < ilen; i++) {
-                const iKey = iObj[i];
-                const iValue = cfg.browser.globalAlias[iKey];
-                const custResolve = resolvePathObject(iValue, projPath, [], undefined, path, url).result;
-                const trimedPath = correctpath(subtractPath(mainProjPath, custResolve, path));
-                cfg.browser.globalAlias[iKey] = trimedPath;
-            }
-        }*/
-        let pref = cfg.preference = cfg.preference ?? {} as IUCConfigPreference;
-        row.projectPrimaryAlice = row.projectName;
-        pref.srcDir = (pref.srcDir ?? "") as any;
-        pref.outDir = (pref.outDir ?? "") as any;
-        cfg.projectBaseCssPath = (cfg.projectBaseCssPath ?? "");
-
-
-
-        cfg.browser.importmap[row.projectPrimaryAlice] = '';
-        // cfg.preloadMain = cfg.preloadMain ?? [];
-        // for (let i = 0, preeloadFiles = cfg.preloadMain, ilen = preeloadFiles.length; i < ilen; i++) {
-        //     let PTH = correctpath(path.join(row.projectPath, ucUtil.devEsc(preeloadFiles[i])));
-        //     preeloadFiles[i] = PTH;
-        // }
-
-    }
+ 
     importmap: IImportMap = {
         imports: {},
         scopes: {
 
         }
     };
-    // GetByImportMeta(fileimportMeta: string): ProjectRowBase {
-    //     return this.ucConfigList.find(cfg => fileimportMeta.startsWith(cfg.importMetaURL)) || null;
-    // }
-    // GetByAlias(primaryAlicePath: string): ProjectRowBase {
-    //     return this.ucConfigList.find(cfg => primaryAlicePath.startsWith(cfg.projectPrimaryAlice)) || null;
-    // }
     Fill_ImportMap(_config: ProjectRowBase) {
         const aliases = {};
         const pathAlias = _config.config?.browser?.importmap ?? {};
@@ -82,7 +44,7 @@ export class ConfigFiller {
         pref.build = Object.assign(new UcBuildOptions(), pref.build);
 
         const bld = pref.build;
-        
+
         if (bld.keyBind == undefined || bld.keyBind.length == 0)
             bld.keyBind = ['ControlRight', 'F12'];
 
@@ -145,14 +107,21 @@ export class ConfigFiller {
             let ucCfg = await ImportUserConfig(ucConfigPath);
             if (ucCfg != undefined) {
                 row.config = deepAssign(row.config ?? new UserUCConfig(), ucCfg);
-                const cfg = row.config;
                 if (this.MAIN_CONFIG == undefined) {
                     this.MAIN_CONFIG = row;
                     this.MAIN_PROJECT_PATH = projectDirPath;
                 }
-                row.projectName = projectName;
-                row.config.projectName = row.config?.projectName ?? row.projectName;
-                this._setRootDirecory(row, correctpath(projectDirPath));
+                row.projectName =
+                    row.config.projectName =
+                    row.projectPrimaryAlice = projectName;
+
+                row.projectPath = correctpath(projectDirPath);
+                const cfg = row.config;
+                row.rootPath = correctpath(path.normalize(path.relative(this.MAIN_PROJECT_PATH, row.projectPath)));
+                row.rootPath = row.rootPath == '.' ? '.' : `./${row.rootPath}/`;
+                cfg.browser.importmap[row.projectPrimaryAlice] = '';
+
+
                 this.ucConfigList.push(row);
                 row.importMetaURL = url.pathToFileURL(projectDirPath).href;
                 let dirs = this.listProjectPath(projectDirPath);
