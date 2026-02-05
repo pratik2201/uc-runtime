@@ -1,20 +1,19 @@
-import { GetUniqueId, ProjectRowR } from "../common/ipc/enumAndMore.js";
-import { ATTR_OF, StyleClassScopeType } from "../global/runtimeOpt.js";
-import { ucUtil } from "../global/ucUtil.js";
+ 
+import { ATTR_OF, GetUniqueId, StyleClassScopeType, ucUtil } from "ap-shared-core/out/ucbuilder/ucUtil.js";
 import { SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
+import { Assembly, AssemblyManager } from "../main/Assembly.js";
 import { CssRuntimeResolver } from "./CssRuntimeResolver.js";
-import { ProjectManage } from "./ipc/ProjectManage.js";
+//import { ProjectManage } from "ucbuilder-devtools/out/renderer/ProjectManage.js";
 import { nodeFn } from "./nodeFn.js";
-import { ResourceManage } from "./ResourceManage.js";
 export type VariableList = { [key: string]: string };
 export const patternList = {
   styleTagSelector: /<style([\n\r\w\W.]*?)>([\n\r\w\W.]*?)<\/style>/gi,
-  subUcFatcher: /\[inside=([\"'`])((?:\\.|(?!\1)[^\\])*)\1\]([\S\s]*)/gim,
+  subUcFatcher: /\[inside=([\"'`])((?:\\.|(?!\1)[^\\])*)\1\]([\S\s]*)/gim,  // [done]
   mediaSelector: /^\s*@(media|keyframes|supports|container|document)\s+([\s\S]*)\s*/i,
   animationNamePattern: /animation-name\s*:\s*-([lgit])-(\w+)\s*;/gim,
   animationAccessPattern: /-([lgit])-(\w+)\s*/gim,
   varHandler: /(\$[lgit]-\w+)((?:\s*\:\s*(.*?)\s*;)|(?:\s+(.+?)\s*--)|\s*)/gim,
-  rootExcludePattern: /(\w*)(:root|:exclude)/gi,
+  rootExcludePattern: /([a-z0-9@_-]*)(:root|:exclude)/gi,
 };
 export interface IKeyStampNode {
   TEMPLATE?: string,
@@ -28,7 +27,8 @@ export interface IStyleSeperatorOptions {
   callCounter?: number,
   isForRoot?: boolean,
   //_rootinfo?: RootPathRow,
-  _projectinfo?: ProjectRowR,
+  _assembly?: Assembly,
+  //_projectinfo?: ProjectRowR,
   localNodeElement?: HTMLElement,
   //cssVarStampKey?: string,
 }
@@ -38,7 +38,8 @@ const StyleSeperatorOptions: IStyleSeperatorOptions = {
   callCounter: 0,
   isForRoot: false,
   //_rootinfo: Object.assign({}, rootPathRow),
-  _projectinfo: new ProjectRowR(),
+  //_projectinfo: new ProjectRowR(),
+  _assembly: undefined,
   localNodeElement: undefined,
   //cssVarStampKey: "",
 };
@@ -95,7 +96,7 @@ export class StylerRegs {
   baseType: StyleBaseType = StyleBaseType.UserControl;
   static initProjectsStyle(): void {
     SourceNode.init();
-    ProjectManage.projects.forEach((row) => {
+    /*ProjectManage.projects.forEach((row) => {
       let cssPath = nodeFn.path.resolve(row.projectPath, 'styles.scss');
       let cssContent = ResourceManage.getResource(row.config.guid ?? cssPath, 'cssFile', cssPath);
       if (cssContent == undefined) {
@@ -106,14 +107,15 @@ export class StylerRegs {
       row.stampSRC = SourceNode.registerSource({
         key: _stylepath,
         baseType: StyleBaseType.Global,
+        assembly: { guid: _stylepath as never, name: row.projectName as never },
         project: row,
         mode: '$',
         accessName: row.projectPrimaryAlice,
       });
-      
+
       row.stampSRC.pushCSS(cssPath, dev$Use_loader(dev$minifyCss(cssContent), cssPath), document.body);//row.importMetaURL,
       //}
-    });
+    });*/
   }
   KEYS: IKeyStampNode = {
     TEMPLATE: "" as string,
@@ -124,7 +126,8 @@ export class StylerRegs {
   controlXName: string = '';
   static templateID: number = 0;
   static localID: number = 0;
-  projectInfo: ProjectRowR = undefined;
+  //projectInfo: ProjectRowR = undefined;
+  assembly: Assembly = undefined;
   nodeName: string = WRAPPER_TAG_NAME;
   private _parent: StylerRegs = undefined;
   public get parent(): StylerRegs {
@@ -154,7 +157,8 @@ export class StylerRegs {
     mode?: CSSSearchAttributeCondition) {
     this.main = main;
     this.generateStamp = generateStamp;
-    this.projectInfo = main.project;
+    this.assembly = main.assembly;
+    //this.projectInfo = main.project;
     this.baseType = baseType;
     this.opnClsr.ignoreList = [
       { openingChar: `"`, closingChar: `"` },
@@ -168,7 +172,7 @@ export class StylerRegs {
       if (generateStamp) {
         StylerRegs.templateID++;
       }
-      this.KEYS.ROOT = "" + this.projectInfo.id;
+      this.KEYS.ROOT = "" + this.assembly.id;
       this.KEYS.TEMPLATE = "" + StylerRegs.templateID;
       this.KEYS.LOCAL = "" + StylerRegs.localID;
     } else {
@@ -216,23 +220,14 @@ export class StylerRegs {
     if (_args.data == undefined) return "";
     let _params = Object.assign(Object.assign({}, StyleSeperatorOptions), _args);
     _params.callCounter++;
-    let _curProject: ProjectRowR = _this.projectInfo;
-    //let rtrn = StylerRegs.REMOVE_COMMENT(_params.data);
-    //rtrn = StylerRegs.REMOVE_EXTRASPACE(Use_loader(rtrn, this.main.cssFilePath));
-    //console.log([_params.data]);
-    // console.log( this.main.cssFilePath);
+    let _curAssembly = _this.assembly;
+    //let _curProject = _this.projectInfo;
 
-    //let rtrn = dev$Use_loader(_params.data, this.main.cssFilePath);
     let rtrn = this.cssResolver.resolveImports(_params.data);
-    //console.log(rtrn);
 
-    // const xrtrn = this.opnClsr.parse({ openingChar: '{', closingChar: '}' }, rtrn);
-    // console.log(xrtrn);
 
     rtrn = this.opnClsr.doTask("{", "}", rtrn,
       (selectorText: string, styleContent: string, count: number): string => {
-        //  console.log([selectorText, styleContent]);
-
         let excludeContentList = this.rootAndExcludeHandler.checkRoot(selectorText, styleContent, _params);
         if (excludeContentList.length == 0) {
           let trimSelector: string = selectorText.trim();
@@ -265,7 +260,8 @@ export class StylerRegs {
             const res = _this.selectorHandler.parseScopeSeperator({
               selectorText: sel,
               scopeSelectorText: _params.scopeSelectorText,
-              project: _curProject,
+              assembly: _curAssembly,
+              //  project: _curProject,
               isForRoot: _params.isForRoot
             });
             let grp = StylerRegs.groupByStyler(res);
@@ -314,6 +310,8 @@ export class StylerRegs {
 
 
   pushChild(cssGuid: string, node: StylerRegs, accessKey: string): void {
+    console.log(cssGuid);
+
     let sreg: StylerRegs = this.children.find((s: StylerRegs) => s.cssGuid == cssGuid);
     if (sreg == undefined) {
       node.alices = accessKey.toLowerCase();
@@ -336,7 +334,8 @@ export interface IHiddenScopeKVP {
 }
 export interface IHiddenScopeNode {
   list: IHiddenScopeKVP;
-  project: ProjectRowR;
+  //project: ProjectRowR;
+  assembly: Assembly;
   isForRoot: boolean; scopeSelectorText?: string;
   counter: number;
 }
@@ -354,12 +353,6 @@ export class RootAndExcludeHandler {
     selectorText.replace(
       patternList.subUcFatcher,
       (match: string, quationMark: string, cssGuid: string, UCselector: string) => {
-        /*filePath = ucUtil.devEsc(filePath);
-        let fpath = nodeFn.path.resolveFilePath(this.main.main.cssFilePath, filePath);
-        filePath = fpath;
-        ucUtil.changeExtension(fpath, '.scss', '');  // remobe .scss
-        UCselector = UCselector.trim();*/
-        //nodeFn.path.isSamePath(s.cssGuid, cssGuid)
         let tree: StylerRegs = this.main.children.find(
           (s: StylerRegs) => s.cssGuid == cssGuid || s.controlXName == cssGuid
         );
@@ -403,16 +396,18 @@ export class RootAndExcludeHandler {
                   })
                 );
               } else {
-                let rInfo = ProjectManage.getInfoByAlices(
-                  rootAlices // `@${rootAlices}:`
-                );
-                if (rInfo != undefined) {
+                // let rInfo = ProjectManage.getInfoByAlices(
+                //   rootAlices // `@${rootAlices}:`
+                // );
+                let aInfo = AssemblyManager.GetAssemblyByName(rootAlices as never);
+                if (aInfo != undefined) {
                   externalStyles.push(
                     _this.main.parseStyleSeperator_sub({
                       data: _params.scopeSelectorText + styleContent,
                       callCounter: _params.callCounter,
                       isForRoot: true,
-                      _projectinfo: rInfo,
+                      _assembly: aInfo,
+                      //_projectinfo: rInfo,
                     })
                   );
                 }
@@ -439,7 +434,7 @@ export class RootAndExcludeHandler {
 //   }
 //   match(rtrn: string): string {
 //     let _this = this;
-//     let cssfilepath = this.main.main.cssFilePath;
+//     let cssfilepath = this.main.main.cssFivlePath;
 //     rtrn = rtrn.replace(
 //       patternList.themeCSSLoader,
 //       (match: string, code: string, quationMark: string, path: string, offset: any, input_string: string) => {
@@ -483,10 +478,10 @@ export class RootAndExcludeHandler {
 export const ScopeSelectorOptions: IScopeSelectorOptions = {
   selectorText: "",
   scopeSelectorText: "",
-  project: undefined,
+  /*project: undefined,*/ assembly: undefined,
   isForRoot: false,
   hiddens: {
-    project: undefined,
+    assembly: undefined,
     list: {},
     isForRoot: false,
     counter: 0,
@@ -503,7 +498,8 @@ export interface IScopeSelectorOptions {
   selectorText: string;
   scopeSelectorText?: string;
   isForRoot: boolean;
-  project: ProjectRowR;
+  assembly: Assembly;
+  //project: ProjectRowR;
   hiddens?: IHiddenScopeNode;
 }
 interface SelScopeMap {
@@ -577,7 +573,7 @@ export class SelectorHandler {
     let _this = this;
     const result: SelSingleScopeNode[] = [];
     scopeOpt = Object.assign(ScopeSelectorOptions, scopeOpt);
-    scopeOpt.hiddens.project = scopeOpt.project;
+    scopeOpt.hiddens.assembly = scopeOpt.assembly;
 
     scopeOpt.hiddens.scopeSelectorText = scopeOpt.scopeSelectorText;
     scopeOpt.hiddens.isForRoot = scopeOpt.isForRoot;
@@ -708,7 +704,7 @@ export class SelectorHandler {
             splitted[len - 1] = this.MISC_SELECTOR_CONDITION(fsel, {
               scope: 'r',
               selectorOperation: '$',
-              key: '_' + hiddens.project.id
+              key: '_' + hiddens.assembly.id
             });
             break;
         }
@@ -716,7 +712,7 @@ export class SelectorHandler {
         splitted[len - 1] = this.MISC_SELECTOR_CONDITION(fsel, {
           scope: 'r',
           selectorOperation: '$',
-          key: '_' + hiddens.project.id
+          key: '_' + hiddens.assembly.id
         });
       }
     } else {
@@ -832,7 +828,7 @@ export class CssVariableHandler {
         if (isPrintWithEmptyValue || isPrintWithDefaultValue) { // GET VALUE 
           if (isPrintWithDefaultValue) {
             //console.log(defaultVal);
-            defaultVal = defaultVal["#trimText_"]('--');
+            defaultVal = ucUtil.trimText_(defaultVal, '--');
             //console.log(defaultVal);
             //console.log("-------------------------");
             defaultVal = _this.handlerVariable(defaultVal);
@@ -852,7 +848,7 @@ export class CssVariableHandler {
           );
         } else if (isSettingValue) { // SET VALUE
           let tarEle: HTMLElement = undefined;
-          defaultVal = defaultVal["#_trimText"](':')["#trimText_"](';');
+          defaultVal = ucUtil.trimText_(ucUtil._trimText(defaultVal, ':'), ';');
           defaultVal = _this.handlerVariable(defaultVal);
           switch (scope) {
             case "g": uniqId = '' + this.main.KEYS.ROOT; break;

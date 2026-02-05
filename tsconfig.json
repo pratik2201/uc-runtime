@@ -1,17 +1,17 @@
 {
-  "include": [  "src"],
-  "exclude": [
-    "node_modules",
-    "out"
+  "include": [
+    "src/**/*"
   ],
-  "compilerOptions": {     
+  "exclude": [
+    "out",
+    "node_modules"
+  ],
+  "compilerOptions": {
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "target": "ESNext",
-    "baseUrl": ".",
-    "outDir": "out",
     "rootDir": "src",
-    "declarationDir": "out",
+    "outDir": "out",
     "strict": true,
     "allowJs": true,
     "strictNullChecks": false,
@@ -34,10 +34,7 @@
     ],
     "paths": {
       "ucbuilder/*": [
-        "./src/*"
-      ],
-      "@ucbuilder/*": [
-        "./src/*"
+        "./*"
       ]
     }
   }

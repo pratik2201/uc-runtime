@@ -1,10 +1,9 @@
-import { ExtractArguments, ISourceOptions, ITemplatePathOptions, ITptOptions, ResourceKeyRegistry, TptOptions } from "../common/enumAndMore.js";
-import { codeFileInfo } from "../global/codeFileInfo.js";
-import { ATTR_OF } from "../global/runtimeOpt.js";
-import { TemplateMaker } from "../global/TemplateMaker.js";
-import { ucUtil } from "../global/ucUtil.js";
+import { ExtractArguments, ISourceOptions, ITemplatePathOptions, ITptOptions, TptOptions } from "../common/enumAndMore.js";
+import { TemplateMaker } from "ap-shared-core/out/template/TemplateMaker.js";
+import { ResourceKeyList, ResourceKeyRegistry } from "ap-shared-core/out/ucbuilder/resources/enums.js";
+import { ATTR_OF, ucUtil } from "ap-shared-core/out/ucbuilder/ucUtil.js";
 import { FilterContent, SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
-import { nodeFn } from "./nodeFn.js";
+import { Assembly, AssemblyManager } from "../main/Assembly.js";
 import { ResourceManage } from "./ResourceManage.js";
 import { CSSSearchAttributeCondition, CssVariableHandler, CSSVariableScope, StyleBaseType, StylerRegs, VariableList } from "./StylerRegs.js";
 import { ITransferDataNode, Usercontrol } from "./Usercontrol.js";
@@ -12,8 +11,8 @@ import { ITransferDataNode, Usercontrol } from "./Usercontrol.js";
 
 export class Template {
   static MATERIAL: ISourceOptions = {
-    htmlContents: undefined as string,
-    cssContents: undefined as string,
+    htmlGuid: undefined as keyof ResourceKeyRegistry,
+    cssGuid: undefined as keyof ResourceKeyRegistry,
   }
   static extractArgs = (args: any) => ExtractArguments(args);
 
@@ -145,34 +144,32 @@ export class Template {
    * @param cssdata 
    * @returns 
    */
-  static GetObjectOfTemplate(cinfo: codeFileInfo, htmlResKey: keyof ResourceKeyRegistry, cssResKey: keyof ResourceKeyRegistry) {
-    return this._GetObjectOfTemplate(cinfo, ResourceManage.getContent(htmlResKey), ResourceManage.getContent(cssResKey))
+  static GetObjectOfTemplate(/*cinfo: codeFileInfo,*/cssGuid: string, htmlResKey: keyof ResourceKeyRegistry, cssResKey: keyof ResourceKeyRegistry) {
+    return this._GetObjectOfTemplate(/*cinfo,*/cssGuid, ResourceManage.getContent(htmlResKey), ResourceManage.getContent(cssResKey))
   }
-  private static _GetObjectOfTemplate(cinfo: codeFileInfo, htContent: string, cssdata: string): { outerCSS: string, tptObj: { [key: string]: ITemplatePathOptions } } {
+  private static _GetObjectOfTemplate(/*cinfo: codeFileInfo,*/cssGuid: string, htContent: string, cssdata: string): { outerCSS: string, tptObj: { [key: string]: ITemplatePathOptions } } {
 
-    let impUrl = cinfo.projectInfo.importMetaURL;
-    htContent = htContent ?? nodeFn.fs.readFileSync(cinfo.pathOf.html);
+    //let impUrl = cinfo.projectInfo.importMetaURL;
+    //htContent = htContent ?? nodeFn.fs.readFileSync(cinfo.pathOf.html);
 
-    if (cssdata == undefined) {
-      if (nodeFn.fs.existsSync(cinfo.pathOf.scss))
-        cssdata = nodeFn.fs.readFileSync(cinfo.pathOf.scss);
-    }
+    // if (cssdata == undefined) {
+    //   if (nodeFn.fs.existsSync(cinfo.pathOf.scss))
+    //     cssdata = nodeFn.fs.readFileSync(cinfo.pathOf.scss);
+    // }
 
 
-    let robj = this.GetOptionsByContent(htContent,
-      cssdata/*,
-      cinfo.pathOf.scss, impUrl*/);
-    let _mainFile_RootPath = cinfo.fullWithoutExt('html');
+    let robj = this.GetOptionsByContent(htContent, cssdata);
+    let _cssGuid = cssGuid//cinfo.fullWithoutExt('html');
     for (let i = 0, iObj = Object.values(robj.tptObj), ilen = iObj.length; i < ilen; i++) {
       const irow = iObj[i];
-      irow.objectKey = _mainFile_RootPath + "#" + irow.accessKey;
+      irow.objectKey = _cssGuid + "#" + irow.accessKey;
     }
     return robj;
   }
 
-  static GetArrayOfTemplate(cinfo: codeFileInfo, htContent: string, cssdata: string): ITemplatePathOptions[] {
+  static GetArrayOfTemplate(/*cinfo: codeFileInfo,*/cssGuid: string, htContent: string, cssdata: string): ITemplatePathOptions[] {
     let ar = [] as ITemplatePathOptions[];
-    let objs = Template._GetObjectOfTemplate(cinfo, htContent, cssdata).tptObj;
+    let objs = Template._GetObjectOfTemplate(cssGuid, htContent, cssdata).tptObj;
     for (let i = 0, iObj = Object.keys(objs), ilen = iObj.length; i < ilen; i++)
       ar.push(objs[iObj[i]]);
     return ar;
@@ -183,21 +180,23 @@ export class Template {
     let tExt = this.extended;
 
     let cfg = Object.assign({}, TptOptions);
-    cfg.cfInfo = tExt.cfInfo;
+    //cfg.cfInfo = tExt.cfInfo;
 
     cfg.parentUc = tExt.parentUc;
     tnode.extended.initializecomponent(cfg, tptPathOpt);
     return tnode;
   }
-  pushTemplateCss(cssCode: string, cssPath: string, baseType?: StyleBaseType, mode: CSSSearchAttributeCondition = '*') {
+  pushTemplateCss(cssCode: string, cssGuid: ResourceKeyList, baseType?: StyleBaseType, mode: CSSSearchAttributeCondition = '*') {
     let accessName = `@`;
     let ext = this.extended;
+    //console.log(cssGuid);
+
     let snode = SourceNode.registerSource({
-      key: ext.cfInfo.fullWithoutExt('html') + "@", // + accessName,
+      key: cssGuid + "@",
       accessName: accessName,
-      cssFilePath: cssPath,
       baseType: baseType,
-      project: ext.cfInfo.projectInfo,
+      assembly: AssemblyManager.Parse(cssGuid),
+      //project: ext.cfInfo.projectInfo,
       mode: mode,
       generateStamp: false
     });
@@ -208,10 +207,10 @@ export class Template {
       parentUc: puc,
       parentSrc: pext.srcNode,
       wrapper: pext.wrapperHT,
-      key: `${ext.cfInfo.fullWithoutExt('html')}${accessName}`,
+      key: `${cssGuid /*ext.cfInfo.fullWithoutExt('html')*/}${accessName}`,
       accessName: accessName
     });
-    snode.pushCSSByContent(ext.cfInfo.pathOf.scss, cssCode, /*ext.cfInfo.actualdProject,*/ pext.wrapperHT);
+    snode.pushCSSByContent(cssGuid /*ext.cfInfo.pathOf.scss*/, cssCode, /*ext.cfInfo.actualdProject,*/ pext.wrapperHT);
     pext.Events.afterClose.on(({ }) => {
       snode.release();
     });
@@ -223,9 +222,12 @@ export class Template {
       StylerRegs.templateID++;
       const _ext = this.extended;
       _ext.parentUc = pera.parentUc;
-      _ext.cfInfo = pera.cfInfo;
+      // _ext.cfInfo = pera.cfInfo;
+      _ext.assembly = AssemblyManager.Parse(pera.source.htmlGuid);
     },
-    cfInfo: undefined as codeFileInfo,
+
+    assembly: undefined as Assembly,
+    ///cfInfo: undefined as codeFileInfo,
     parentUc: undefined as Usercontrol,
   };
 }
@@ -282,7 +284,7 @@ export class TemplateNode {
       dta = _this.Events.onGenerateContent(dta, jsonRow);
       return dta;
     },
-    tmaker: new TemplateMaker(import.meta.url),
+    tmaker: new TemplateMaker(/*import.meta.url*/),
     generateNode: (jsonRow: any): HTMLElement => {
       let _ext = this.extended;
       let dta = _ext.generateContent(jsonRow) as string;
@@ -304,22 +306,19 @@ export class TemplateNode {
       let tptExt = this.extended;
       let param0 = Object.assign(Object.assign({}, TptOptions), _args);
       tptExt.accessName = tptPathOpt.accessKey;
-
-      //console.log(param0.cssBaseFilePath);
       tptExt.srcNode = SourceNode.registerSource(
         {
-          key: tptPathOpt.objectKey /*+ "@" + tptPathOpt.accessKey*/,
+          key: tptPathOpt.objectKey,
           accessName: tptExt.accessName,
-          cssFilePath: param0.cssBaseFilePath ?? param0.cfInfo.pathOf.scss,
           baseType: StyleBaseType.Template,
+          assembly: tptExt.main.extended.assembly,
           mode: '^',
-          //root: param0.cfInfo.rootInfo,
-          project: param0.cfInfo.projectInfo,
+          //project: param0.cfInfo.projectInfo,
           generateStamp: false
         });
       let isAlreadyExist = tptExt.srcNode.htmlCode.load(tptPathOpt.htmlContents);
       if (!isAlreadyExist)
-        tptExt.srcNode.loadHTML(false/*param0.beforeContentAssign*/);
+        tptExt.srcNode.loadHTML(false);
 
       let htEle = tptExt.srcNode.dataHT;
 
@@ -327,10 +326,7 @@ export class TemplateNode {
         .filter((s) => s.nodeName.toLowerCase().startsWith("x.temp-"))
         .forEach((s) => htEle.removeAttribute(s.nodeName));
 
-      // let eleHT = param0.elementHT;
       tptExt.parentUc = tptExt.main.extended.parentUc;
-
-
 
       let puc = tptExt.parentUc;
       let pext = puc.ucExtends;
@@ -339,25 +335,12 @@ export class TemplateNode {
         parentUc: puc,
         parentSrc: pext.srcNode,
         wrapper: pext.wrapperHT,
-        key: `${param0.cfInfo.fullWithoutExt('html')}@${tptPathOpt.accessKey}`,
+        key: `${param0.source.cssGuid}@${tptPathOpt.accessKey}`,
         accessName: tptPathOpt.accessKey
       });
 
 
-
-      /*tptExt.srcNode.styler.wrapperHT = tptExt.parentUc.ucExtends.wrapperHT;
-      tptExt.srcNode.styler.parent = tptExt.parentUc.ucExtends.srcNode.styler;
-      tptExt.srcNode.styler.controlName = tptPathOpt.accessKey;
-      //console.log(`===> ${tptExt.accessName}`);
-      if (tptExt.parentUc != undefined) {
-        tptExt.parentUc.ucExtends.srcNode.styler.pushChild(
-          `${param0.cfInfo.mainFilePath}@${tptExt.accessName}`,
-          tptExt.srcNode.styler,
-          tptExt.accessName
-        );
-      }*/
-
-      tptExt.srcNode.pushCSSByContent(param0.cssBaseFilePath, tptPathOpt.cssContents, /*param0.cfInfo.actualfProject,*/ tptExt.parentUc.ucExtends.self);
+      tptExt.srcNode.pushCSSByContent(param0.source.cssGuid/*undefined*/, tptPathOpt.cssContents, tptExt.parentUc.ucExtends.self);
       tptExt.parentUc.ucExtends.Events.afterClose.on(({ }) => {
         tptExt.srcNode.release();
       });

@@ -63,26 +63,24 @@ export class SourceNode {
     accessKey = '';
     htmlCode = new HTMLCodeNode();
     styler;
-    cssFilePath;
     onRelease = [];
     dataHT;
-    rootFilePath = '';
+    //rootFilePath: string = '';
     config = ({ parentSrc, parentUc, wrapper, key, accessName }) => {
         this.styler.controlXName = accessName;
         this.styler.wrapperHT = wrapper;
-        //this.styler.parent = parentSrc.styler;
-        parentSrc.styler
-            .pushChild(key, this.styler, accessName);
+        parentSrc.styler.pushChild(key, this.styler, accessName);
     };
-    project;
+    assembly;
+    //project: ProjectRowR;
     cssObj = {};
-    pushCSSByContent(key, cssContent, /*project: ProjectRow,*/ localNodeElement) {
+    pushCSSByContent(key, cssContent, localNodeElement) {
         if (cssContent == undefined)
             return;
         let csnd = this.cssObj[key];
         cssContent = ucUtil.devEsc(cssContent);
         let ccontent = this.styler.parseStyleSeperator_sub({
-            data: cssContent,
+            data: cssContent, // _assembly: this.assembly,  //  NEW  ADDED 
             localNodeElement: localNodeElement,
         });
         if (csnd == undefined) {
@@ -94,12 +92,12 @@ export class SourceNode {
             this.cssObj[key] = newcssCode;
         }
     }
-    pushCSS(cssFilePath, cssContent, localNodeElement) {
+    pushCSS(cssGuid, cssContent, localNodeElement) {
         if (cssContent == undefined) {
             console.warn('cssContent not provided in `SourceNode.pushCSS`');
             return;
         }
-        this.pushCSSByContent(cssFilePath, cssContent, localNodeElement);
+        this.pushCSSByContent(cssGuid, cssContent, localNodeElement);
     }
     static resourcesHT = document.createElement("programres");
     static init() {
@@ -141,7 +139,7 @@ export class SourceNode {
         let _CLASSES = [];
         let h;
         let stmpUnq = this.localStamp;
-        let stmpRt = '' + this.project.id; //this.root.id;
+        let stmpRt = '' + this.assembly.id; //this.root.id;
         let ar = ucUtil.getArray(ele);
         if (SourceNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
             let keyToSet = options.groupKey != undefined ?
@@ -240,18 +238,20 @@ export class SourceNode {
     static MODE = STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR;
     static childs = {};
     static cacheData = {};
-    static registerSource({ key, accessName = '', cssKeyStamp, mode = '^', baseType = StyleBaseType.UserControl, cssFilePath = undefined, project, /*root,*/ generateStamp = true }) {
+    static registerSource({ key, accessName = '', cssKeyStamp, mode = '^', baseType = StyleBaseType.UserControl, 
+    /* project,*/ assembly, generateStamp = true }) {
         //console.log(key);
         let myObjectKey = key; //this.GetKey(key, alices);
         let rtrn = SourceNode.childs[myObjectKey];
         if (rtrn == undefined) {
             rtrn = new SourceNode();
-            rtrn.project = project;
-            rtrn.cssFilePath = cssFilePath;
+            //rtrn.project = project;
+            rtrn.assembly = assembly; // ?? AssemblyManager.Parse(key)
             rtrn.myObjectKey = myObjectKey;
             rtrn.accessKey = accessName;
             SourceNode.childs[myObjectKey] = rtrn;
             rtrn.styler = new StylerRegs(rtrn, generateStamp, cssKeyStamp ?? SourceNode.cacheData[myObjectKey], baseType, mode);
+            //console.log(SourceNode.childs);
         }
         else
             rtrn.isNewSource = false;
@@ -269,6 +269,28 @@ export class SourceNode {
         }
         return result; //{ result: result, count: rtrn.counter };
     };
+}
+export class FilterContent {
+    static select_inline_Pattern = /(["=> \w\[\]-^|#~$*.+]*)(::|:)([-\w\(\)]+)/g;
+    static select_inline_filter(data, _guid = "") {
+        let rtrn = "";
+        let isReplaced = false;
+        rtrn = data.replace(this.select_inline_Pattern, function (match, selector, seperator, pseudo, offset, input_string) {
+            isReplaced = true;
+            return (SourceNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) ?
+                data.trim() + `[${ATTR_OF.UC.ALL}^='${_guid}_']`
+                :
+                    data.trim() + `.${ATTR_OF.__CLASS(_guid, 'l')}`;
+            //return `${selector.trim()}.${ATTR_OF.__CLASS(_guid, 'l')}${seperator}${pseudo}`;
+        });
+        if (isReplaced)
+            return rtrn;
+        return (SourceNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) ?
+            data.trim() + `[${ATTR_OF.UC.ALL}^='${_guid}_']`
+            :
+                data.trim() + `.${ATTR_OF.__CLASS(_guid, 'l')}`;
+        return; // old one `[${ATTR_OF.UC.UNIQUE_STAMP}='${_guid}']`
+    }
 }
 // export class StampNode {
 //     static MODE: STYLER_SELECTOR_TYPE = STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR;
@@ -295,7 +317,7 @@ export class SourceNode {
 //         if (rtrn == undefined) {
 //             rtrn = new SourceNode();
 //             rtrn.project = project;
-//             rtrn.cssFilePath = cssFilePath;
+//             rtrn.cssFilePaeth = cssFilePath;
 //             rtrn.myObjectKey = myObjectKey;
 //             rtrn.accessKey = accessName;
 //             SourceNode.childs[myObjectKey] = rtrn;
@@ -316,26 +338,4 @@ export class SourceNode {
 //         return result; //{ result: result, count: rtrn.counter };
 //     }
 // }
-export class FilterContent {
-    static select_inline_Pattern = /(["=> \w\[\]-^|#~$*.+]*)(::|:)([-\w\(\)]+)/g;
-    static select_inline_filter(data, _guid = "") {
-        let rtrn = "";
-        let isReplaced = false;
-        rtrn = data.replace(this.select_inline_Pattern, function (match, selector, seperator, pseudo, offset, input_string) {
-            isReplaced = true;
-            return (SourceNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) ?
-                data.trim() + `[${ATTR_OF.UC.ALL}^='${_guid}_']`
-                :
-                    data.trim() + `.${ATTR_OF.__CLASS(_guid, 'l')}`;
-            //return `${selector.trim()}.${ATTR_OF.__CLASS(_guid, 'l')}${seperator}${pseudo}`;
-        });
-        if (isReplaced)
-            return rtrn;
-        return (SourceNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) ?
-            data.trim() + `[${ATTR_OF.UC.ALL}^='${_guid}_']`
-            :
-                data.trim() + `.${ATTR_OF.__CLASS(_guid, 'l')}`;
-        return; // old one `[${ATTR_OF.UC.UNIQUE_STAMP}='${_guid}']`
-    }
-}
 //# sourceMappingURL=StampGenerator.js.map

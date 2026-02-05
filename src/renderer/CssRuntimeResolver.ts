@@ -1,8 +1,8 @@
-import { ResourceKeyList } from "ucbuilder/enumAndMore.js";
-import { ResourceKeyBridge } from "../enumAndMore.js";
+
+import { ResourceKeyList, ResourceKeyBridge } from "ap-shared-core/out/ucbuilder/resources/enums.js";
 import { ResourceManage } from "./ResourceManage.js";
 
- 
+
 
 const SCSS_IMPORT_RE =
   /@(use|import)\s+(?:url\()?["']([^"')]+)["']\)?\s*;/gi;
@@ -16,7 +16,7 @@ export class CssRuntimeResolver {
 
   // ---------- ENTRY POINTS ----------
 
-  resolveFromKey(cssKey: ResourceKeyList ): string {
+  resolveFromKey(cssKey: ResourceKeyList): string {
     this.loaded.clear();
 
     const res = ResourceManage.get(cssKey);
@@ -43,7 +43,7 @@ export class CssRuntimeResolver {
 
   // ---------- IMPORT / USE ----------
 
-    resolveImports(css: string): string {
+  resolveImports(css: string): string {
 
     return css.replace(SCSS_IMPORT_RE, (_m, _type, value) => {
 
@@ -68,7 +68,7 @@ export class CssRuntimeResolver {
 
   // ---------- URL(...) ----------
 
-    resolveUrls(css: string): string {
+  resolveUrls(css: string): string {
 
     return css.replace(CSS_URL_RE, (_m, value) => {
 

@@ -1,6 +1,6 @@
+import { ucUtil } from 'ap-shared-core/out/ucbuilder/ucUtil.js';
 import fs from 'fs';
 import { PreloadFullFill } from "../common/ipc/enumAndMore.js";
-import { ucUtil } from "../global/ucUtil.js";
 import { IpcRendererHelper } from './ipc/IpcRendererHelper.js';
 // export interface I_WriteFileSyncPerameters { path: string, data: string, encode: fs.WriteFileOptions }
 // export interface I_ReadFileSyncPerameters { path: string, doCache?: boolean, encode: fs.WriteFileOptions }
@@ -144,7 +144,7 @@ export class nodeFn {
             const relative = nodeFn.path.relative(base, target);
             return relative && !relative.startsWith("..") && !nodeFn.path.isAbsolute(relative);
         },
-
+        get sep() { return nodeFn.path.sep(); },
         extname: (path: string): string => {
             return this.fullfill.path.extname(path);
         },
@@ -160,6 +160,7 @@ export class nodeFn {
         relative: (from: string, to: string): string => {
             return this.fullfill.path.relative(from, to);
         },
+         
         resolve: (...paths: string[]): string => {
             return nodeFn.fullfill.path.resolve(...paths);
         },

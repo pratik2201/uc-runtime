@@ -17,11 +17,14 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.11.0",
-    "@types/ucbuilder-devtools": "file:../ucbuilder-devtools/ucbuilder-devtools-1.0.0-bata-0.tgz", 
     "electron": "^39.1.1",
     "rimraf": "^6.0.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "ap-shared-core": "file:../ap-shared-core",
+    "ucbuilder-devtools": "file:../ucbuilder-devtools"
   },
   "keywords": [
     "electron app designer",

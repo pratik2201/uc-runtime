@@ -6,8 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 let win: Electron.BrowserWindow;
 app.on('ready', async () => {
-     debugger;
-    await IpcMainHelper.init(import.meta.url,undefined);
+    await IpcMainHelper.init(import('../designerFiles/Resources.js'));
     let mainScreen: Electron.Display = screen.getPrimaryDisplay();
     win = new BrowserWindow({
         width: mainScreen.size.width,
@@ -22,9 +21,12 @@ app.on('ready', async () => {
             preload: join(__dirname, '../preload/index.js'),
         },
     });
+ debugger;
     win.setMenu(null);
     try {
-        IpcMainHelper.loadURL(pathToFileURL(join(__dirname, '../../index.html')).href, win, { baseURLForDataURL: join(__dirname, '../../') });
+        IpcMainHelper.loadURL(pathToFileURL(join(__dirname, '../../index.html')).href, win, {
+            baseURLForDataURL: join(__dirname, '../../')
+        });
         win.webContents.once('did-finish-load', () => {
             console.log('Renderer loaded');
             //if (!app.isPackaged) {

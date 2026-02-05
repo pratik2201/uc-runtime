@@ -1,4 +1,6 @@
-import { BuildResource } from "../enumAndMore.js";
+
+import { BuildResource } from "ap-shared-core/out/ucbuilder/resources/enums.js";
+import { normalizeJSON, safeStringify } from "ap-shared-core/out/objectUtil.js";
 import { decryptResource } from "./cryptoResource.js";
 
 const cache = new Map<string, string>();
@@ -7,8 +9,8 @@ function getCache(key: string, content: string) {
   else {
     if (content == undefined) return undefined;
     const v = decryptResource(content);
-    cache.set(key, v);
-    return v;
+    cache.set(key, safeStringify(v));
+    return normalizeJSON(v);
   }
 }
 export class ResourceStorage {
@@ -57,7 +59,7 @@ export class ResourceStorage {
 
   static getContentByName(name: string) {
     let v = this.map.values().find(s => s.name == name)?.content ?? null;
-    return getCache(name,v);//this.map.values().find(s => s.name == name)?.content ?? null;
+    return getCache(name, v);//this.map.values().find(s => s.name == name)?.content ?? null;
   }
 
   static keys() {

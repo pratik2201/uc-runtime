@@ -1,6 +1,6 @@
-import { ProjectRowR } from "../common/ipc/enumAndMore.js";
-import { ATTR_OF } from "../global/runtimeOpt.js";
-import { ucUtil } from "../global/ucUtil.js";
+
+import { ucUtil, ATTR_OF } from "ap-shared-core/out/ucbuilder/ucUtil.js";
+import { Assembly } from "../main/Assembly.js";
 import { CSSSearchAttributeCondition, IKeyStampNode, StyleBaseType, StylerRegs, WRAPPER_TAG_NAME } from "../renderer/StylerRegs.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
 
@@ -80,28 +80,26 @@ export class SourceNode {
     accessKey: string = '';
     htmlCode: HTMLCodeNode = new HTMLCodeNode();
     styler: StylerRegs;
-    cssFilePath: string;
     onRelease = [] as (() => void)[]
     dataHT: HTMLElement;
-    rootFilePath: string = '';
+    //rootFilePath: string = '';
     config = ({ parentSrc, parentUc, wrapper, key, accessName }: {
         parentSrc: SourceNode, parentUc: Usercontrol,
         wrapper: HTMLElement, key: string, accessName: string
     }) => {
         this.styler.controlXName = accessName;
         this.styler.wrapperHT = wrapper;
-        //this.styler.parent = parentSrc.styler;
-        parentSrc.styler
-            .pushChild(key, this.styler, accessName);
+        parentSrc.styler.pushChild(key, this.styler, accessName);
     }
-    project: ProjectRowR;
+    assembly: Assembly;
+    //project: ProjectRowR;
     cssObj: { [key: string]: StyleCodeNode } = {};
-    pushCSSByContent(key: string, cssContent: string, /*project: ProjectRow,*/ localNodeElement?: HTMLElement) {
+    pushCSSByContent(key: string, cssContent: string, localNodeElement?: HTMLElement) {
         if (cssContent == undefined) return;
         let csnd = this.cssObj[key];
         cssContent = ucUtil.devEsc(cssContent);
         let ccontent = this.styler.parseStyleSeperator_sub({
-            data: cssContent,
+            data: cssContent, // _assembly: this.assembly,  //  NEW  ADDED 
             localNodeElement: localNodeElement,
         })
         if (csnd == undefined) {
@@ -114,13 +112,13 @@ export class SourceNode {
         }
     }
 
-    pushCSS(cssFilePath: string, cssContent: string, localNodeElement?: HTMLElement) {
+    pushCSS(cssGuid: string, cssContent: string, localNodeElement?: HTMLElement) {
         if (cssContent == undefined) {
             console.warn('cssContent not provided in `SourceNode.pushCSS`');
             return;
         }
         this.pushCSSByContent(
-            cssFilePath,
+            cssGuid,
             cssContent,
             localNodeElement
         );
@@ -162,7 +160,7 @@ export class SourceNode {
         let _CLASSES: string[] = [];
         let h: HTMLElement;
         let stmpUnq: string = this.localStamp;
-        let stmpRt = '' + this.project.id;//this.root.id;
+        let stmpRt = '' + this.assembly.id;//this.root.id;
         let ar = ucUtil.getArray(ele);
         if (SourceNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
             let keyToSet = options.groupKey != undefined ?
@@ -267,19 +265,20 @@ export class SourceNode {
     }
     static MODE: STYLER_SELECTOR_TYPE = STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR;
     static childs: { [key: string]: SourceNode; } = {};
+
     static cacheData: {
         [key: string]: IKeyStampNode
     } = {};
     static registerSource({ key,
         accessName = '', cssKeyStamp,
         mode = '^', baseType = StyleBaseType.UserControl,
-        cssFilePath = undefined, project, /*root,*/ generateStamp = true }: {
-            key: string, accessName?: string, /*root?: RootPathRow,*/
-            cssFilePath?: string,
+       /* project,*/ assembly, generateStamp = true }: {
+            key: string, accessName?: string,
             cssKeyStamp?: IKeyStampNode,
+            assembly: Assembly,
             baseType?: StyleBaseType,
             mode?: CSSSearchAttributeCondition,
-            generateStamp?: boolean, project: ProjectRowR,
+            generateStamp?: boolean, // project: ProjectRowR,
         }): SourceNode {
         //console.log(key);
 
@@ -287,21 +286,24 @@ export class SourceNode {
         let rtrn: SourceNode = SourceNode.childs[myObjectKey];
         if (rtrn == undefined) {
             rtrn = new SourceNode();
-            rtrn.project = project;
-            rtrn.cssFilePath = cssFilePath;
+            //rtrn.project = project;
+            rtrn.assembly = assembly;// ?? AssemblyManager.Parse(key)
             rtrn.myObjectKey = myObjectKey;
             rtrn.accessKey = accessName;
             SourceNode.childs[myObjectKey] = rtrn;
             rtrn.styler = new StylerRegs(rtrn, generateStamp, cssKeyStamp ?? SourceNode.cacheData[myObjectKey], baseType, mode);
+            //console.log(SourceNode.childs);
+
         } else rtrn.isNewSource = false;
         rtrn.counter++;
         //console.log([rtrn.counter,'open',myObjectKey]);
         return rtrn;
     }
-     static deregisterSource = async (key: string) => {
+    static deregisterSource = async (key: string) => {
         let result = false;
         let myObjectKey = key;
         let rtrn: SourceNode = SourceNode.childs[myObjectKey];
+
         if (rtrn != undefined) {
             rtrn.counter--;
             result = (rtrn.counter <= 0);
@@ -309,55 +311,6 @@ export class SourceNode {
         return result; //{ result: result, count: rtrn.counter };
     }
 }
-// export class StampNode {
-//     static MODE: STYLER_SELECTOR_TYPE = STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR;
-//     static dataHT: HTMLElement;
-//     static GetKey(key: string, alice: string) { return key + "@" + alice; }
-//     static childs: { [key: string]: SourceNode; } = {};
-//     static cacheData: {
-//         [key: string]: IKeyStampNode
-//     } = {};
-
-//     static registerSource({ key,
-//         accessName = '', cssKeyStamp,
-//         mode = '^', baseType = StyleBaseType.UserControl,
-//         cssFilePath = undefined, project, /*root,*/ generateStamp = true }: {
-//             key: string, accessName?: string, /*root?: RootPathRow,*/
-//             cssFilePath?: string,
-//             cssKeyStamp?: IKeyStampNode,
-//             baseType?: StyleBaseType,
-//             mode?: CSSSearchAttributeCondition,
-//             generateStamp?: boolean, project: ProjectRowR,
-//         }): SourceNode {
-//         //console.log(key);
-
-//         let myObjectKey = key; //this.GetKey(key, alices);
-//         let rtrn: SourceNode = SourceNode.childs[myObjectKey];
-//         if (rtrn == undefined) {
-//             rtrn = new SourceNode();
-//             rtrn.project = project;
-//             rtrn.cssFilePath = cssFilePath;
-//             rtrn.myObjectKey = myObjectKey;
-//             rtrn.accessKey = accessName;
-//             SourceNode.childs[myObjectKey] = rtrn;
-//             rtrn.styler = new StylerRegs(rtrn, generateStamp, cssKeyStamp ?? SourceNode.cacheData[myObjectKey], baseType, mode);
-//         } else rtrn.isNewSource = false;
-//         rtrn.counter++;
-//         //console.log([rtrn.counter,'open',myObjectKey]);
-//         return rtrn;
-//     }
-//     static deregisterSource = async (key: string) => {
-//         let result = false;
-//         let myObjectKey = key;
-//         let rtrn: SourceNode = SourceNode.childs[myObjectKey];
-//         if (rtrn != undefined) {
-//             rtrn.counter--;
-//             result = (rtrn.counter <= 0);
-//         }
-//         return result; //{ result: result, count: rtrn.counter };
-//     }
-// }
-
 export class FilterContent {
     static select_inline_Pattern: RegExp = /(["=> \w\[\]-^|#~$*.+]*)(::|:)([-\w\(\)]+)/g;
 
@@ -388,3 +341,51 @@ export class FilterContent {
     }
 }
 
+// export class StampNode {
+//     static MODE: STYLER_SELECTOR_TYPE = STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR;
+//     static dataHT: HTMLElement;
+//     static GetKey(key: string, alice: string) { return key + "@" + alice; }
+//     static childs: { [key: string]: SourceNode; } = {};
+//     static cacheData: {
+//         [key: string]: IKeyStampNode
+//     } = {};
+
+//     static registerSource({ key,
+//         accessName = '', cssKeyStamp,
+//         mode = '^', baseType = StyleBaseType.UserControl,
+//         cssFilePath = undefined, project, /*root,*/ generateStamp = true }: {
+//             key: string, accessName?: string, /*root?: RootPathRow,*/
+//             cssFilePath?: string,
+//             cssKeyStamp?: IKeyStampNode,
+//             baseType?: StyleBaseType,
+//             mode?: CSSSearchAttributeCondition,
+//             generateStamp?: boolean, project: ProjectRowR,
+//         }): SourceNode {
+//         //console.log(key);
+
+//         let myObjectKey = key; //this.GetKey(key, alices);
+//         let rtrn: SourceNode = SourceNode.childs[myObjectKey];
+//         if (rtrn == undefined) {
+//             rtrn = new SourceNode();
+//             rtrn.project = project;
+//             rtrn.cssFilePaeth = cssFilePath;
+//             rtrn.myObjectKey = myObjectKey;
+//             rtrn.accessKey = accessName;
+//             SourceNode.childs[myObjectKey] = rtrn;
+//             rtrn.styler = new StylerRegs(rtrn, generateStamp, cssKeyStamp ?? SourceNode.cacheData[myObjectKey], baseType, mode);
+//         } else rtrn.isNewSource = false;
+//         rtrn.counter++;
+//         //console.log([rtrn.counter,'open',myObjectKey]);
+//         return rtrn;
+//     }
+//     static deregisterSource = async (key: string) => {
+//         let result = false;
+//         let myObjectKey = key;
+//         let rtrn: SourceNode = SourceNode.childs[myObjectKey];
+//         if (rtrn != undefined) {
+//             rtrn.counter--;
+//             result = (rtrn.counter <= 0);
+//         }
+//         return result; //{ result: result, count: rtrn.counter };
+//     }
+// }

@@ -1,7 +1,7 @@
-import { ucUtil } from "../global/ucUtil.js";
-import { KeyboardKey } from "./hardware.js";
-import { WinManager } from "./WinManager.js";
 
+import { KeyboardKey } from "ap-shared-core/out/hardware.js";
+import { WinManager } from "./WinManager.js";
+import { ucUtil } from "ap-shared-core/out/ucbuilder/ucUtil.js";
 interface TabIndexRow {
     container: HTMLElement;
     element: HTMLElement;
@@ -50,7 +50,7 @@ class ErrorSound {
 export interface TabContainerClearNode { target: HTMLElement, callback: (e: KeyboardEvent) => Promise<boolean | void> }
 class TabIndexManager {
     static beep() { ErrorSound.playErrorBeep(); }
-      
+
     static stopFurther(e: Event, breakTheLoop: boolean = false) {
         if (e == undefined) return;
         e.preventDefault();
@@ -225,8 +225,8 @@ class TabIndexManager {
                     }
                     break;
             }
-            this.breakTheLoop = false; 
-        }); 
+            this.breakTheLoop = false;
+        });
     }
 
 
@@ -502,3 +502,4 @@ const elementState = Object.freeze({
 });
 
 export { TabIndexManager };
+

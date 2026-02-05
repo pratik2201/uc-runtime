@@ -1,4 +1,7 @@
-import { BridgeAPI, getCloneableObject, IPC_API_KEY, IPC_GET_KEY, IPC_REGISTER_KEY, IpcRendererCallBack, ProjectRowBase,   UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js";
+import { ProjectRowBase } from "ap-shared-core/out/ucbuilder/configResources.js";
+import { BridgeAPI,  IPC_API_KEY, IPC_GET_KEY, IPC_REGISTER_KEY, IpcRendererCallBack, UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js";
+import { getCloneableObject } from "ap-shared-core/out/objectUtil.js";
+ 
 export interface IRelativeRendere {
     sendSync: (key: string, args: any[]) => any;
     send: (key: string, args: any[]) => void;
@@ -8,7 +11,7 @@ export interface IRelativeRendere {
     onLoadedCallBack: Array<() => void>;
     isReadyForUse: boolean;
 }
-export class  IpcRendererHelper {
+export class IpcRendererHelper {
 
     static IPC_ON: { [actionKey: string]: IpcRendererCallBack } = {};
     private static loadRelativeChennels(importMetaUrl: string): Promise<any> {
@@ -20,7 +23,7 @@ export class  IpcRendererHelper {
         }*/
         return undefined;
     }
-    static ucConfigList: ProjectRowBase[] = [];
+     //static ucConfigList: ProjectRowBase[] = [];
     static Group(ukey: string) { // donedanadonerootpath
         if (typeof window === "undefined") return;
         let donedanadonerootpath = ukey; //GetRootPathByUrl_M(ukey, this.ucConfigList);  // IpcRendererHelper.getRelativeURL(ukey)
@@ -57,7 +60,7 @@ export class  IpcRendererHelper {
     static _Window: Window = undefined;
     static init = (_win: Window) => {
         let cb = window[IPC_API_KEY] as BridgeAPI;
-        this.ucConfigList = this.sendSync('ucConfigList',[],UC_ACCESS_KEY); // cb.sendSync(IPC_API_KEY, 'ucConfigList;');
+        //this.ucConfigList = this.sendSync('ucConfigList', [], UC_ACCESS_KEY); // cb.sendSync(IPC_API_KEY, 'ucConfigList;');
         cb.on(IPC_API_KEY, this.onCallback);
         //console.log(cb.sendSync(IPC_API_KEY, 'ucConfigList;'));
 
@@ -102,14 +105,15 @@ export class  IpcRendererHelper {
 
         return apk.invoke(IPC_API_KEY, IPC_GET_KEY(key, importMetaUrl), ...args);
     }
-
+    static get assembies(): ProjectRowBase {
+        return this.sendSync('assembies', [{}], UC_ACCESS_KEY);
+    }
     static get ucConfig(): ProjectRowBase {
-        return this.sendSync('ucConfig', [{}],UC_ACCESS_KEY);
+        return this.sendSync('ucConfig', [{}], UC_ACCESS_KEY);
     }
-    static get importMap() {
-
-        return this.sendSync('importMap', [{}],UC_ACCESS_KEY);
-    }
+    // static get importMap() { 
+    //     return this.sendSync('impdortMap', [{}], UC_ACCESS_KEY);
+    // }
     static ipcChannels = new Set();
     // static get ipcChennelList() {
     //     return this.sendSync('ipcChennelList', [{}],UC_ACCESS_KEY);

@@ -1,9 +1,6 @@
-import { ATTR_OF } from "../global/runtimeOpt.js";
-import { ProjectManage } from "../renderer/ipc/ProjectManage.js";
-import { IResolvePathResult } from "../common/ipc/enumAndMore.js";
-import { Usercontrol } from "../renderer/Usercontrol.js";
+
+import { ATTR_OF } from "ap-shared-core/out/ucbuilder/ucUtil.js";
 import { dataManager } from "./dataManager.js";
-import { ucUtil } from "../global/ucUtil.js";
 
  
 export class Extensions {

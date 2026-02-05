@@ -1,42 +1,10 @@
-import { codeFileInfo } from "../global/codeFileInfo.js";
-import { SourceNode } from "../lib/StampGenerator.js";
 import { IKeyStampNode } from "../renderer/StylerRegs.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
+import { ResourceKeyRegistry } from "ap-shared-core/out/ucbuilder/resources/enums.js";
 export type UCGenerateMode = "client" | "designer";
 export type UcStates = "normal" | "dock" | "minimize" | "maximize";
 // ResourceManage.d.ts
 
-
-export interface ResourceProjectNameRegistry { }
-
-export type ResourceProjectNameList = keyof ResourceProjectNameRegistry;
-export interface ResourceNamedRegistry { }
-export type ResourceNamedList = keyof ResourceNamedRegistry;
-
-
-
-export interface ResourceKeyRegistry { }
-export type ResourceKeyList = keyof ResourceKeyRegistry;
-
-
-
-
-export type BuildResourceType = "css" | "html" | "image" | "text" | "raw" | "data";
-export class BuildResource {
-  guid: string;
-  name?: string;
-  type: BuildResourceType;
-  content: string;
-  source?: string;
-}
-export class UserResource extends BuildResource {
-  /**
-   * ONLY ONE RESOURCE SHOULD ASSIGN THIS OPTION TRUE TO USE
-   * THAT CSS AS PROJECT'S GLOBAL CSS
-   */
-  isGlobalCss? = false;
-  project?: ResourceProjectNameList;
-}
 
 export type FileTypes =
   | "cssFile"
@@ -149,78 +117,16 @@ export class objectOpt {
 
 export type WrapperNodeNameAs = "wrapper" | "targetElement" | "random";
 export type StringExchangerCallback = (content: string) => string;
-export class ResourceKeyBridge {
 
-  // how placeholders look in text
-  static PREFIX = "__RES::";
-  static SUFFIX = "__";
-
-  // __RES::sharepnl:css:uuid__
-  static PLACEHOLDER_RE = /__RES::([a-zA-Z0-9._:-]+)__/g;
-
-  // ----------------------------
-  // make "__RES::key__"
-  // ----------------------------
-  static makeKey(key: string): string {
-    return `${this.PREFIX}${key}${this.SUFFIX}`;
-  }
-
-  // ----------------------------
-  // extract "sharepnl:css:uuid"
-  // ----------------------------
-  static extractKey(placeholder: string): string | null {
-    if (!placeholder.startsWith(this.PREFIX) || !placeholder.endsWith(this.SUFFIX))
-      return null;
-
-    return placeholder.slice(
-      this.PREFIX.length,
-      placeholder.length - this.SUFFIX.length
-    );
-  }
-
-  // ----------------------------
-  // find all keys inside text
-  // ----------------------------
-  static findAll(text: string): string[] {
-    const out: string[] = [];
-    let m: RegExpExecArray | null;
-
-    this.PLACEHOLDER_RE.lastIndex = 0;
-
-    while ((m = this.PLACEHOLDER_RE.exec(text))) {
-      out.push(m[1]);
-    }
-    return out;
-  }
-
-  // ----------------------------
-  // replace placeholders
-  // ----------------------------
-  static replace(
-    text: string,
-    resolver: (key: string) => string
-  ): string {
-    return text.replace(this.PLACEHOLDER_RE, (_m, key) => {
-      return resolver(key);
-    });
-  }
-
-  // ----------------------------
-  // quick check
-  // ----------------------------
-  static isPlaceholder(value: string): boolean {
-    return value.startsWith(this.PREFIX) && value.endsWith(this.SUFFIX);
-  }
-}
 export interface ISourceOptions {
   htmlRow?: any;
   //htmlImportMetaUrl?: string;
   htmlGuid?: keyof ResourceKeyRegistry;
   cssGuid?: keyof ResourceKeyRegistry;
-  htmlContents?: string;
+  /*htmlContents?: string;
   cssContents?: string;
   cssFilePath?: string;
-  htmlFilePath?: string;
+  htmlFilePath?: string;*/
   //beforeContentAssign: StringExchangerCallback;
 }
 export const SourceOptions: ISourceOptions = {
@@ -245,7 +151,7 @@ export const TemplatePathOptions: ITemplatePathOptions = {
 export type WhatToDoWithTargetElement = "replace" | "append";
 
 export interface IUcOptions {
-  cfInfo?: codeFileInfo;
+  //cfInfo?: codeFileInfo;
   cssKeyStamp?: IKeyStampNode,
   guid?: string;
   mode?: UCGenerateMode;
@@ -288,10 +194,10 @@ export function ExtractArguments(args: IArguments): IArguments {
 }
 
 export interface ITptOptions {
-  cfInfo?: codeFileInfo;
+  //cfInfo?: codeFileInfo;
   MakeEmptyTemplate?: boolean;
   source?: ISourceOptions;
-  cssBaseFilePath?: string;
+  //cssBaseFilePath?: string;
   parentUc?: Usercontrol;
 }
 export const TptOptions: ITptOptions = {

@@ -1,9 +1,10 @@
 
-import { ucWinFrame$Designer } from '../../designerFiles/renderer/controls/ucWinFrame.uc.designer.js';
+//import { ucWinFrame$Designer } from '../../designerFiles/renderer/controls/ucWinFrame.uc.designer.js';
+ class ucWinFrame$Designer{}
 export class ucWinFrame extends ucWinFrame$Designer {
 
     async $() {
-        const parentExt = this.ucExtends.PARENT.ucExtends;
+       /* const parentExt = this.ucExtends.PARENT.ucExtends;
         this.ucExtends.initalComponents.changeStage(this.container1);
         parentExt.initalComponents.stageHT = this.container1;
         this.lbl_title.innerText = parentExt.wrapperHT.getAttribute('x-caption') ?? '';
@@ -17,7 +18,7 @@ export class ucWinFrame extends ucWinFrame$Designer {
 
         parentExt.Events.captionChanged.on((newCaption) => {
             this.lbl_title.innerText = newCaption;
-        })
+        })*/
     }
     movableContainer(container: HTMLElement, dragableObject: HTMLElement) {
         dragableObject.addEventListener('mousedown', mousedown_listner);

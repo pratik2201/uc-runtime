@@ -1,6 +1,6 @@
-import { GetUniqueId } from "../common/ipc/enumAndMore.js";
-import { Usercontrol } from "../renderer/Usercontrol.js";
 
+import { Usercontrol } from "../renderer/Usercontrol.js";
+import { GetUniqueId } from "ap-shared-core/out/ucbuilder/ucUtil.js";
 
 
 interface EventRecord {

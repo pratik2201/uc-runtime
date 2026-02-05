@@ -1,7 +1,7 @@
+import { KeyboardKey } from "ap-shared-core/out/hardware.js";
+import { GetUniqueId } from "ap-shared-core/out/ucbuilder/ucUtil.js";
 import { CommonEvent } from "../global/commonEvent.js";
-import { GetUniqueId } from "../common/ipc/enumAndMore.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
-import { KeyboardKey } from "./hardware.js";
 import { TabIndexManager } from "./TabIndexManager.js";
 
 type ShortcutCallback = (e: KeyboardEvent) => void;

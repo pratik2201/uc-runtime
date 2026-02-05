@@ -1,4 +1,4 @@
-import { ProjectRowR } from "../common/ipc/enumAndMore.js";
+import { Assembly } from "../main/Assembly.js";
 import { CSSSearchAttributeCondition, IKeyStampNode, StyleBaseType, StylerRegs } from "../renderer/StylerRegs.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
 export declare enum STYLER_SELECTOR_TYPE {
@@ -37,10 +37,8 @@ export declare class SourceNode {
     accessKey: string;
     htmlCode: HTMLCodeNode;
     styler: StylerRegs;
-    cssFilePath: string;
     onRelease: (() => void)[];
     dataHT: HTMLElement;
-    rootFilePath: string;
     config: ({ parentSrc, parentUc, wrapper, key, accessName }: {
         parentSrc: SourceNode;
         parentUc: Usercontrol;
@@ -48,12 +46,12 @@ export declare class SourceNode {
         key: string;
         accessName: string;
     }) => void;
-    project: ProjectRowR;
+    assembly: Assembly;
     cssObj: {
         [key: string]: StyleCodeNode;
     };
-    pushCSSByContent(key: string, cssContent: string, /*project: ProjectRow,*/ localNodeElement?: HTMLElement): void;
-    pushCSS(cssFilePath: string, cssContent: string, localNodeElement?: HTMLElement): void;
+    pushCSSByContent(key: string, cssContent: string, localNodeElement?: HTMLElement): void;
+    pushCSS(cssGuid: string, cssContent: string, localNodeElement?: HTMLElement): void;
     static resourcesHT: HTMLElement;
     static init(): void;
     static ExtendControlObject(rtrn: {}, xname: string, ctr: any, ignoreEmpty?: boolean): void;
@@ -72,15 +70,14 @@ export declare class SourceNode {
     static cacheData: {
         [key: string]: IKeyStampNode;
     };
-    static registerSource({ key, accessName, cssKeyStamp, mode, baseType, cssFilePath, project, /*root,*/ generateStamp }: {
+    static registerSource({ key, accessName, cssKeyStamp, mode, baseType, assembly, generateStamp }: {
         key: string;
         accessName?: string;
-        cssFilePath?: string;
         cssKeyStamp?: IKeyStampNode;
+        assembly: Assembly;
         baseType?: StyleBaseType;
         mode?: CSSSearchAttributeCondition;
         generateStamp?: boolean;
-        project: ProjectRowR;
     }): SourceNode;
     static deregisterSource: (key: string) => Promise<boolean>;
 }

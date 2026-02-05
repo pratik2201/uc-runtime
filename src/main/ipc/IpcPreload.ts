@@ -1,5 +1,5 @@
 import { ContextBridge, IpcRenderer, IpcRendererEvent } from "electron";
-import { basename, dirname, join, normalize, relative, resolve, isAbsolute, extname } from "path";
+import { basename, dirname, join, normalize, relative, resolve, isAbsolute, extname, sep } from "path";
 import { fileURLToPath, pathToFileURL } from "url";
 import { BridgeAPI, IPC_API_KEY } from "../../common/ipc/enumAndMore.js";
 export class IpcPreload {
@@ -16,6 +16,7 @@ export class IpcPreload {
             },
             path: {
                 isAbsolute: (path) => isAbsolute(path),
+                sep: () => sep,
                 basename: (path, suffix) => basename(path, suffix),
                 dirname: (path) => dirname(path),
                 normalize: (path) => normalize(path),

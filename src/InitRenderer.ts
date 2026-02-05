@@ -1,1 +1,1 @@
-export * from './renderer/ipc/ShubhLabh.js';
+export * from './main/ipc/ShubhLabh.js';

@@ -1,8 +1,3 @@
-import { codeFileInfo, GetDeclaration } from "../global/codeFileInfo.js";
-import ucWinFrame$Dynamic from "../renderer/controls/ucWinFrame.uc.html.js";
-import { Usercontrol } from "../renderer/Usercontrol.js";
-import { nodeFn } from "../renderer/nodeFn.js";
-import { PathBridge } from "../global/pathBridge.js";
 const VOID_HTML_NODE_NAMES = [
     'AREA',
     'BASE',
@@ -384,39 +379,28 @@ export class HTMLx {
             "<childs>": cntnt
         });
     }
-    static Usercontrol = (name: string, targetUc: IHTMLxSource, layoutTsOutPath: string, ucProps: HTMLTagMapper<'WRAPPER'>, ...childs: string[]) => {
+    static Usercontrol = (name: string, /* targetUc: IHTMLxSource,*/ xfrom: string, layoutTsOutPath: string, ucProps: HTMLTagMapper<'WRAPPER'>, ...childs: string[]) => {
         let relpath: string;
 
-        const sc = PathBridge.Convert(layoutTsOutPath, 'out', 'tsLayout', 'out');
-        const sProject = sc.project;
-        const sPref = sProject.config.preference;
-        const tc = PathBridge.Convert(nodeFn.url.fileURLToPath(targetUc.dynamicFilePath), 'out', 'tsLayout', 'out');
-        const tProject = tc.project;
-        const tPref = tProject.config.preference;
+        /* const sc = PathBridge.Convert(layoutTsOutPath, 'out', 'tsLayout', 'out');
+         const sProject = sc.project;
+         const sPref = sProject.config.preference;
+         const tc = PathBridge.Convert(nodeFn.url.fileURLToPath(targetUc.dynamicFilePath), 'out', 'tsLayout', 'out');
+         const tProject = tc.project;
+         const tPref = tProject.config.preference;
+ 
+         const sHtmlPath = sc.paths[sPref.outDir].html;
+         const tHtmlPath = tc.paths[tPref.outDir].html;*/
 
-        const sHtmlPath = sc.paths[sPref.outDir].html;
-        const tHtmlPath = tc.paths[tPref.outDir].html;
-       /// console.log([sHtmlPath, tHtmlPath]);
-
-        //-------------------------------------
-        // const targetCinfo = new codeFileInfo();
-        // targetCinfo.parseUrl(nodeFn.url.fileURLToPath(targetUc.dynamicFilePath), undefined, undefined);  // DESIGNER OUT
-        // const outDynamicCinfo = new codeFileInfo();
-        // outDynamicCinfo.parseUrl(nodeFn.url.fileURLToPath(layoutTsOutPath), undefined, undefined);  // DESIGNER OUT
-        // const pref = outDynamicCinfo.projectInfo.config.preference;
-        // const dirDec = pref.dirDeclaration;
-
-        //if (targetCinfo.pathOf != undefined) {
-        //relpath = nodeFn.path.relativeFilePath(outDynamicCinfo.pathOf.html, targetCinfo.pathOf.html);
-        relpath = nodeFn.path.relativeFilePath(
+        relpath = xfrom.startsWith('{:') ? xfrom : `{:${xfrom}}`;/*nodeFn.path.relativeFilePath(
             sHtmlPath,//outDynamicCinfo.allPathOf[pref.srcDir].html,
             tHtmlPath,//targetCinfo.allPathOf[pref.srcDir].html
-        );
+        );*/
 
         ucProps = ucProps ?? {};
         if (name != undefined)
             ucProps["x-name"] = name as any;
-        ucProps["x-from"] = `{:${relpath}}`;
+        ucProps["x-from"] = relpath;
         return HTMLx.Tag('WRAPPER', ucProps, ...childs);
         //}
         return undefined;
