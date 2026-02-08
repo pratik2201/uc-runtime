@@ -1,7 +1,7 @@
 {
   "include": [
     "src"
-  ],
+   ],
   "exclude": [
     "out",
     "node_modules"
@@ -12,6 +12,7 @@
     "target": "ESNext",
     "rootDir": "src",
     "outDir": "out",
+    "baseUrl": ".",
     "strict": true,
     "allowJs": true,
     "strictNullChecks": false,

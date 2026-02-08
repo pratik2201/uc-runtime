@@ -1,8 +1,8 @@
 
-import { ucUtil, ATTR_OF } from "ap-shared-core/out/ucbuilder/ucUtil.js";
-import { Assembly } from "../main/Assembly.js";
+import { ucUtil, ATTR_OF } from "ap-shared-core/out/ucbuilder/ucUtil.js"; 
 import { CSSSearchAttributeCondition, IKeyStampNode, StyleBaseType, StylerRegs, WRAPPER_TAG_NAME } from "../renderer/StylerRegs.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
+import { Assembly } from "../renderer/Assembly.js";
 
 
 export enum STYLER_SELECTOR_TYPE {

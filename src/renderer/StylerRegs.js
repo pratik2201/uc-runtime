@@ -1,6 +1,6 @@
 import { ATTR_OF, GetUniqueId, ucUtil } from "ap-shared-core/out/ucbuilder/ucUtil.js";
 import { SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
-import { AssemblyManager } from "../main/Assembly.js";
+import { AssemblyManager } from "ap-shared-core/out/ucbuilder/Assembly.js";
 import { CssRuntimeResolver } from "./CssRuntimeResolver.js";
 //import { ProjectManage } from "ucbuilder-devtools/out/renderer/ProjectManage.js";
 import { nodeFn } from "./nodeFn.js";
@@ -784,7 +784,6 @@ export class CssVariableHandler {
 class openCloser {
     ignoreList = [];
     parse(oc, str) {
-        // console.log(str);
         let result = [];
         let stack = [];
         let buffer = "";

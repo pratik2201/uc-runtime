@@ -1,6 +1,9 @@
 import { ISourceOptions, IUcOptions, UCGenerateMode, UcStates, WhatToDoWithTargetElement } from "../common/enumAndMore.js";
+import { IUsercontrolMeta } from "ap-shared-core/out/ucbuilder/Template.js";
+import { CommonEvent } from "../global/commonEvent.js";
 import { IPassElementOptions, SourceNode } from "../lib/StampGenerator.js";
-import { Assembly } from "../main/Assembly.js";
+import { Assembly } from "ap-shared-core/out/ucbuilder/Assembly.js";
+import { ResourceKeyList } from "ap-shared-core/out/ucbuilder/resources/enums.js";
 import { CSSVariableScope, VariableList } from "./StylerRegs.js";
 export type UcDialogResult = "none" | "ok" | 'cancel' | 'close';
 export type ucVisibility = 'inherit' | 'visible' | 'hidden';
@@ -31,12 +34,12 @@ export declare class Usercontrol {
         form: Usercontrol;
         dialogForm: Usercontrol;
         PARENT: Usercontrol;
+        resource: IUsercontrolMeta;
         srcNode: SourceNode;
         assembly: Assembly;
         wrapperHT: HTMLElement;
         isDialogBox: boolean;
-        cssGuid: string;
-        htmlGuid: string;
+        guid: ResourceKeyList;
         keepVisible: boolean;
         parentDependantIndex: number;
         dependant: Usercontrol[];
@@ -56,12 +59,12 @@ export declare class Usercontrol {
             form: Usercontrol;
             dialogForm: Usercontrol;
             PARENT: Usercontrol;
+            resource: IUsercontrolMeta;
             srcNode: SourceNode;
             assembly: Assembly;
             wrapperHT: HTMLElement;
             isDialogBox: boolean;
-            cssGuid: string;
-            htmlGuid: string;
+            guid: ResourceKeyList;
             keepVisible: boolean;
             parentDependantIndex: number;
             dependant: Usercontrol[];
@@ -101,38 +104,40 @@ export declare class Usercontrol {
                 at?: HTMLElement;
                 keepCurrentVisible?: boolean;
                 defaultFocusAt?: HTMLElement;
-            }) => Promise<"none" | "cancel" | "close" | "ok">;
+            }) => Promise<"none" | "ok" | "cancel" | "close">;
             _windowstate: UcStates;
             windowstate: UcStates;
-            getChildsRefByMainPath: (htmlGuid: string) => Usercontrol[];
-            getFirstChildRefByMainPath: (htmlGuid: string) => Usercontrol;
+            getChildsRefByMainPath: (guid: string) => Usercontrol[];
+            getFirstChildRefByMainPath: (guid: string) => Usercontrol;
             Events: {
                 /** @private  */
-                _contextChange: any;
-                readonly contextChange: any;
+                _contextChange: CommonEvent<() => void>;
+                readonly contextChange: CommonEvent<() => void>;
                 /** @private  */
-                _afterInitlize: any;
-                readonly afterInitlize: any;
-                beforeClose: any;
-                afterClose: any;
-                onDestruction: any;
-                captionChanged: any;
-                winStateChanged: any;
-                _activate: any;
-                readonly activate: any;
-                _deactivate: any;
-                readonly deactivate: any;
-                beforeFreez: any;
-                beforeUnFreez: any;
-                loaded: any;
-                loadLastSession: any;
+                _afterInitlize: CommonEvent<(uc: Usercontrol) => void>;
+                readonly afterInitlize: CommonEvent<(uc: Usercontrol) => void>;
+                beforeClose: CommonEvent<(args: {
+                    prevent?: boolean;
+                }) => void>;
+                afterClose: CommonEvent<(uc?: Usercontrol) => void>;
+                onDestruction: CommonEvent<({}: {}) => void>;
+                captionChanged: CommonEvent<(newCaptionText: string) => void>;
+                winStateChanged: CommonEvent<(state: UcStates) => void>;
+                _activate: CommonEvent<() => void>;
+                readonly activate: CommonEvent<() => void>;
+                _deactivate: CommonEvent<() => void>;
+                readonly deactivate: CommonEvent<() => void>;
+                beforeFreez: CommonEvent<(newUc: Usercontrol) => void>;
+                beforeUnFreez: CommonEvent<(oldUc: Usercontrol) => void>;
+                loaded: CommonEvent<() => void>;
+                loadLastSession: CommonEvent<() => void>;
                 /** @private  */
-                _newSessionGenerate: any;
-                readonly newSessionGenerate: any;
+                _newSessionGenerate: CommonEvent<() => void>;
+                readonly newSessionGenerate: CommonEvent<() => void>;
                 /** @private  */
-                _completeSessionLoad: any;
-                readonly completeSessionLoad: any;
-                sizeChanged: any;
+                _completeSessionLoad: CommonEvent<() => void>;
+                readonly completeSessionLoad: CommonEvent<() => void>;
+                sizeChanged: CommonEvent<(size: ResizeObserverEntry[]) => void>;
                 formExt: () => /*elided*/ any;
                 dialogExt: () => /*elided*/ any;
                 onDataExport: (_data: ITransferDataNode) => boolean;
@@ -184,38 +189,40 @@ export declare class Usercontrol {
             at?: HTMLElement;
             keepCurrentVisible?: boolean;
             defaultFocusAt?: HTMLElement;
-        }) => Promise<"none" | "cancel" | "close" | "ok">;
+        }) => Promise<"none" | "ok" | "cancel" | "close">;
         _windowstate: UcStates;
         windowstate: UcStates;
-        getChildsRefByMainPath: (htmlGuid: string) => Usercontrol[];
-        getFirstChildRefByMainPath: (htmlGuid: string) => Usercontrol;
+        getChildsRefByMainPath: (guid: string) => Usercontrol[];
+        getFirstChildRefByMainPath: (guid: string) => Usercontrol;
         Events: {
             /** @private  */
-            _contextChange: any;
-            readonly contextChange: any;
+            _contextChange: CommonEvent<() => void>;
+            readonly contextChange: CommonEvent<() => void>;
             /** @private  */
-            _afterInitlize: any;
-            readonly afterInitlize: any;
-            beforeClose: any;
-            afterClose: any;
-            onDestruction: any;
-            captionChanged: any;
-            winStateChanged: any;
-            _activate: any;
-            readonly activate: any;
-            _deactivate: any;
-            readonly deactivate: any;
-            beforeFreez: any;
-            beforeUnFreez: any;
-            loaded: any;
-            loadLastSession: any;
+            _afterInitlize: CommonEvent<(uc: Usercontrol) => void>;
+            readonly afterInitlize: CommonEvent<(uc: Usercontrol) => void>;
+            beforeClose: CommonEvent<(args: {
+                prevent?: boolean;
+            }) => void>;
+            afterClose: CommonEvent<(uc?: Usercontrol) => void>;
+            onDestruction: CommonEvent<({}: {}) => void>;
+            captionChanged: CommonEvent<(newCaptionText: string) => void>;
+            winStateChanged: CommonEvent<(state: UcStates) => void>;
+            _activate: CommonEvent<() => void>;
+            readonly activate: CommonEvent<() => void>;
+            _deactivate: CommonEvent<() => void>;
+            readonly deactivate: CommonEvent<() => void>;
+            beforeFreez: CommonEvent<(newUc: Usercontrol) => void>;
+            beforeUnFreez: CommonEvent<(oldUc: Usercontrol) => void>;
+            loaded: CommonEvent<() => void>;
+            loadLastSession: CommonEvent<() => void>;
             /** @private  */
-            _newSessionGenerate: any;
-            readonly newSessionGenerate: any;
+            _newSessionGenerate: CommonEvent<() => void>;
+            readonly newSessionGenerate: CommonEvent<() => void>;
             /** @private  */
-            _completeSessionLoad: any;
-            readonly completeSessionLoad: any;
-            sizeChanged: any;
+            _completeSessionLoad: CommonEvent<() => void>;
+            readonly completeSessionLoad: CommonEvent<() => void>;
+            sizeChanged: CommonEvent<(size: ResizeObserverEntry[]) => void>;
             formExt: () => {
                 readonly Context: any;
                 SetContext: any;
@@ -231,12 +238,12 @@ export declare class Usercontrol {
                 form: Usercontrol;
                 dialogForm: Usercontrol;
                 PARENT: Usercontrol;
+                resource: IUsercontrolMeta;
                 srcNode: SourceNode;
                 assembly: Assembly;
                 wrapperHT: HTMLElement;
                 isDialogBox: boolean;
-                cssGuid: string;
-                htmlGuid: string;
+                guid: ResourceKeyList;
                 keepVisible: boolean;
                 parentDependantIndex: number;
                 dependant: Usercontrol[];
@@ -276,38 +283,40 @@ export declare class Usercontrol {
                     at?: HTMLElement;
                     keepCurrentVisible?: boolean;
                     defaultFocusAt?: HTMLElement;
-                }) => Promise<"none" | "cancel" | "close" | "ok">;
+                }) => Promise<"none" | "ok" | "cancel" | "close">;
                 _windowstate: UcStates;
                 windowstate: UcStates;
-                getChildsRefByMainPath: (htmlGuid: string) => Usercontrol[];
-                getFirstChildRefByMainPath: (htmlGuid: string) => Usercontrol;
+                getChildsRefByMainPath: (guid: string) => Usercontrol[];
+                getFirstChildRefByMainPath: (guid: string) => Usercontrol;
                 Events: {
                     /** @private  */
-                    _contextChange: any;
-                    readonly contextChange: any;
+                    _contextChange: CommonEvent<() => void>;
+                    readonly contextChange: CommonEvent<() => void>;
                     /** @private  */
-                    _afterInitlize: any;
-                    readonly afterInitlize: any;
-                    beforeClose: any;
-                    afterClose: any;
-                    onDestruction: any;
-                    captionChanged: any;
-                    winStateChanged: any;
-                    _activate: any;
-                    readonly activate: any;
-                    _deactivate: any;
-                    readonly deactivate: any;
-                    beforeFreez: any;
-                    beforeUnFreez: any;
-                    loaded: any;
-                    loadLastSession: any;
+                    _afterInitlize: CommonEvent<(uc: Usercontrol) => void>;
+                    readonly afterInitlize: CommonEvent<(uc: Usercontrol) => void>;
+                    beforeClose: CommonEvent<(args: {
+                        prevent?: boolean;
+                    }) => void>;
+                    afterClose: CommonEvent<(uc?: Usercontrol) => void>;
+                    onDestruction: CommonEvent<({}: {}) => void>;
+                    captionChanged: CommonEvent<(newCaptionText: string) => void>;
+                    winStateChanged: CommonEvent<(state: UcStates) => void>;
+                    _activate: CommonEvent<() => void>;
+                    readonly activate: CommonEvent<() => void>;
+                    _deactivate: CommonEvent<() => void>;
+                    readonly deactivate: CommonEvent<() => void>;
+                    beforeFreez: CommonEvent<(newUc: Usercontrol) => void>;
+                    beforeUnFreez: CommonEvent<(oldUc: Usercontrol) => void>;
+                    loaded: CommonEvent<() => void>;
+                    loadLastSession: CommonEvent<() => void>;
                     /** @private  */
-                    _newSessionGenerate: any;
-                    readonly newSessionGenerate: any;
+                    _newSessionGenerate: CommonEvent<() => void>;
+                    readonly newSessionGenerate: CommonEvent<() => void>;
                     /** @private  */
-                    _completeSessionLoad: any;
-                    readonly completeSessionLoad: any;
-                    sizeChanged: any;
+                    _completeSessionLoad: CommonEvent<() => void>;
+                    readonly completeSessionLoad: CommonEvent<() => void>;
+                    sizeChanged: CommonEvent<(size: ResizeObserverEntry[]) => void>;
                     formExt: () => /*elided*/ any;
                     dialogExt: () => /*elided*/ any;
                     onDataExport: (_data: ITransferDataNode) => boolean;
@@ -340,12 +349,12 @@ export declare class Usercontrol {
                 form: Usercontrol;
                 dialogForm: Usercontrol;
                 PARENT: Usercontrol;
+                resource: IUsercontrolMeta;
                 srcNode: SourceNode;
                 assembly: Assembly;
                 wrapperHT: HTMLElement;
                 isDialogBox: boolean;
-                cssGuid: string;
-                htmlGuid: string;
+                guid: ResourceKeyList;
                 keepVisible: boolean;
                 parentDependantIndex: number;
                 dependant: Usercontrol[];
@@ -385,38 +394,40 @@ export declare class Usercontrol {
                     at?: HTMLElement;
                     keepCurrentVisible?: boolean;
                     defaultFocusAt?: HTMLElement;
-                }) => Promise<"none" | "cancel" | "close" | "ok">;
+                }) => Promise<"none" | "ok" | "cancel" | "close">;
                 _windowstate: UcStates;
                 windowstate: UcStates;
-                getChildsRefByMainPath: (htmlGuid: string) => Usercontrol[];
-                getFirstChildRefByMainPath: (htmlGuid: string) => Usercontrol;
+                getChildsRefByMainPath: (guid: string) => Usercontrol[];
+                getFirstChildRefByMainPath: (guid: string) => Usercontrol;
                 Events: {
                     /** @private  */
-                    _contextChange: any;
-                    readonly contextChange: any;
+                    _contextChange: CommonEvent<() => void>;
+                    readonly contextChange: CommonEvent<() => void>;
                     /** @private  */
-                    _afterInitlize: any;
-                    readonly afterInitlize: any;
-                    beforeClose: any;
-                    afterClose: any;
-                    onDestruction: any;
-                    captionChanged: any;
-                    winStateChanged: any;
-                    _activate: any;
-                    readonly activate: any;
-                    _deactivate: any;
-                    readonly deactivate: any;
-                    beforeFreez: any;
-                    beforeUnFreez: any;
-                    loaded: any;
-                    loadLastSession: any;
+                    _afterInitlize: CommonEvent<(uc: Usercontrol) => void>;
+                    readonly afterInitlize: CommonEvent<(uc: Usercontrol) => void>;
+                    beforeClose: CommonEvent<(args: {
+                        prevent?: boolean;
+                    }) => void>;
+                    afterClose: CommonEvent<(uc?: Usercontrol) => void>;
+                    onDestruction: CommonEvent<({}: {}) => void>;
+                    captionChanged: CommonEvent<(newCaptionText: string) => void>;
+                    winStateChanged: CommonEvent<(state: UcStates) => void>;
+                    _activate: CommonEvent<() => void>;
+                    readonly activate: CommonEvent<() => void>;
+                    _deactivate: CommonEvent<() => void>;
+                    readonly deactivate: CommonEvent<() => void>;
+                    beforeFreez: CommonEvent<(newUc: Usercontrol) => void>;
+                    beforeUnFreez: CommonEvent<(oldUc: Usercontrol) => void>;
+                    loaded: CommonEvent<() => void>;
+                    loadLastSession: CommonEvent<() => void>;
                     /** @private  */
-                    _newSessionGenerate: any;
-                    readonly newSessionGenerate: any;
+                    _newSessionGenerate: CommonEvent<() => void>;
+                    readonly newSessionGenerate: CommonEvent<() => void>;
                     /** @private  */
-                    _completeSessionLoad: any;
-                    readonly completeSessionLoad: any;
-                    sizeChanged: any;
+                    _completeSessionLoad: CommonEvent<() => void>;
+                    readonly completeSessionLoad: CommonEvent<() => void>;
+                    sizeChanged: CommonEvent<(size: ResizeObserverEntry[]) => void>;
                     formExt: () => /*elided*/ any;
                     dialogExt: () => /*elided*/ any;
                     onDataExport: (_data: ITransferDataNode) => boolean;

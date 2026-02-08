@@ -23,7 +23,7 @@ export class IpcRendererHelper {
         }*/
         return undefined;
     }
-     //static ucConfigList: ProjectRowBase[] = [];
+     //static ucConfigList: ProjectRdowBase[] = [];
     static Group(ukey: string) { // donedanadonerootpath
         if (typeof window === "undefined") return;
         let donedanadonerootpath = ukey; //GetRootPathByUrl_M(ukey, this.ucConfigList);  // IpcRendererHelper.getRelativeURL(ukey)

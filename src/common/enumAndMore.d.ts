@@ -1,6 +1,7 @@
+import { ITemplateMeta, IUsercontrolMeta } from "ap-shared-core/out/ucbuilder/Template.js";
 import { IKeyStampNode } from "../renderer/StylerRegs.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
-import { ResourceKeyRegistry } from "ap-shared-core/out/ucbuilder/resources/enums.js";
+import { ResourceKeyRegistry, ResourceKeyList } from "./resources/enums.js";
 export type UCGenerateMode = "client" | "designer";
 export type UcStates = "normal" | "dock" | "minimize" | "maximize";
 export type FileTypes = "cssFile" | "htmlFile" | "imageFile" | "textFile" | "rawFile" | "string" | "integer" | "float" | "boolean";
@@ -36,20 +37,12 @@ export interface ISourceOptions {
     cssGuid?: keyof ResourceKeyRegistry;
 }
 export declare const SourceOptions: ISourceOptions;
-export interface ITemplateNodeMeta {
-    accessKey: string;
-    objectKey: string;
-    htmlContents?: string;
-    cssContents?: string;
-    tptCSSContents?: string;
-}
-export declare const TemplatePathOptions: ITemplateNodeMeta;
 export type WhatToDoWithTargetElement = "replace" | "append";
 export interface IUcOptions {
     cssKeyStamp?: IKeyStampNode;
-    guid?: string;
+    guid?: ResourceKeyList;
     mode?: UCGenerateMode;
-    source?: ISourceOptions;
+    source?: IUsercontrolMeta;
     parentUc?: Usercontrol;
     accessName?: string;
     context?: any;
@@ -65,7 +58,8 @@ export declare const UcOptions: IUcOptions;
 export declare function ExtractArguments(args: IArguments): IArguments;
 export interface ITptOptions {
     MakeEmptyTemplate?: boolean;
-    source?: ISourceOptions;
+    guid?: ResourceKeyList;
+    source?: ITemplateMeta;
     parentUc?: Usercontrol;
 }
 export declare const TptOptions: ITptOptions;

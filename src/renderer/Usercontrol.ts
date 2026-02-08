@@ -1,16 +1,16 @@
 import { TemplateMaker } from "ap-shared-core/out/template/TemplateMaker.js";
 import { ExtractArguments, ISourceOptions, IUcOptions, UCGenerateMode, UcStates, WhatToDoWithTargetElement, objectOpt } from "../common/enumAndMore.js";
-import { ResourceKeyList, ResourceKeyRegistry } from "ap-shared-core/out/ucbuilder/resources/enums.js";
+import { IUsercontrolMeta } from "ap-shared-core/out/ucbuilder/Template.js";
 import { ATTR_OF, GetUniqueId } from "ap-shared-core/out/ucbuilder/ucUtil.js";
+import { CommonEvent } from "../global/commonEvent.js";
 import { FilterContent, IPassElementOptions, STYLER_SELECTOR_TYPE, SourceNode } from "../lib/StampGenerator.js";
 import { TabIndexManager } from "../lib/TabIndexManager.js";
-import { WinManager } from "../lib/WinManager.js";
-import { Assembly, AssemblyManager } from "../main/Assembly.js";
+import { WinManager } from "../lib/WinManager.js"; 
 import { nodeFn } from "./nodeFn.js";
 import { ResourceManage } from "./ResourceManage.js";
 import { CSSVariableScope, CssVariableHandler, StyleBaseType, VariableList } from "./StylerRegs.js";
-import { CommonEvent } from "../global/commonEvent.js";
-import { IUsercontrolMeta } from "ap-shared-core/out/ucbuilder/Template.js";
+import { ResourceKeyRegistry, ResourceKeyList } from "src/common/resources/enums";
+import { Assembly, AssemblyManager } from "./Assembly.js";
 export type UcDialogResult = "none" | "ok" | 'cancel' | 'close';
 export type ucVisibility = 'inherit' | 'visible' | 'hidden';
 export class Usercontrol {
@@ -26,7 +26,7 @@ export class Usercontrol {
     }
     // static async GenerateControls(mainUc: Usercontrol, args?: IUcOptions, htmlCodePath?: string) {
     //     const mainFilePath = htmlCodePath;
-    //     async function _tpt(xname: string, finfo: codeFileInfo, targetEle: HTMLElement) {
+    //     async function _tpt(xname: string, finfo: codeFfileInfo, targetEle: HTMLElement) {
     //         let jsPath: string;
     //         jsPath = finfo.pathOf.code;
     //         let className = nodeFn.path.basename(jsPath).split('.')[0];
@@ -37,7 +37,7 @@ export class Usercontrol {
     //             elementHT: targetEle,
     //         } as ITptOptions);
     //     }
-    //     async function _uc(xname: string, finfo: codeFileInfo, targetEle: HTMLElement) {
+    //     async function _uc(xname: string, finfo: codeFsileInfo, targetEle: HTMLElement) {
     //         let jsPath: string;
     //         jsPath = finfo.pathOf.code;
     //         let className = nodeFn.path.basename(jsPath).split('.')[0];
@@ -61,7 +61,7 @@ export class Usercontrol {
     //         if (ele.hasAttribute('x-from')) {
     //             let xfrom = ele.getAttribute(ATTR_OF.X_FROM);
     //             let targetPath = nodeFn.path.resolveFilePath(mainFinfo.pathOf.html, xfrom);
-    //             let finfo = new codeFileInfo();
+    //             let finfo = new codeFilefInfo();
     //             finfo.parseUrl(targetPath, pref.outDir as any, mainFinfo.pathOf.html);
     //             if (xfrom.endsWith('.uc.html'))
     //                 await _uc(xname, finfo, ele);
@@ -136,7 +136,6 @@ export class Usercontrol {
             SELECTED_ID: undefined,
             CLOSE_ON_SAVE: undefined as boolean,
         },
-        //fileInfo: undefined as codeFileInfo,
         form: undefined as Usercontrol,
         dialogForm: undefined as Usercontrol,
         PARENT: undefined as Usercontrol,

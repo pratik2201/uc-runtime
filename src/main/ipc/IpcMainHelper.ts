@@ -1,13 +1,10 @@
-import { app, ipcMain, type BrowserWindow, type IpcMainEvent } from "electron";
+import { ipcMain, type BrowserWindow, type IpcMainEvent } from "electron";
 import fs from "node:fs";
-import path, { dirname } from "node:path";
-import url, { fileURLToPath, pathToFileURL } from "node:url";
-//import { ConfigHandler } from "ucbuilder-devtools/out/lib/ConfigHandler.js"; 
-import { IPC_API_KEY, IPC_GET_KEY, IPC_REGISTER_KEY, UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js";
-import { AssemblyManager } from "../Assembly.js";
-import { createImportMap, scanAllProjects } from "./importMapGenerator.js"; // ucbuilder/out/main/devtoolsBridge.js
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { getCloneableObject } from "ap-shared-core/out/objectUtil.js";
-import { PathBridge } from "ap-shared-core/out/ucbuilder-devtools/pathBridge.js";
+import { IPC_API_KEY, IPC_GET_KEY, IPC_REGISTER_KEY, UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js"; 
+import { ResourceStorage } from "../ResourceStorage.js";
+import { AssemblyManager } from "../../renderer/Assembly.js";
 type IpcMainCallBack = (e: import("electron").IpcMainEvent, ...args: any[]) => void;
 type IpcMainInvokeCallBack = (e: import("electron").IpcMainInvokeEvent, ...args: any[]) => Promise<any>;
 
@@ -20,8 +17,8 @@ interface IGroupMain {
 
 export function IpcMainGroup(regKey: string): IGroupMain {
     if (typeof window !== "undefined") return;
-    PathBridge.path = path as any;
-    PathBridge.url = url as any;
+    //PathBridge.path = path as any;
+    //PathBridge.url = url as any;
 
     let urlObj = regKey;// GetRootPathByUrl_M(urlpath, configManage.filler.ucConfigList);
     let rtrn: IGroupMain = {
@@ -115,12 +112,13 @@ export class IpcMainHelper {
         }
         const baseURLForDataURL = options?.baseURLForDataURL ?? htmlUrl;
         let html = fs.readFileSync(htmlPath, "utf-8");
-        let projectDirList = await scanAllProjects();
-        const importMap = createImportMap(_path, projectDirList, dirname(baseURLForDataURL));
+      //  let projectDirList = await scanAllProjects();
+        let importMap = ResourceStorage.RuntimeProps['importmap'];
+        importMap = (importMap != undefined) ? importMap : {};
 
-        let mapStr = JSON.stringify(importMap);
-
-        const importMapScript = `<script type="importmap">${mapStr}</script>`;
+        const importMapScript = `<script type="importmap">${importMap}</script>`;
+        console.log(importMapScript);
+        
         //<script type="module" src="${modulePath}"></script>
         const headRegex = /<head\b[^>]*>/i;
         const htmlRegex = /<html\b[^>]*>/i;

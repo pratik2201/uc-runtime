@@ -1,5 +1,5 @@
 import { GetUniqueId } from "ap-shared-core/out/ucbuilder/ucUtil.js";
-import { CommonEvent } from "ap-shared-core/out/commonEvent.js";
+import { CommonEvent } from "../global/commonEvent.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
 import { TabIndexManager } from "./TabIndexManager.js";
 export class ShortcutNode {

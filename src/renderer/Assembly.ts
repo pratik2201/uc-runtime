@@ -1,6 +1,6 @@
-
-import { AssemblyList, ResourceKeyList, ResourceKeyRegistry } from "ap-shared-core/out/ucbuilder/resources/enums.js";
+import { AssemblyList, ResourceKeyList, ResourceKeyRegistry } from "../common/resources/enums.js";
 import { SourceNode } from "../lib/StampGenerator.js";
+
 
 export class Assembly {
     name: AssemblyList;
@@ -14,7 +14,7 @@ export class Assembly {
 }
 export class AssemblyManager {
     private static counter = 0;
-    static assemblies: ResourceKeyRegistry = {};
+    static assemblies: ResourceKeyRegistry = {} as any;
     static getAssemblies() { return this.assemblies; }
 
     static Register(row: Assembly) {

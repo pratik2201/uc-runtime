@@ -11,7 +11,7 @@ export class IpcRendererHelper {
         }*/
         return undefined;
     }
-    //static ucConfigList: ProjectRowBase[] = [];
+    //static ucConfigList: ProjectRdowBase[] = [];
     static Group(ukey) {
         if (typeof window === "undefined")
             return;
@@ -91,8 +91,8 @@ export class IpcRendererHelper {
         let apk = win[IPC_API_KEY];
         return apk.invoke(IPC_API_KEY, IPC_GET_KEY(key, importMetaUrl), ...args);
     }
-    static get assembies() {
-        return this.sendSync('assembies', [{}], UC_ACCESS_KEY);
+    static get assemblies() {
+        return this.sendSync('assemblies', [{}], UC_ACCESS_KEY);
     }
     static get ucConfig() {
         return this.sendSync('ucConfig', [{}], UC_ACCESS_KEY);

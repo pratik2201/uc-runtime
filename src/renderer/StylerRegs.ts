@@ -1,10 +1,9 @@
 
 import { ATTR_OF, GetUniqueId, StyleClassScopeType, ucUtil } from "ap-shared-core/out/ucbuilder/ucUtil.js";
-import { SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
-import { Assembly, AssemblyManager } from "../main/Assembly.js";
+import { SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js"; 
 import { CssRuntimeResolver } from "./CssRuntimeResolver.js";
-//import { ProjectManage } from "ucbuilder-devtools/out/renderer/ProjectManage.js";
 import { nodeFn } from "./nodeFn.js";
+import { Assembly, AssemblyManager } from "./Assembly.js";
 export type VariableList = { [key: string]: string };
 export const patternList = {
   styleTagSelector: /<style([\n\r\w\W.]*?)>([\n\r\w\W.]*?)<\/style>/gi,

@@ -4,11 +4,11 @@ import { Extensions } from "../../lib/Extensions.js";
 import { SourceNode } from "../../lib/StampGenerator.js";
 import { TabIndexManager } from "../../lib/TabIndexManager.js";
 import { WinManager } from "../../lib/WinManager.js";
+import { AssemblyManager, Assembly } from "../../renderer/Assembly.js";
 import { IpcRendererHelper } from "../../renderer/ipc/IpcRendererHelper.js";
 import { nodeFn } from "../../renderer/nodeFn.js";
 import { ResourceManage } from "../../renderer/ResourceManage.js";
-import { StyleBaseType, StylerRegs } from "../../renderer/StylerRegs.js";
-import { Assembly, AssemblyManager } from "../Assembly.js";
+import { StyleBaseType, StylerRegs } from "../../renderer/StylerRegs.js"; 
 import { ImportMapResolver } from "ap-shared-core/out/ucbuilder-devtools/ImportMapResolver.js";
 
 let isExecuted = false;
@@ -34,7 +34,7 @@ async function initRenderer() {
   Extensions.init();
   StylerRegs.initProjectsStyle();
   const _assembiles = IpcRendererHelper.assemblies;
-  AssemblyManager.assemblies = {};
+  AssemblyManager.assemblies = {} as any;
   for (const [k, v] of Object.entries(_assembiles)) {
     const _newAssembly = new Assembly();
     Object.assign(_newAssembly, v);

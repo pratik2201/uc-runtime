@@ -1,6 +1,6 @@
 import { StyleClassScopeType } from "ap-shared-core/out/ucbuilder/ucUtil.js";
 import { SourceNode } from "../lib/StampGenerator.js";
-import { Assembly } from "../main/Assembly.js";
+import { Assembly } from "ap-shared-core/out/ucbuilder/Assembly.js";
 import { CssRuntimeResolver } from "./CssRuntimeResolver.js";
 export type VariableList = {
     [key: string]: string;

@@ -1,8 +1,8 @@
-import { UserUCConfig } from 'ap-shared-core/out/ucbuilder/configResources.js' 
+//import { UserUCConfig } from '../../configResources.js' 
 import { cleanPath } from 'ap-shared-core/out/ucbuilder/ucUtil.js'
 import fs from 'fs'
 import path from 'path'
-//import { ImportUserConfig } from 'ucbuilder-devtools/out/lib/userConfigManage.js'
+//import { ImportUserConfig } from 'ucbuilder-devtools/out/lib/usderConfigManage.js'
 
 export type BrowserConfig = {
   importmap?: Record<string, string>

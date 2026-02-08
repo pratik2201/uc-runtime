@@ -1,7 +1,7 @@
 import { ITemplateMeta, IUsercontrolMeta } from "ap-shared-core/out/ucbuilder/Template.js";
 import { IKeyStampNode } from "../renderer/StylerRegs.js";
-import { Usercontrol } from "../renderer/Usercontrol.js";
-import { ResourceKeyList, ResourceKeyRegistry } from "ap-shared-core/out/ucbuilder/resources/enums.js";
+import { Usercontrol } from "../renderer/Usercontrol.js"; 
+import { ResourceKeyRegistry, ResourceKeyList } from "./resources/enums.js";
 export type UCGenerateMode = "client" | "designer";
 export type UcStates = "normal" | "dock" | "minimize" | "maximize";
 // ResourceManage.d.ts
@@ -118,8 +118,7 @@ export const SourceOptions: ISourceOptions = {
 
 export type WhatToDoWithTargetElement = "replace" | "append";
 
-export interface IUcOptions {
-  //cfInfo?: codeFileInfo;
+export interface IUcOptions { 
   cssKeyStamp?: IKeyStampNode,
   guid?: ResourceKeyList;
   mode?: UCGenerateMode;
@@ -162,8 +161,7 @@ export function ExtractArguments(args: IArguments): IArguments {
   } else return args;
 }
 
-export interface ITptOptions {
-  //cfInfo?: codeFileInfo;
+export interface ITptOptions { 
   MakeEmptyTemplate?: boolean;
   //source?: ISourceOptions;
   guid?: ResourceKeyList;

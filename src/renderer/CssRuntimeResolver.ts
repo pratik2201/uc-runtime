@@ -1,5 +1,5 @@
-
-import { ResourceKeyList, ResourceKeyBridge } from "ap-shared-core/out/ucbuilder/resources/enums.js";
+ 
+import { ResourceKeyList, ResourceKeyBridge } from "../common/resources/enums.js";
 import { ResourceManage } from "./ResourceManage.js";
 
 

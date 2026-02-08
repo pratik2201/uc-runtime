@@ -6,6 +6,7 @@
   "scripts": {
     "clean": "rimraf out",
     "start": "electron .",
+    "build:designer": "ucbuilder-devtools build",
     "build:dts": "tsc --emitDeclarationOnly",
     "build": "tsc",
     "rebuild": "npm run clean && npm run build && npm run build:dts",
@@ -18,7 +19,8 @@
     "electron": "^39.1.1",
     "rimraf": "^6.0.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "ucbuilder-devtools": "file:../ucbuilder-devtools"
   },
   "dependencies": {
     "ap-shared-core": "file:../ap-shared-core"

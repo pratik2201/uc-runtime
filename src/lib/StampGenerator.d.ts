@@ -1,4 +1,4 @@
-import { Assembly } from "../main/Assembly.js";
+import { Assembly } from "ap-shared-core/out/ucbuilder/Assembly.js";
 import { CSSSearchAttributeCondition, IKeyStampNode, StyleBaseType, StylerRegs } from "../renderer/StylerRegs.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
 export declare enum STYLER_SELECTOR_TYPE {

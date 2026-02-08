@@ -1,4 +1,4 @@
-import { ResourceKeyList } from "ap-shared-core/out/ucbuilder/resources/enums.js";
+import { ResourceKeyList } from "../common/resources/enums.js";
 export declare class CssRuntimeResolver {
     private loaded;
     resolveFromKey(cssKey: ResourceKeyList): string;
