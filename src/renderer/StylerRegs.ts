@@ -1,4 +1,4 @@
- 
+
 import { ATTR_OF, GetUniqueId, StyleClassScopeType, ucUtil } from "ap-shared-core/out/ucbuilder/ucUtil.js";
 import { SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
 import { Assembly, AssemblyManager } from "../main/Assembly.js";
@@ -883,6 +883,11 @@ export class CssVariableHandler {
     return rtrn;
   }
 }
+
+
+
+
+
 export interface OCIterator {
   frontContent: string;
   betweenContent: string;
@@ -896,7 +901,6 @@ interface OpenCloseCharNode {
 class openCloser {
   ignoreList: OpenCloseCharNode[] = [];
   parse(oc: OpenCloseCharNode, str: string): OCIterator[] {
-    // console.log(str);
     let result: OCIterator[] = [];
     let stack: { node: OCIterator; startIndex: number }[] = [];
     let buffer = "";

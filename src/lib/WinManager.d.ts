@@ -1,6 +1,5 @@
-import { CommonEvent } from "../global/commonEvent.js";
+import { KeyboardKey } from "ap-shared-core/out/hardware.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
-import { KeyboardKey } from "./hardware.js";
 type ShortcutCallback = (e: KeyboardEvent) => void;
 export declare class ShortcutNode {
     private shortcutMap;
@@ -32,8 +31,8 @@ interface WinNode {
 export declare class FocusManager {
     currentElement: HTMLElement | undefined;
     Event: {
-        onFatch: CommonEvent<(ele: HTMLElement) => void>;
-        onFocus: CommonEvent<(ele: HTMLElement) => void>;
+        onFatch: any;
+        onFocus: any;
     };
     fetch(ele: HTMLElement): void;
     /**
@@ -51,8 +50,8 @@ export declare class WinManager {
     static event: {
         onFreez: (uc: Usercontrol) => void;
         onUnFreez: (uc: Usercontrol) => void;
-        keydown: CommonEvent<(e: KeyboardEvent) => void>;
-        keyup: CommonEvent<(e: KeyboardEvent) => void>;
+        keydown: any;
+        keyup: any;
     };
     static ACCESS_KEY: string;
     static getNode(htNode: HTMLElement): WinNode;

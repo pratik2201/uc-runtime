@@ -1,29 +1,25 @@
 import { TemplateMaker } from "ap-shared-core/out/template/TemplateMaker.js";
-import { ExtractArguments, ISourceOptions, IUcOptions, UCGenerateMode, UcStates, WhatToDoWithTargetElement, objectOpt } from "../common/enumAndMore.js";
-import { ResourceKeyList, ResourceKeyRegistry } from "ap-shared-core/out/ucbuilder/resources/enums.js";
+import { ExtractArguments, objectOpt } from "../common/enumAndMore.js";
 import { ATTR_OF, GetUniqueId } from "ap-shared-core/out/ucbuilder/ucUtil.js";
-import { FilterContent, IPassElementOptions, STYLER_SELECTOR_TYPE, SourceNode } from "../lib/StampGenerator.js";
+import { CommonEvent } from "ap-shared-core/out/commonEvent.js";
+import { FilterContent, STYLER_SELECTOR_TYPE, SourceNode } from "../lib/StampGenerator.js";
 import { TabIndexManager } from "../lib/TabIndexManager.js";
 import { WinManager } from "../lib/WinManager.js";
-import { Assembly, AssemblyManager } from "../main/Assembly.js";
+import { AssemblyManager } from "../main/Assembly.js";
 import { nodeFn } from "./nodeFn.js";
 import { ResourceManage } from "./ResourceManage.js";
-import { CSSVariableScope, CssVariableHandler, StyleBaseType, VariableList } from "./StylerRegs.js";
-import { CommonEvent } from "../global/commonEvent.js";
-import { IUsercontrolMeta } from "ap-shared-core/out/ucbuilder/Template.js";
-export type UcDialogResult = "none" | "ok" | 'cancel' | 'close';
-export type ucVisibility = 'inherit' | 'visible' | 'hidden';
+import { CssVariableHandler, StyleBaseType } from "./StylerRegs.js";
 export class Usercontrol {
-    static readonly guid: string;
-    static MATERIAL: ISourceOptions = {
-        htmlGuid: undefined as keyof ResourceKeyRegistry,
-        cssGuid: undefined as keyof ResourceKeyRegistry,
-    }
-    static parse(node: HTMLElement): Usercontrol { return node["#data"](ATTR_OF.BASE_OBJECT); }
-    static Resolver = (outDesignerImportMetaUrl: string, relPathOfOutHtml: string) => {
+    static guid;
+    static MATERIAL = {
+        htmlGuid: undefined,
+        cssGuid: undefined,
+    };
+    static parse(node) { return node["#data"](ATTR_OF.BASE_OBJECT); }
+    static Resolver = (outDesignerImportMetaUrl, relPathOfOutHtml) => {
         let fp = nodeFn.url.fileURLToPath(outDesignerImportMetaUrl); // `absFileUrl` designer js path
         return nodeFn.path.resolveFilePath(fp, relPathOfOutHtml);
-    }
+    };
     // static async GenerateControls(mainUc: Usercontrol, args?: IUcOptions, htmlCodePath?: string) {
     //     const mainFilePath = htmlCodePath;
     //     async function _tpt(xname: string, finfo: codeFileInfo, targetEle: HTMLElement) {
@@ -53,7 +49,6 @@ export class Usercontrol {
     //         const uc = mainUc[xname] as Usercontrol;
     //         uc.ucExtends.show({ decision: 'replace' });
     //     }
-
     //     const mainFinfo = args.cfInfo;
     //     const pref = args.cfInfo.projectInfo.config.preference;
     //     for (const [xname, htAr] of Object.entries(mainUc.ucExtends.controls)) {
@@ -70,32 +65,23 @@ export class Usercontrol {
     //         } else mainUc[xname] = htAr;
     //     }
     //     // console.log(importMeta);
-
     //     //console.log(uc.ucExtends.controls);
-
     // }
-
-    static HiddenSpace: HTMLElement = document.createElement('hspc' + GetUniqueId());
-
-    static UcOptionsStc: IUcOptions;
-
-    static extractArgs = (args: IArguments) => ExtractArguments(args);
-
+    static HiddenSpace = document.createElement('hspc' + GetUniqueId());
+    static UcOptionsStc;
+    static extractArgs = (args) => ExtractArguments(args);
     constructor() {
-
     }
-    private hide = async () => {
+    hide = async () => {
         let _ext = this.ucExtends;
         let res = { prevent: false };
-
         _ext.visibility = 'hidden';
         if (_ext.isDialogBox)
             await WinManager.pop(this);
         Usercontrol.HiddenSpace.appendChild(_ext.wrapperHT);
-        await _ext.Events.afterClose.fireAsync([this]);  // _ext.Events.afterHide
-
-    }
-    private destruct = async (): Promise<boolean> => {
+        await _ext.Events.afterClose.fireAsync([this]); // _ext.Events.afterHide
+    };
+    destruct = async () => {
         let _this = this;
         let _ext = _this.ucExtends;
         await _ext.Events.onDestruction.fireAsync();
@@ -111,9 +97,9 @@ export class Usercontrol {
             }
         });
         return false;
-    }
-    static templateMkr = new Map<string, string>();
-    public ucExtends = {
+    };
+    static templateMkr = new Map();
+    ucExtends = {
         get Context() { return this.dialogForm?.ucExtends.___META.CONTEXT; },
         set SetContext(context) {
             /*if (this.dialogForm.ucExtends != this) {
@@ -125,46 +111,42 @@ export class Usercontrol {
             let df = this.dialogForm.ucExtends;
             df.___META.CONTEXT = context;
             df.Events.contextChange.fire([]);
-
         },
-        DialogResult: undefined as UcDialogResult,
-        mode: 'client' as UCGenerateMode,
+        DialogResult: undefined,
+        mode: 'client',
         ___META: {
             CONTEXT: undefined,
             PREV_CREATED_ID: undefined,
             PREV_UPDATED_ID: undefined,
             SELECTED_ID: undefined,
-            CLOSE_ON_SAVE: undefined as boolean,
+            CLOSE_ON_SAVE: undefined,
         },
         //fileInfo: undefined as codeFileInfo,
-        form: undefined as Usercontrol,
-        dialogForm: undefined as Usercontrol,
-        PARENT: undefined as Usercontrol,
-        resource: undefined as IUsercontrolMeta,
+        form: undefined,
+        dialogForm: undefined,
+        PARENT: undefined,
         // session: undefined as SessionManager,// new SessionManager(),
-        srcNode: undefined as SourceNode,
-        assembly: undefined as Assembly,
-        wrapperHT: undefined as HTMLElement,
-        isDialogBox: false as boolean,
-        /*cssGuid: undefined as string,
-        htmlGuid: undefined as string,*/
-        guid: undefined as ResourceKeyList,
-        keepVisible: false as boolean,
-        parentDependantIndex: -1 as number,
-        dependant: [] as Usercontrol[],
-
+        srcNode: undefined,
+        assembly: undefined,
+        wrapperHT: undefined,
+        isDialogBox: false,
+        cssGuid: undefined,
+        htmlGuid: undefined,
+        keepVisible: false,
+        parentDependantIndex: -1,
+        dependant: [],
         //HIDE_OR_CLOSE: 'close' as 'hide' | 'close',
         isForm: false,
-        get formExtends() { return (this.form as Usercontrol).ucExtends; },
-        get self(): HTMLElement { return this.wrapperHT; },
-        set caption(text: string) {
+        get formExtends() { return this.form.ucExtends; },
+        get self() { return this.wrapperHT; },
+        set caption(text) {
             this.designer.setCaption(text);
         },
         get caption() {
             return this.wrapperHT.getAttribute('x-caption');
         },
-        lastFocuedElement: undefined as HTMLElement,
-        keepVisible_Till_I_Exist: (I: Usercontrol) => {
+        lastFocuedElement: undefined,
+        keepVisible_Till_I_Exist: (I) => {
             let _this = this;
             let vopt = this.ucExtends.keepVisible;
             this.ucExtends.keepVisible = true;
@@ -172,7 +154,7 @@ export class Usercontrol {
                 _this.ucExtends.keepVisible = vopt;
             });
         },
-        find: (skey: string): HTMLElement[] => {
+        find: (skey) => {
             let ar = skey.split(',');
             let _this = this.ucExtends;
             let uniqStamp = _this.srcNode.localStamp;
@@ -181,21 +163,21 @@ export class Usercontrol {
                 return s;
             });
             let nodeList = _this.self.querySelectorAll(ar.join(","));
-            return Array.from(nodeList) as HTMLElement[];
+            return Array.from(nodeList);
         },
-
         initalComponents: {
-            targetElement: undefined as HTMLElement,
-            elements: undefined as HTMLCollection,
-            stageHT: undefined as HTMLElement,
-            changeStage: (newStage: HTMLElement): boolean => {
+            targetElement: undefined,
+            elements: undefined,
+            stageHT: undefined,
+            changeStage: (newStage) => {
                 let ucExt = this.ucExtends;
-                if (!this.ucExtends.wrapperHT.contains(newStage)) return false;
+                if (!this.ucExtends.wrapperHT.contains(newStage))
+                    return false;
                 let initCompo = ucExt.initalComponents;
                 let arL = Array.from(initCompo?.elements ?? []);
-                let ctrls: HTMLElement[] = [];
+                let ctrls = [];
                 for (let index = 0, len = arL.length; index < len; index++) {
-                    const node = arL[index] as HTMLElement;
+                    const node = arL[index];
                     if (!node.contains(newStage)) {
                         newStage.appendChild(node);
                     }
@@ -204,57 +186,56 @@ export class Usercontrol {
                 return true;
             }
         },
-
-        setCssVariable: (varList: VariableList, scope: CSSVariableScope) => {
+        setCssVariable: (varList, scope) => {
             let styler = this.ucExtends.srcNode.styler;
             switch (scope) {
-                case 'global': CssVariableHandler.SetCSSVarValue(varList, '' + styler.KEYS.LOCAL, "g"); break;
+                case 'global':
+                    CssVariableHandler.SetCSSVarValue(varList, '' + styler.KEYS.LOCAL, "g");
+                    break;
                 //case 'template': CssVariableHandler.SETVALUE(varList, styler.TEMPLATE_STAMP_KEY, "t", this.ucExtends.self); break;
-                case 'local': CssVariableHandler.SetCSSVarValue(varList, styler.KEYS.LOCAL, "l", this.ucExtends.self); break;
-                case 'internal': CssVariableHandler.SetCSSVarValue(varList, styler.KEYS.INTERNAL, "i", this.ucExtends.self); break; // StylerRegs.internalKey
+                case 'local':
+                    CssVariableHandler.SetCSSVarValue(varList, styler.KEYS.LOCAL, "l", this.ucExtends.self);
+                    break;
+                case 'internal':
+                    CssVariableHandler.SetCSSVarValue(varList, styler.KEYS.INTERNAL, "i", this.ucExtends.self);
+                    break; // StylerRegs.internalKey
             }
         },
-        getCssVariable: (key: string, scope: CSSVariableScope): string => {
+        getCssVariable: (key, scope) => {
             let styler = this.ucExtends.srcNode.styler;
             switch (scope) {
-                case 'global': return document.body.style.getPropertyValue(
-                    CssVariableHandler.GetCombinedCSSVarName(key, '' + styler.KEYS.ROOT, "g"));
+                case 'global': return document.body.style.getPropertyValue(CssVariableHandler.GetCombinedCSSVarName(key, '' + styler.KEYS.ROOT, "g"));
                 /*case 'template': return this.ucExtends.self.style.getPropertyValue(
                     CssVariableHandler.getKeyName(key, styler.TEMPLATE_STAMP_KEY, "t"));*/
-                case 'local': return this.ucExtends.self.style.getPropertyValue(
-                    CssVariableHandler.GetCombinedCSSVarName(key, styler.KEYS.LOCAL, "l"));
-                case 'internal': return this.ucExtends.self.style.getPropertyValue(
-                    CssVariableHandler.GetCombinedCSSVarName(key, styler.KEYS.INTERNAL, "i"));  // StylerRegs.internalKey
+                case 'local': return this.ucExtends.self.style.getPropertyValue(CssVariableHandler.GetCombinedCSSVarName(key, styler.KEYS.LOCAL, "l"));
+                case 'internal': return this.ucExtends.self.style.getPropertyValue(CssVariableHandler.GetCombinedCSSVarName(key, styler.KEYS.INTERNAL, "i")); // StylerRegs.internalKey
                 default: return '';
             }
         },
         cssVarStampKey: '0',
-        initializecomponent: (param0: IUcOptions): void => {
+        initializecomponent: (param0) => {
             let ucExt = this.ucExtends;
             ucExt.mode = param0.mode;
-            if (param0.guid != undefined) {
-                ucExt.guid = param0.guid;
-                ucExt.resource = JSON.parse(ResourceManage.getContent(param0.guid as never));
-            }
-            if (param0.events.beforeInitlize != undefined) param0.events.beforeInitlize(this);
+            if (param0.events.beforeInitlize != undefined)
+                param0.events.beforeInitlize(this);
             ucExt.isForm = (param0.parentUc == undefined);
             //ucExt.fileInfo = param0.cfInfo;
             if (ucExt.isForm) {
                 ucExt.dialogForm = this;
-                ucExt.show = () => { throw new Error('Parent Free Usercontrol SHOULD be CALL by `showDialog` \n ' + ucExt.guid) };
-            } else {
+                ucExt.show = () => { throw new Error('Parent Free Usercontrol SHOULD be CALL by `showDialog` \n ' + param0.source.htmlGuid); };
+            }
+            else {
                 ucExt.dialogForm = param0.parentUc.ucExtends.dialogForm;
-                ucExt.showDialog = () => { throw new Error('with Parent Usercontrol SHOULD be CALL by `show` \n ' + ucExt.guid) };
+                ucExt.showDialog = () => { throw new Error('with Parent Usercontrol SHOULD be CALL by `show` \n ' + param0.source.htmlGuid); };
             }
             if (ucExt.isForm) {
                 ucExt.dialogForm.ucExtends.___META.CONTEXT = param0.context;
             }
-            ucExt.assembly = AssemblyManager.Parse(ucExt.guid);
-            //ucExt.cssGuid = param0.source.cssGuid;
-            //ucExt.htmlGuid = param0.source.htmlGuid;
-            ucExt.guid = param0.guid as never;
+            ucExt.assembly = AssemblyManager.Parse(param0.source.htmlGuid);
+            ucExt.cssGuid = param0.source.cssGuid;
+            ucExt.htmlGuid = param0.source.htmlGuid;
             ucExt.srcNode = SourceNode.registerSource({
-                key: ucExt.guid,
+                key: ucExt.cssGuid,
                 cssKeyStamp: param0.cssKeyStamp,
                 accessName: param0.accessName,
                 assembly: ucExt.assembly,
@@ -263,47 +244,45 @@ export class Usercontrol {
                 mode: '^',
             });
             //let htPathToRead = param0.source.htmlFilePath ?? ucExt.fileInfo.pathOf.html;
-            ucExt.resource = param0.source;
-
-
-            let tmkr = Usercontrol.templateMkr.get(ucExt.guid);
+            let htContent = ResourceManage.getContent(ucExt.htmlGuid);
+            let tmkr = Usercontrol.templateMkr.get(ucExt.htmlGuid);
             if (tmkr == undefined) {
-                let t = new TemplateMaker(/*ucExt.htmlGuid*/);
-                tmkr = t.compileTemplate(ucExt.resource.htmlContents)(param0.source.htmlRow ?? {});
-                Usercontrol.templateMkr.set(ucExt.guid, tmkr);
+                let t = new TemplateMaker( /*ucExt.htmlGuid*/);
+                tmkr = t.compileTemplate(htContent)(param0.source.htmlRow ?? {});
+                Usercontrol.templateMkr.set(ucExt.htmlGuid, tmkr);
             }
-            let isAlreadyExist = ucExt.srcNode.htmlCode.load(
-                tmkr
-            );
+            let isAlreadyExist = ucExt.srcNode.htmlCode.load(tmkr);
             if (!isAlreadyExist)
                 ucExt.srcNode.loadHTML();
-            ucExt.wrapperHT = ucExt.srcNode.dataHT.cloneNode(true) as HTMLElement;
-
+            ucExt.wrapperHT = ucExt.srcNode.dataHT.cloneNode(true);
             if (ucExt.isForm) {
                 ucExt.PARENT = this;
                 ucExt.form = this;
                 ucExt.srcNode.config({
                     parentUc: ucExt.PARENT,
-                    parentSrc: ucExt.assembly.srcNode,//ucExt.fileInfo.projectInfo.stampSRC,
+                    parentSrc: ucExt.assembly.srcNode, //ucExt.fileInfo.projectInfo.stampSRC,
                     wrapper: ucExt.wrapperHT,
-                    key: ucExt.guid,
+                    key: param0.source.cssGuid,
                     accessName: param0.accessName
                 });
-            } else {
+            }
+            else {
                 ucExt.form = param0.parentUc.ucExtends.form;
                 ucExt.PARENT = param0.parentUc;
                 ucExt.srcNode.config({
                     parentUc: ucExt.PARENT,
                     parentSrc: ucExt.PARENT.ucExtends.srcNode,
                     wrapper: ucExt.wrapperHT,
-                    key: ucExt.guid,
+                    key: param0.source.cssGuid,
                     accessName: param0.accessName
                 });
                 if (param0.targetElement) {
                     ucExt.initalComponents.elements = param0.targetElement.children;
                     objectOpt.copyAttr(param0.targetElement, ucExt.wrapperHT);
                     Usercontrol.HiddenSpace.append(ucExt.wrapperHT);
-                } else Usercontrol.HiddenSpace.append(ucExt.wrapperHT);
+                }
+                else
+                    Usercontrol.HiddenSpace.append(ucExt.wrapperHT);
             }
             ucExt.initalComponents.targetElement = param0.targetElement;
             let pucExt = ucExt.PARENT.ucExtends;
@@ -320,68 +299,61 @@ export class Usercontrol {
                         sizeChangeEvt.fire([cbpera]);
                     });
                     ucExt.resizerObserver.observe(ucExt.wrapperHT);
-                } else {
+                }
+                else {
                     if (sizeChangeEvt.length == 0) {
                         ucExt.resizerObserver.disconnect();
                         ucExt.resizerObserver = undefined;
                     }
                 }
-            }
+            };
             ucExt.Events.onDestruction.on(() => {
                 for (let i = ucExt.dependant.length - 1; i >= 0; i--) {
                     ucExt.dependant[i]?.destruct();
                 }
                 pucExt.dependant[ucExt.parentDependantIndex] = undefined;
             });
-            ucExt.Events.onDataExport = (data) =>
-                pucExt.Events.onDataExport(data);
+            ucExt.Events.onDataExport = (data) => pucExt.Events.onDataExport(data);
             if (ucExt.dialogForm == undefined && pucExt.dialogForm != undefined)
                 ucExt.dialogForm = pucExt.dialogForm;
             ucExt.initalComponents.stageHT = ucExt.wrapperHT;
             ucExt.srcNode.setWrapper(ucExt.wrapperHT);
         },
-        controls: undefined as { [xname: string]: HTMLElement | HTMLElement[] },
-        resizerObserver: undefined as ResizeObserver,
-        finalizeInitAsync: async (param0: IUcOptions) => {
+        controls: undefined,
+        resizerObserver: undefined,
+        finalizeInitAsync: async (param0) => {
             let ext = this.ucExtends;
             //ext.srcNode.pushCSS(ext.srcNode.cssFsilePath ?? ext.fileInfo.pathOf.scss, ext.fileInfo.projectInfo.importMetaURL, ext.self);
-            const cssContent = ResourceManage.getContent(ext.guid as never);
-            ext.srcNode.pushCSS(
-                ext.guid,
-                //ext.srcNode.cssFilePdath ?? ext.fileInfo.pathOf.scss,
-                cssContent,//param0.source.cssContents,
-                ext.self);
+            const cssContent = ResourceManage.getContent(param0.source.cssGuid);
+            ext.srcNode.pushCSS(param0.source.cssGuid, 
+            //ext.srcNode.cssFilePdath ?? ext.fileInfo.pathOf.scss,
+            cssContent, //param0.source.cssContents,
+            ext.self);
             //console.log(cssContent);
-
             if (ext.isDialogBox) {
                 ext.Events.afterInitlize.on(param0.events.afterInitlize);
                 await ext.Events.afterInitlize.fireAsync([this]);
             }
         },
-        finalizeInit: (param0: IUcOptions) => {
+        finalizeInit: (param0) => {
             let ext = this.ucExtends;
             //ext.srcNode.pushCSS(ext.srcNode.cssdFilePath ?? ext.fileInfo.pathOf.scss, ext.fileInfo.projectInfo.importMetaURL, ext.self);
-            const cssContent = ext.resource.cssContents;//ResourceManage.getContent(param0.source.cssGuid as never);
-            ext.srcNode.pushCSS(
-                ext.guid,//ext.srcNode.cssFfilePath ?? ext.fileInfo.pathOf.scss,
-                cssContent,//param0.source.cssContents,
-                ext.self);
-
-
+            const cssContent = ResourceManage.getContent(param0.source.cssGuid);
+            ext.srcNode.pushCSS(param0.source.cssGuid, //ext.srcNode.cssFfilePath ?? ext.fileInfo.pathOf.scss,
+            cssContent, //param0.source.cssContents,
+            ext.self);
             if (ext.isDialogBox) {
                 ext.Events.afterInitlize.on(param0.events.afterInitlize);
                 ext.Events.afterInitlize.fire([this]);
             }
         },
-
-        visibility: 'inherit' as ucVisibility,
-        getVisibility: (): ucVisibility => {
+        visibility: 'inherit',
+        getVisibility: () => {
             let ext = this.ucExtends;
             return (ext.isForm || ext.visibility != 'inherit') ?
                 ext.visibility : ext.PARENT.ucExtends.visibility;
         },
-        show: ({ at = undefined, defaultFocusAt = undefined, decision = 'append' }:
-            { at?: HTMLElement, defaultFocusAt?: HTMLElement, decision?: WhatToDoWithTargetElement, visibility?: ucVisibility } = {}) => {
+        show: ({ at = undefined, defaultFocusAt = undefined, decision = 'append' } = {}) => {
             let _extend = this.ucExtends;
             let _element = _extend.initalComponents.targetElement;
             _element = at ?? _element;
@@ -396,26 +368,18 @@ export class Usercontrol {
                         break;
                 }
             }
-
             if (_extend.dialogForm == undefined)
                 _extend.dialogForm = _extend.isForm ? this : _extend.PARENT.ucExtends.dialogForm;
             _extend.Events.loaded.fire();
             _extend.visibility = 'visible';
             if (defaultFocusAt)
                 TabIndexManager.focusTo(defaultFocusAt);
-
             //return undefined as Usercontrol
         },
-
-        dialogResolver: undefined as (value: UcDialogResult) => void,
+        dialogResolver: undefined,
         showDialog: async ({ defaultFocusAt = undefined, at = undefined, keepCurrentVisible = true,
-            // afterClose = undefined
-        }: {
-            at?: HTMLElement,
-            keepCurrentVisible?: boolean,
-            defaultFocusAt?: HTMLElement,
-            //afterClose?: (frm: Usercontrol) => void,
-        } = {}) => {
+        // afterClose = undefined
+         } = {}) => {
             let _extends = this.ucExtends;
             let alreadyLoadedBefore = _extends.isDialogBox;
             _extends.isDialogBox = true;
@@ -423,17 +387,12 @@ export class Usercontrol {
             let _oldParentVisibleValue = _parentExt.keepVisible;
             _parentExt.keepVisible = keepCurrentVisible;
             const ele = at ?? _extends.initalComponents.targetElement ?? _extends.assembly.defaultLoadAt;
-
-
             if (ele != document.body && ele?.previousElementSibling != null) {
-                const puc = Usercontrol.parse(ele.previousElementSibling as HTMLElement);
+                const puc = Usercontrol.parse(ele.previousElementSibling);
                 if (puc != undefined)
-                    puc.ucExtends.lastFocuedElement = document.activeElement as HTMLElement;
+                    puc.ucExtends.lastFocuedElement = document.activeElement;
                 //pera.parentUc.ucExtends.lastFocuedElement = document.activeElement as HTMLElement;
             }
-
-
-
             if (ele) {
                 ele.append(_extends.wrapperHT);
                 await WinManager.push(this);
@@ -443,87 +402,80 @@ export class Usercontrol {
             });
             //if (afterClose)
             //    _extends.Events.afterClose.on(afterClose);
-
             if (_extends.dialogForm == undefined)
                 _extends.dialogForm = this;
             //}, 1);
             //if (!alreadyLoadedBefore)
             _extends.Events.loaded.fireAsync();
             //requestAnimationFrame(() => {
-
             if (!defaultFocusAt) {
                 TabIndexManager.moveNext(_extends.self, undefined);
-            } else {
+            }
+            else {
                 TabIndexManager.focusTo(defaultFocusAt);
             }
-            return new Promise(async (resolve: (v: UcDialogResult) => void) => {
+            return new Promise(async (resolve) => {
                 _extends.dialogResolver = resolve;
             });
         },
-
         /*queryElements(selector: string, callback: (element: HTMLElement) => void): void {
             let elements = document.querySelectorAll(selector);
             elements.forEach(element => callback(element as HTMLElement));
         },*/
         //idList: [],
         //stampRow: userControlStampRow,
-        _windowstate: 'normal' as UcStates,
+        _windowstate: 'normal',
         get windowstate() { return this._windowstate; },
-        set windowstate(state: UcStates) { this._windowstate = state; this.Events.winStateChanged.fire([state]); },
-        getChildsRefByMainPath: (guid: string): Usercontrol[] => {
+        set windowstate(state) { this._windowstate = state; this.Events.winStateChanged.fire([state]); },
+        getChildsRefByMainPath: (htmlGuid) => {
             let _ext = this.ucExtends;
-            return _ext.dependant.filter(s => s.ucExtends.guid == guid);
+            return _ext.dependant.filter(s => s.ucExtends.htmlGuid == htmlGuid);
         },
-        getFirstChildRefByMainPath: (guid: string): Usercontrol => {
+        getFirstChildRefByMainPath: (htmlGuid) => {
             let _ext = this.ucExtends;
-            return _ext.dependant.find(s => s.ucExtends.guid == guid);
+            return _ext.dependant.find(s => s.ucExtends.htmlGuid == htmlGuid);
         },
         /* options: {
              ucExt: () => this.ucExtends,
          },*/
         Events: {
-
             /** @private  */
-            _contextChange: new CommonEvent<() => void>(),
+            _contextChange: new CommonEvent(),
             get contextChange() { return this.dialogExt().Events._contextChange; },
             /** @private  */
-            _afterInitlize: new CommonEvent<(uc: Usercontrol) => void>(),
+            _afterInitlize: new CommonEvent(),
             get afterInitlize() { return this.dialogExt().Events._afterInitlize; },
             // @ts-ignore
-            beforeClose: new CommonEvent<(args: { prevent?: boolean }) => void>(),
-            afterClose: new CommonEvent<(uc?: Usercontrol) => void>(),
-
+            beforeClose: new CommonEvent(),
+            afterClose: new CommonEvent(),
             /*
             // @ts-ignore
              beforeHide: new CommonEvent<({ prevent = false }) => void>(),
              afterHide: new CommonEvent<() => void>(),*/
-            onDestruction: new CommonEvent<({ }) => void>(),
-
-            captionChanged: new CommonEvent<(newCaptionText: string) => void>(),
-            winStateChanged: new CommonEvent<(state: UcStates) => void>(),
+            onDestruction: new CommonEvent(),
+            captionChanged: new CommonEvent(),
+            winStateChanged: new CommonEvent(),
             //activate: new CommonEvent<() => void>(),
-            _activate: new CommonEvent<() => void>(),
+            _activate: new CommonEvent(),
             get activate() { return this.dialogExt().Events._activate; },
-            _deactivate: new CommonEvent<() => void>(),
+            _deactivate: new CommonEvent(),
             get deactivate() { return this.dialogExt().Events._deactivate; },
-
-            beforeFreez: new CommonEvent<(newUc: Usercontrol) => void>(),
-            beforeUnFreez: new CommonEvent<(oldUc: Usercontrol) => void>(),
-            loaded: new CommonEvent<() => void>(),
-            loadLastSession: new CommonEvent<() => void>(),
+            beforeFreez: new CommonEvent(),
+            beforeUnFreez: new CommonEvent(),
+            loaded: new CommonEvent(),
+            loadLastSession: new CommonEvent(),
             /** @private  */
-            _newSessionGenerate: new CommonEvent<() => void>(),
+            _newSessionGenerate: new CommonEvent(),
             get newSessionGenerate() { return this.formExt().Events._newSessionGenerate; },
             /** @private  */
-            _completeSessionLoad: new CommonEvent<() => void>(),
+            _completeSessionLoad: new CommonEvent(),
             get completeSessionLoad() { return this.formExt().Events._completeSessionLoad; },
-            sizeChanged: new CommonEvent<(size: ResizeObserverEntry[]) => void>(),
+            sizeChanged: new CommonEvent(),
             formExt: () => this.ucExtends.form.ucExtends,
             dialogExt: () => this.ucExtends.dialogForm.ucExtends,
-            onDataExport: (_data: ITransferDataNode) => { return false; },
-            onDataImport: (_data: ITransferDataNode) => { return false; },
+            onDataExport: (_data) => { return false; },
+            onDataImport: (_data) => { return false; },
         },
-
         distructOnClose: true,
         close: async () => {
             let _ext = this.ucExtends;
@@ -535,20 +487,19 @@ export class Usercontrol {
                 else
                     this.hide();
             }
-            if (_ext.dialogResolver != undefined) _ext.dialogResolver(_ext.DialogResult);
+            if (_ext.dialogResolver != undefined)
+                _ext.dialogResolver(_ext.DialogResult);
         },
-
-        passElement: (ele: HTMLElement | HTMLElement[], options?: IPassElementOptions): { [xname: string]: HTMLElement | HTMLElement[] } => {
+        passElement: (ele, options) => {
             return this.ucExtends.srcNode.passElement(ele, options);
         },
-
         designer: {
-            setCaption: (text: string) => {
+            setCaption: (text) => {
                 this.ucExtends.wrapperHT.setAttribute("x-caption", text);
                 this.ucExtends.Events.captionChanged.fire([text]);
             },
-            getAllControls: (/*specific?: string[]*/): { [key: string]: HTMLElement | HTMLElement[] } => {
-                let childs: { [key: string]: HTMLElement | HTMLElement[] } = {};
+            getAllControls: ( /*specific?: string[]*/) => {
+                let childs = {};
                 let uExt = this.ucExtends;
                 let fromElement = uExt.wrapperHT;
                 let uniqStamp = uExt.srcNode.localStamp;
@@ -557,36 +508,31 @@ export class Usercontrol {
                         const itmpath = specific[i];
                         if (!(itmpath in childs)) {
                             let ele = fromElement.querySelector(`[${ATTR_OF.X_NAME}='${itmpath}'][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`) as HTMLElement; // old one `[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
-                            //let ele = fromElement.querySelector(`[${propOpt.ATTR.ACCESS_KEY}='${itmpath}']${ATTR_OF.setParent(uniqStamp)}`) as HTMLElement; 
+                            //let ele = fromElement.querySelector(`[${propOpt.ATTR.ACCESS_KEY}='${itmpath}']${ATTR_OF.setParent(uniqStamp)}`) as HTMLElement;
                             fillObj(itmpath, ele);
                         }
                     }
                 } else {*/
-                let eleAr: HTMLElement[] = [];
+                let eleAr = [];
                 if (SourceNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
-                    eleAr = Array.from(fromElement.querySelectorAll(`[${ATTR_OF.X_NAME}][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`)) as HTMLElement[];  // old one `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
-                } else {
-                    eleAr = Array.from(fromElement.querySelectorAll(`.${ATTR_OF.__CLASS(uniqStamp, 'l')}[${ATTR_OF.X_NAME}]`)) as HTMLElement[];  // old one `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
+                    eleAr = Array.from(fromElement.querySelectorAll(`[${ATTR_OF.X_NAME}][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`)); // old one `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
+                }
+                else {
+                    eleAr = Array.from(fromElement.querySelectorAll(`.${ATTR_OF.__CLASS(uniqStamp, 'l')}[${ATTR_OF.X_NAME}]`)); // old one `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
                 }
                 for (let i = 0, len = eleAr.length; i < len; i++) {
                     const ele = eleAr[i];
                     SourceNode.ExtendControlObject(childs, ele.getAttribute(ATTR_OF.X_NAME), ele);
                 }
-
                 return childs;
             }
         },
     };
 }
-export interface ITransferDataNode {
-    type: "unknown" | "uc" | "uc-link" | "tpt" | "tpt-link" | "text" | "json" | "link";
-    unqKey?: string;
-    data?: any;
-}
 ;
-export const TransferDataNode: ITransferDataNode = {
+export const TransferDataNode = {
     type: "unknown",
     unqKey: '',
     data: undefined,
 };
-
+//# sourceMappingURL=Usercontrol.js.map

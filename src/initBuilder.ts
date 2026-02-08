@@ -1,12 +1,13 @@
-import { PathBridge } from "ucbuilder-devtools/out/renderer/pathBridge.js";
+
 import { ProjectManage } from "ucbuilder-devtools/out/renderer/ProjectManage.js";
 import { WinManager } from "./lib/WinManager.js";
 import { nodeFn } from "./renderer/nodeFn.js";
+import { PathBridge } from "ap-shared-core/out/ucbuilder-devtools/pathBridge.js";
 
 async function initBuilder() {
     ProjectManage.init();
-    PathBridge.path = nodeFn.path;
-    PathBridge.url = nodeFn.url;
+    PathBridge.path = nodeFn.path as any;
+    PathBridge.url = nodeFn.url  as any;
     PathBridge.CheckAndSetDefault();
     PathBridge.source = ProjectManage.projects;
     try {

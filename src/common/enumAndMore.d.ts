@@ -1,35 +1,8 @@
 import { IKeyStampNode } from "../renderer/StylerRegs.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
+import { ResourceKeyRegistry } from "ap-shared-core/out/ucbuilder/resources/enums.js";
 export type UCGenerateMode = "client" | "designer";
 export type UcStates = "normal" | "dock" | "minimize" | "maximize";
-export interface AssemblyRegistry {
-}
-export type AssemblyList = keyof AssemblyRegistry;
-export interface ResourceNamedRegistry {
-}
-export type ResourceNamedList = keyof ResourceNamedRegistry;
-export interface ResourceKeyRegistry {
-}
-export type ResourceKeyList = keyof ResourceKeyRegistry;
-export declare function safeStringify(v: any): string;
-export declare function normalizeJSON(v: any): any;
-export type BuildResourceType = "css" | "html" | "image" | "text" | "raw" | "data" | "string";
-export declare class BuildResource {
-    guid: string;
-    name?: string;
-    type: BuildResourceType;
-    content: string;
-    source?: string;
-}
-export declare class UserResource extends BuildResource {
-    /**
-     * ONLY ONE RESOURCE SHOULD ASSIGN THIS OPTION TRUE TO USE
-     * THAT CSS AS PROJECT'S GLOBAL CSS
-     */
-    isGlobalCss?: boolean;
-    importar?: string;
-    project?: AssemblyList;
-}
 export type FileTypes = "cssFile" | "htmlFile" | "imageFile" | "textFile" | "rawFile" | "string" | "integer" | "float" | "boolean";
 export declare class FileEntry {
     type: FileTypes;
@@ -57,30 +30,20 @@ export declare class objectOpt {
 }
 export type WrapperNodeNameAs = "wrapper" | "targetElement" | "random";
 export type StringExchangerCallback = (content: string) => string;
-export declare class ResourceKeyBridge {
-    static PREFIX: string;
-    static SUFFIX: string;
-    static PLACEHOLDER_RE: RegExp;
-    static makeKey(key: string): string;
-    static extractKey(placeholder: string): string | null;
-    static findAll(text: string): string[];
-    static replace(text: string, resolver: (key: string) => string): string;
-    static isPlaceholder(value: string): boolean;
-}
 export interface ISourceOptions {
     htmlRow?: any;
     htmlGuid?: keyof ResourceKeyRegistry;
     cssGuid?: keyof ResourceKeyRegistry;
 }
 export declare const SourceOptions: ISourceOptions;
-export interface ITemplatePathOptions {
+export interface ITemplateNodeMeta {
     accessKey: string;
     objectKey: string;
     htmlContents?: string;
     cssContents?: string;
     tptCSSContents?: string;
 }
-export declare const TemplatePathOptions: ITemplatePathOptions;
+export declare const TemplatePathOptions: ITemplateNodeMeta;
 export type WhatToDoWithTargetElement = "replace" | "append";
 export interface IUcOptions {
     cssKeyStamp?: IKeyStampNode;

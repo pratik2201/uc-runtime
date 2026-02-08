@@ -1,5 +1,4 @@
-import { ATTR_OF } from "../global/runtimeOpt.js";
-import { ucUtil } from "../global/ucUtil.js";
+import { ucUtil, ATTR_OF } from "ap-shared-core/out/ucbuilder/ucUtil.js";
 import { StyleBaseType, StylerRegs, WRAPPER_TAG_NAME } from "../renderer/StylerRegs.js";
 export var STYLER_SELECTOR_TYPE;
 (function (STYLER_SELECTOR_TYPE) {

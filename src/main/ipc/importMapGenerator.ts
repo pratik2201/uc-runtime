@@ -1,9 +1,8 @@
+import { UserUCConfig } from 'ap-shared-core/out/ucbuilder/configResources.js' 
+import { cleanPath } from 'ap-shared-core/out/ucbuilder/ucUtil.js'
 import fs from 'fs'
 import path from 'path'
-import { UserUCConfig } from 'ap-shared-core/out/ucbuilder/configResources.js'
-import { ConfigHandler } from 'ucbuilder-devtools/out/lib/ConfigHandler.js'
 import { ImportUserConfig } from 'ucbuilder-devtools/out/lib/userConfigManage.js'
-import { cleanPath } from 'ap-shared-core/out/ucbuilder/ucUtil.js'
 
 export type BrowserConfig = {
   importmap?: Record<string, string>
@@ -32,7 +31,7 @@ export function ensureHead(): HTMLHeadElement {
 }
 
 export async function scanAllProjects(
-  mainRoot: string = ConfigHandler.filler.MAIN_PROJECT_PATH
+  mainRoot: string = ''//ConfigHandler.filler.MAIN_PROJECT_PATH
 ): Promise<ProjectEntry[]> {
   //console.log(mainRoot);
 

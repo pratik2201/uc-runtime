@@ -1,19 +1,17 @@
 
 import { BuildResource } from "ap-shared-core/out/ucbuilder/resources/enums.js";
-import { ResourceStorage } from "./ResourceStorage.js";
-import { decryptResource, encryptResource } from "./cryptoResource.js";
+import { ResourceStorage } from "ap-shared-core/out/ucbuilder/resources/ResourceStorage.js";
 import { IpcMainGroup } from "./ipc/IpcMainHelper.js";
-export default function () {
-    const main = IpcMainGroup('ucbuilder/src/renderer/ResourceManage');
+import { encryptResource, decryptResource } from "ap-shared-core/out/ucbuilder/resources/cryptoResource.js";
 
+export default function () {
+    const main = IpcMainGroup('ucbuilder/src/renderer/ResourceManage'); 
     main.On('x1', (event, res: string) => {
         event.returnValue = encryptResource(res);
     });
     main.On('x0', (event, res: string) => {
-        event.returnValue = decryptResource(res);
-
-    });
-
+        event.returnValue = decryptResource(res); 
+    }); 
     main.On('register', (event, res: BuildResource) => {
         event.returnValue = ResourceStorage.register(res);
     });
@@ -23,27 +21,17 @@ export default function () {
     main.On('has', (event, key: string) => {
         event.returnValue = ResourceStorage.has(key);
     });
-    main.On('get', (event, key: string) => {
-
+    main.On('get', (event, key: string) => { 
         event.returnValue = ResourceStorage.get(key);
     });
     main.On('getContent', (event, key: string) => {
-        event.returnValue = ResourceStorage.getContent(key);
-        //let v = ResourceStorage.getContent(key);
-        //event.returnValue = getCache(key, v);
+        event.returnValue = ResourceStorage.getContent(key); 
     });
     main.On('getByName', (event, name: string) => {
-        event.returnValue = ResourceStorage.getByName(name);
-        // let v = ResourceStorage.getByName(name);
-        // if (v != undefined) {
-        //     v = JSON.parse(JSON.stringify(v));
-        //     v.content = getCache(name, v.content);
-        // }
-        // event.returnValue = v;
+        event.returnValue = ResourceStorage.getByName(name); 
     });
-    main.On('getContentByName', (event, name: string) => {
-        //let v = ResourceStorage.getContentByName(name);
-        event.returnValue = ResourceStorage.getContentByName(name);//getCache(name, v);
+    main.On('getContentByName', (event, name: string) => { 
+        event.returnValue = ResourceStorage.getContentByName(name); 
     });
     main.On('keys', (event) => {
         event.returnValue = ResourceStorage.keys();
@@ -51,24 +39,4 @@ export default function () {
     main.On('clear', (event) => {
         event.returnValue = ResourceStorage.clear();
     });
-
-
-    // main.On('resource.all', (event) => {
-    //     event.returnValue = RM.getEntriesOfFile();
-    // });
-    // main.On('resource.getResource', (event, resKey: string, type: FileTypes, valOrPath: string) => {
-    //     event.returnValue = RM.getResource(resKey, type, valOrPath);
-    // });
-    // main.On('resource.setResource', (event, resKey: string, fe: FileEntry) => {
-    //     RM.setResource(resKey, fe);
-    //     event.returnValue = undefined;
-    // });
-    // main.On('resource.getValue', (event, key: string, valueIfNotExist?: string, type?: FileTypes) => {
-    //     if (RM.hasValue(key)) event.returnValue = RM.getValue(key);
-    //     else {
-    //         if (valueIfNotExist != undefined && type != undefined)
-    //             event.returnValue = registerValue(key, valueIfNotExist, type);
-    //         else event.returnValue = undefined;
-    //     };
-    // });
 };

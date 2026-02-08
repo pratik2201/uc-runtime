@@ -12,12 +12,23 @@ import { Assembly, AssemblyManager } from "../Assembly.js";
 import { ImportMapResolver } from "ap-shared-core/out/ucbuilder-devtools/ImportMapResolver.js";
 
 let isExecuted = false;
+function getImportMap() {
+  const script = document.querySelector(
+    'script[type="importmap"]'
+  ) as HTMLScriptElement | null;
+
+  if (!script?.textContent) {
+    throw new Error("ImportMapResolver: importmap script not found");
+  }
+
+  return JSON.parse(script.textContent);
+}
 async function initRenderer() {
   if (isExecuted) return;
   isExecuted = true;
   IpcRendererHelper.init(window);
   nodeFn.fullfill = window[IPC_API_KEY].fullFill;
-  ImportMapResolver.init(nodeFn.path.resolve());
+  ImportMapResolver.init(getImportMap(), nodeFn.path.resolve());
 
   TabIndexManager.init();
   Extensions.init();

@@ -2,12 +2,12 @@ import { app, ipcMain, type BrowserWindow, type IpcMainEvent } from "electron";
 import fs from "node:fs";
 import path, { dirname } from "node:path";
 import url, { fileURLToPath, pathToFileURL } from "node:url";
-import { ConfigHandler } from "ucbuilder-devtools/out/lib/ConfigHandler.js";
-import { PathBridge } from "ucbuilder-devtools/out/renderer/pathBridge.js";
+//import { ConfigHandler } from "ucbuilder-devtools/out/lib/ConfigHandler.js"; 
 import {  IPC_API_KEY, IPC_GET_KEY, IPC_REGISTER_KEY, UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js";
 import { AssemblyManager } from "../Assembly.js";
 import { createImportMap, scanAllProjects } from "./importMapGenerator.js"; // ucbuilder/out/main/devtoolsBridge.js
 import { getCloneableObject } from "ap-shared-core/out/objectUtil.js";
+import { PathBridge } from "ap-shared-core/out/ucbuilder-devtools/pathBridge.js";
 type IpcMainCallBack = (e: import("electron").IpcMainEvent, ...args: any[]) => void;
 type IpcMainInvokeCallBack = (e: import("electron").IpcMainInvokeEvent, ...args: any[]) => Promise<any>;
 
@@ -101,7 +101,7 @@ export class IpcMainHelper {
     static INITIAL_SCRIPT = "";
 
     static async loadURL(_path: string, win: BrowserWindow, options?: Electron.LoadURLOptions) {
-        await ConfigHandler.init(_path);
+        //await ConfigHandler.init(_path);
         IpcMainHelper.On('assembies', (event, args: {}) => {
             event.returnValue = AssemblyManager.getAssemblies();
         }, UC_ACCESS_KEY);

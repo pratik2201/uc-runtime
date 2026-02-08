@@ -60,27 +60,5 @@ export class ResourceManage {
     static getContentByName = <K extends keyof ResourceNamedRegistry>(name: K,CHECK_RESOURCE_PATH_IS_CORRECT_OR_NOT?:ResourceNamedRegistry[K]) => {
         return this.renderer.sendSync('getContentByName', [name]) as string;
     }
-
-
-
-
-
-    // static all = () => {
-    //     return this.renderer.sendSync('resource.all', []) as [string, FileEntry][];
-    // }
-    // static setResources = (resKey: string, fe: FileEntry) => {
-    //     this.renderer.sendSync('resource.setResource', [resKey, fe]);
-    // }
-    // static getResource = (resKey: string, type: FileTypes, valOrPath?: string): string => {
-    //     const res = this.renderer.sendSync('resource.getResource', [resKey, type, valOrPath]) as FileEntry;
-    //     if (res == undefined) {
-    //         console.log(`!!!! AT 'resource.getResource' NO FILE FOUND '${valOrPath}' `);
-    //         return undefined;
-    //     }
-    //     ////console.log(res);
-    //     return res?.value;
-    // }
-    // static getValue = (key: string, value: string): string => {
-    //     return this.renderer.sendSync('resource.getValue', [key, value]);
-    // }
+ 
 }

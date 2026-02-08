@@ -1,6 +1,7 @@
+import { ITemplateMeta, IUsercontrolMeta } from "ap-shared-core/out/ucbuilder/Template.js";
 import { IKeyStampNode } from "../renderer/StylerRegs.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
-import { ResourceKeyRegistry } from "ap-shared-core/out/ucbuilder/resources/enums.js";
+import { ResourceKeyList, ResourceKeyRegistry } from "ap-shared-core/out/ucbuilder/resources/enums.js";
 export type UCGenerateMode = "client" | "designer";
 export type UcStates = "normal" | "dock" | "minimize" | "maximize";
 // ResourceManage.d.ts
@@ -103,60 +104,28 @@ export class objectOpt {
   }
 }
 
-// export interface SessionOptions {
-//     addNodeToParentSession?: boolean;
-//     loadBySession?: boolean;
-//     uniqueIdentity?: string;
-// }
-// export const sessionOptions: SessionOptions = {
-//     addNodeToParentSession: false,
-//     loadBySession: false,
-//     uniqueIdentity: "",
-// };
-
-
 export type WrapperNodeNameAs = "wrapper" | "targetElement" | "random";
 export type StringExchangerCallback = (content: string) => string;
 
 export interface ISourceOptions {
   htmlRow?: any;
-  //htmlImportMetaUrl?: string;
   htmlGuid?: keyof ResourceKeyRegistry;
   cssGuid?: keyof ResourceKeyRegistry;
-  /*htmlContents?: string;
-  cssContents?: string;
-  cssFilePath?: string;
-  htmlFilePath?: string;*/
-  //beforeContentAssign: StringExchangerCallback;
 }
 export const SourceOptions: ISourceOptions = {
-  /*beforeContentAssign: (content) => {
-      return content;
-  },*/
 };
 
-export interface ITemplatePathOptions {
-  accessKey: string;
-  objectKey: string;
-  htmlContents?: string;
-  cssContents?: string;
-  tptCSSContents?: string;
-}
-export const TemplatePathOptions: ITemplatePathOptions = {
-  accessKey: "",
-  objectKey: "",
-  htmlContents: "",
-  cssContents: "",
-};
+
 export type WhatToDoWithTargetElement = "replace" | "append";
 
 export interface IUcOptions {
   //cfInfo?: codeFileInfo;
   cssKeyStamp?: IKeyStampNode,
-  guid?: string;
+  guid?: ResourceKeyList;
   mode?: UCGenerateMode;
   // session?: SessionOptions;
-  source?: ISourceOptions;
+  // source?: ISourceOptions;
+  source?: IUsercontrolMeta;
   parentUc?: Usercontrol;
   accessName?: string,
   context?: any,
@@ -173,7 +142,7 @@ export const UcOptions: IUcOptions = {
   mode: 'client',
   accessName: '',
   //session: newObjectOpt.clone<SessionOptions>(sessionOptions),
-  source: objectOpt.clone<ISourceOptions>(SourceOptions),
+  source: new IUsercontrolMeta(), //objectOpt.clone<ISourceOptions>(SourceOptions),
   //loadAt: document.body,
   // decisionForTargerElement: 'append',  // waitForDecision
   events: {
@@ -196,14 +165,15 @@ export function ExtractArguments(args: IArguments): IArguments {
 export interface ITptOptions {
   //cfInfo?: codeFileInfo;
   MakeEmptyTemplate?: boolean;
-  source?: ISourceOptions;
+  //source?: ISourceOptions;
+  guid?: ResourceKeyList;
+  source?: ITemplateMeta;
   //cssBaseFilePath?: string;
   parentUc?: Usercontrol;
 }
 export const TptOptions: ITptOptions = {
   MakeEmptyTemplate: false,
-
-  source: objectOpt.clone<ISourceOptions>(SourceOptions),
+  source: new ITemplateMeta,//objectOpt.clone<ISourceOptions>(SourceOptions),
 };
 //namespace ucbuilder.global.objectOptions {
 

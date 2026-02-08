@@ -1,8 +1,6 @@
 {
   "name": "ucbuilder",
   "version": "3.0.0-beta.0",
-  "main": "./out/main/index.js",
-  "types": "./out/main/index.d.ts",
   "type": "module",
   "description": ":Shree Ganeshay Namah: \n new way app design",
   "scripts": {

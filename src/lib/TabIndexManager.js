@@ -1,5 +1,5 @@
-import { ucUtil } from "../global/ucUtil.js";
 import { WinManager } from "./WinManager.js";
+import { ucUtil } from "ap-shared-core/out/ucbuilder/ucUtil.js";
 class ErrorSound {
     static audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     static gainNode = (() => {

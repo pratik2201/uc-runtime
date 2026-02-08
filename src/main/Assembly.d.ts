@@ -1,4 +1,4 @@
-import { ResourceKeyRegistry, AssemblyList, ResourceKeyList } from "../enumAndMore.js";
+import { AssemblyList, ResourceKeyList, ResourceKeyRegistry } from "ap-shared-core/out/ucbuilder/resources/enums.js";
 import { SourceNode } from "../lib/StampGenerator.js";
 export declare class Assembly {
     name: AssemblyList;
