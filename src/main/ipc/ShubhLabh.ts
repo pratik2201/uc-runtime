@@ -33,7 +33,7 @@ async function initRenderer() {
   TabIndexManager.init();
   Extensions.init();
   StylerRegs.initProjectsStyle();
-  const _assembiles = IpcRendererHelper.assembies;
+  const _assembiles = IpcRendererHelper.assemblies;
   AssemblyManager.assemblies = {};
   for (const [k, v] of Object.entries(_assembiles)) {
     const _newAssembly = new Assembly();

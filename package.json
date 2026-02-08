@@ -21,8 +21,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "ap-shared-core": "file:../ap-shared-core",
-    "ucbuilder-devtools": "file:../ucbuilder-devtools"
+    "ap-shared-core": "file:../ap-shared-core"
   },
   "keywords": [
     "electron app designer",

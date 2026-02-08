@@ -770,7 +770,9 @@ export class CssVariableHandler {
   static GetCombinedCSSAnimationName = (key: string, uniqId: string, code: CSSVariableScopeSort): string => {
     return `anm${key}${uniqId}${code}`;
   }
-  static SetCSSVarValue = (vlst: VariableList, uniqId: any, code: CSSVariableScopeSort, tarEle: HTMLElement = document.body): void => {
+  static SetCSSVarValue = (vlst: VariableList,
+    uniqId: any,
+    code: CSSVariableScopeSort, tarEle: HTMLElement = document.body): void => {
     let style = tarEle.style;
     for (const [key, value] of Object.entries(vlst)) {
       style.setProperty(this.GetCombinedCSSVarName(key, uniqId, code), value);

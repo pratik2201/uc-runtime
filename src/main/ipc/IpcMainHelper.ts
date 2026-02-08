@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path, { dirname } from "node:path";
 import url, { fileURLToPath, pathToFileURL } from "node:url";
 //import { ConfigHandler } from "ucbuilder-devtools/out/lib/ConfigHandler.js"; 
-import {  IPC_API_KEY, IPC_GET_KEY, IPC_REGISTER_KEY, UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js";
+import { IPC_API_KEY, IPC_GET_KEY, IPC_REGISTER_KEY, UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js";
 import { AssemblyManager } from "../Assembly.js";
 import { createImportMap, scanAllProjects } from "./importMapGenerator.js"; // ucbuilder/out/main/devtoolsBridge.js
 import { getCloneableObject } from "ap-shared-core/out/objectUtil.js";
@@ -96,36 +96,15 @@ export class IpcMainHelper {
         });
         (await import('../nodeFn.ipc.js')).default();
         (await import('../ResourceManage.ipc.js')).default();
-
+        IpcMainHelper.On('assemblies', (event, args: {}) => {
+            event.returnValue = AssemblyManager.getAssemblies();
+        }, UC_ACCESS_KEY);
     }
     static INITIAL_SCRIPT = "";
 
     static async loadURL(_path: string, win: BrowserWindow, options?: Electron.LoadURLOptions) {
-        //await ConfigHandler.init(_path);
-        IpcMainHelper.On('assembies', (event, args: {}) => {
-            event.returnValue = AssemblyManager.getAssemblies();
-        }, UC_ACCESS_KEY);
-
-        if (!app.isPackaged) {
-            try {
-                const { initDevTools } = await import("ucbuilder-devtools/out/main/index.js");
-                if (initDevTools) {
-                    await initDevTools();
-                }
-            } catch (err) {
-                // Devtools not installed or failed to load
-                console.warn("ucbuilder: devtools not available.");
-            }
-        }
 
         console.log('configManage inited.');
-
-
-
-
-
-
-
         let htmlUrl: string, htmlPath: string;
         if (_path.startsWith('file:///')) {
             htmlUrl = _path;

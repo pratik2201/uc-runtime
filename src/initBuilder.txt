@@ -14,7 +14,7 @@ async function initBuilder() {
 
         const keyBinding = ProjectManage.getInfoByProjectPath(ProjectManage.PROJECT_PATH).config.preference.build.keyBind ?? ['ControlRight', 'F12'];
         const shortcutKeys = [keyBinding];
-
+        
         const { builder } = await import("ucbuilder-devtools/out/renderer/builder.js");
         let mgen = builder.GetInstance();
         window['$ucbuilder'] = mgen;

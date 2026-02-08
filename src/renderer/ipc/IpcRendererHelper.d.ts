@@ -22,7 +22,7 @@ export declare class IpcRendererHelper {
     static send(key: string, args: any[], regKey?: IPC_REGISTER_KEY): void;
     static On(actionKey: string, callback: IpcRendererCallBack, regKey?: IPC_REGISTER_KEY): void;
     static Invoke(key: string, args: any[], importMetaUrl: IPC_REGISTER_KEY): Promise<any>;
-    static get assembies(): ProjectRowBase;
+    static get assemblies(): ProjectRowBase;
     static get ucConfig(): ProjectRowBase;
     static ipcChannels: Set<unknown>;
     static getRelativeURL(_path: string): string;

@@ -4,14 +4,7 @@ export default UcDefaultConfig({
     mainAlias: 'ucbuilder',
     preference: {
         build: {
-            ResourceDeclarationFile: 'designerFiles/Resources.ts',
-            RuntimeResources: [
-                {
-                    includeExtensions: [".html", ".scss", ".mjs", ".css", ".svg", ".png", ".jpg", ".ico"],
-                    fromDeclare: "src",
-                    toDeclares: ["out"]
-                }
-            ]
+            ResourceDeclarationFile: 'designerFiles/Resources.ts',  
         },
         dirDeclaration: {
             src: {

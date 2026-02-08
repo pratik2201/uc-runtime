@@ -105,8 +105,8 @@ export class IpcRendererHelper {
 
         return apk.invoke(IPC_API_KEY, IPC_GET_KEY(key, importMetaUrl), ...args);
     }
-    static get assembies(): ProjectRowBase {
-        return this.sendSync('assembies', [{}], UC_ACCESS_KEY);
+    static get assemblies(): ProjectRowBase {
+        return this.sendSync('assemblies', [{}], UC_ACCESS_KEY);
     }
     static get ucConfig(): ProjectRowBase {
         return this.sendSync('ucConfig', [{}], UC_ACCESS_KEY);

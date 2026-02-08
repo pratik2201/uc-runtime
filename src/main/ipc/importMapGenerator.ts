@@ -2,7 +2,7 @@ import { UserUCConfig } from 'ap-shared-core/out/ucbuilder/configResources.js'
 import { cleanPath } from 'ap-shared-core/out/ucbuilder/ucUtil.js'
 import fs from 'fs'
 import path from 'path'
-import { ImportUserConfig } from 'ucbuilder-devtools/out/lib/userConfigManage.js'
+//import { ImportUserConfig } from 'ucbuilder-devtools/out/lib/userConfigManage.js'
 
 export type BrowserConfig = {
   importmap?: Record<string, string>
@@ -43,7 +43,7 @@ export async function scanAllProjects(
 
     try {
       // const json = JSON.parse(fs.readFileSync(ucconfigPath, 'utf8'))
-      const json = await ImportUserConfig(ucconfigPath) as UserUCConfig;
+      const json = undefined ;//await ImportUserConfig(ucconfigPath) as UserUCConfig;
       const relPath = path.relative(mainRoot, projectRoot) || '.'
 
       result.push({
@@ -157,13 +157,7 @@ function findSubProjects(rootDir: string): string[] {
 
   return dirs.map(d => path.join(nodeModules, d));
 }
-async function getBrowserConfig(projectDir: string) {
-  const configPath = path.join(projectDir, "ucconfig.js");
-  if (!fs.existsSync(configPath)) return null;
 
-  const cfg = await ImportUserConfig(configPath);//JSON.parse(fs.readFileSync(configPath, "utf-8"));
-  return cfg.browser || null;
-}
 function findSubProjectsRecursive(dir: string, seen = new Set<string>()): string[] {
   const projects: string[] = [];
 
@@ -197,7 +191,14 @@ function toFileUrl(p: string) {
   const fullPath = path.resolve(p).replace(/\\/g, "/"); // forward slashes
   return `file:///${fullPath}/`; // note 3 slashes
 }
+/*
+async function getBrowserConfig(projectDir: string) {
+  const configPath = path.join(projectDir, "ucconfig.js");
+  if (!fs.existsSync(configPath)) return null;
 
+  const cfg = undefined;//await ImportUsedrConfig(configPath);//JSON.parse(fs.readFileSync(configPath, "utf-8"));
+  return cfg.browser || null;
+}
 export async function generateImportMap(mainProjectDir: string) {
   const importMap: any = { imports: {}, scopes: {} };
 
@@ -233,3 +234,4 @@ export async function generateImportMap(mainProjectDir: string) {
 
   return importMap;
 }
+*/
