@@ -8,31 +8,17 @@ import { AssemblyManager, Assembly } from "../../renderer/Assembly.js";
 import { IpcRendererHelper } from "../../renderer/ipc/IpcRendererHelper.js";
 import { nodeFn } from "../../renderer/nodeFn.js";
 import { ResourceManage } from "../../renderer/ResourceManage.js";
-import { StyleBaseType, StylerRegs } from "../../renderer/StylerRegs.js"; 
-import { ImportMapResolver } from "ap-shared-core/out/ucbuilder-devtools/ImportMapResolver.js";
-
+import { StyleBaseType, StylerRegs } from "../../renderer/StylerRegs.js";
 let isExecuted = false;
-function getImportMap() {
-  const script = document.querySelector(
-    'script[type="importmap"]'
-  ) as HTMLScriptElement | null;
-
-  if (!script?.textContent) {
-    throw new Error("ImportMapResolver: importmap script not found");
-  }
-
-  return JSON.parse(script.textContent);
-}
 async function initRenderer() {
   if (isExecuted) return;
   isExecuted = true;
   IpcRendererHelper.init(window);
   nodeFn.fullfill = window[IPC_API_KEY].fullFill;
-  ImportMapResolver.init(getImportMap(), nodeFn.path.resolve());
 
   TabIndexManager.init();
   Extensions.init();
-  StylerRegs.initProjectsStyle();
+  SourceNode.init();
   const _assembiles = IpcRendererHelper.assemblies;
   AssemblyManager.assemblies = {} as any;
   for (const [k, v] of Object.entries(_assembiles)) {
@@ -44,16 +30,24 @@ async function initRenderer() {
       key: _newAssembly.cssGuid,
       baseType: StyleBaseType.Global,
       assembly: _newAssembly,
-      //project: undefined,
       mode: '$',
       accessName: _newAssembly.name,
     });
     _newAssembly.srcNode.pushCSS(_newAssembly.cssGuid, ResourceManage.getContent(_newAssembly.cssGuid), document.body);
   }
-  //console.log(AssemblyManager.assemblies);
-
   WinManager.initEvent();
-
   console.log('All Done... ');
 }
 await initRenderer();
+
+
+
+// function getImportMap() {
+//   const script = document.querySelector(
+//     'script[type="importmap"]'
+//   ) as HTMLScriptElement | null;
+//   if (!script?.textContent) {
+//     throw new Error("ImportMapResolver: importmap script not found");
+//   }
+//   return JSON.parse(script.textContent);
+// }

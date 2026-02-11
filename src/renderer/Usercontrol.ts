@@ -5,12 +5,12 @@ import { ATTR_OF, GetUniqueId } from "ap-shared-core/out/ucbuilder/ucUtil.js";
 import { CommonEvent } from "../global/commonEvent.js";
 import { FilterContent, IPassElementOptions, STYLER_SELECTOR_TYPE, SourceNode } from "../lib/StampGenerator.js";
 import { TabIndexManager } from "../lib/TabIndexManager.js";
-import { WinManager } from "../lib/WinManager.js"; 
-import { nodeFn } from "./nodeFn.js";
+import { WinManager } from "../lib/WinManager.js";
 import { ResourceManage } from "./ResourceManage.js";
 import { CSSVariableScope, CssVariableHandler, StyleBaseType, VariableList } from "./StylerRegs.js";
-import { ResourceKeyRegistry, ResourceKeyList } from "src/common/resources/enums";
+import { ResourceKeyRegistry, ResourceKeyList } from "src/common/resources/enums.js";
 import { Assembly, AssemblyManager } from "./Assembly.js";
+import { normalizeJSON } from "ap-shared-core/out/objectUtil.js";
 export type UcDialogResult = "none" | "ok" | 'cancel' | 'close';
 export type ucVisibility = 'inherit' | 'visible' | 'hidden';
 export class Usercontrol {
@@ -20,10 +20,10 @@ export class Usercontrol {
         cssGuid: undefined as keyof ResourceKeyRegistry,
     }
     static parse(node: HTMLElement): Usercontrol { return node["#data"](ATTR_OF.BASE_OBJECT); }
-    static Resolver = (outDesignerImportMetaUrl: string, relPathOfOutHtml: string) => {
-        let fp = nodeFn.url.fileURLToPath(outDesignerImportMetaUrl); // `absFileUrl` designer js path
-        return nodeFn.path.resolveFilePath(fp, relPathOfOutHtml);
-    }
+    // static Resolver = (outDesignerImportMetaUrl: string, relPathOfOutHtml: string) => {
+    //     let fp = nodeFn.url.fileURLToPath(outDesignerImportMetaUrl); 
+    //     return nodeFn.path.resolveFilePath(fp, relPathOfOutHtml);
+    // }
     // static async GenerateControls(mainUc: Usercontrol, args?: IUcOptions, htmlCodePath?: string) {
     //     const mainFilePath = htmlCodePath;
     //     async function _tpt(xname: string, finfo: codeFfileInfo, targetEle: HTMLElement) {
@@ -62,7 +62,7 @@ export class Usercontrol {
     //             let xfrom = ele.getAttribute(ATTR_OF.X_FROM);
     //             let targetPath = nodeFn.path.resolveFilePath(mainFinfo.pathOf.html, xfrom);
     //             let finfo = new codeFilefInfo();
-    //             finfo.parseUrl(targetPath, pref.outDir as any, mainFinfo.pathOf.html);
+    //             finfo.parseUrl(targetPath, pref.outDec as any, mainFinfo.pathOf.html);
     //             if (xfrom.endsWith('.uc.html'))
     //                 await _uc(xname, finfo, ele);
     //             else
@@ -82,8 +82,8 @@ export class Usercontrol {
     static extractArgs = (args: IArguments) => ExtractArguments(args);
 
     constructor() {
-
     }
+
     private hide = async () => {
         let _ext = this.ucExtends;
         let res = { prevent: false };
@@ -105,7 +105,7 @@ export class Usercontrol {
         await Usercontrol.HiddenSpace.appendChild(_ext.wrapperHT);
         await _ext.srcNode.release();
         requestAnimationFrame(async () => {
-            _ext.wrapperHT["#delete"]();
+            _ext.wrapperHT.remove();
             for (const key in _this) {
                 _this[key] = undefined;
             }
@@ -233,11 +233,13 @@ export class Usercontrol {
             ucExt.mode = param0.mode;
             if (param0.guid != undefined) {
                 ucExt.guid = param0.guid;
-                ucExt.resource = JSON.parse(ResourceManage.getContent(param0.guid as never));
+                const content = ResourceManage.getContent(param0.guid as never);
+                ucExt.resource = new IUsercontrolMeta();
+                const jsn = normalizeJSON(content);
+                Object.assign(ucExt.resource, jsn);
             }
             if (param0.events.beforeInitlize != undefined) param0.events.beforeInitlize(this);
             ucExt.isForm = (param0.parentUc == undefined);
-            //ucExt.fileInfo = param0.cfInfo;
             if (ucExt.isForm) {
                 ucExt.dialogForm = this;
                 ucExt.show = () => { throw new Error('Parent Free Usercontrol SHOULD be CALL by `showDialog` \n ' + ucExt.guid) };
@@ -262,7 +264,7 @@ export class Usercontrol {
                 mode: '^',
             });
             //let htPathToRead = param0.source.htmlFilePath ?? ucExt.fileInfo.pathOf.html;
-            ucExt.resource = param0.source;
+            //ucExt.resource = param0.source;
 
 
             let tmkr = Usercontrol.templateMkr.get(ucExt.guid);
@@ -341,22 +343,19 @@ export class Usercontrol {
         },
         controls: undefined as { [xname: string]: HTMLElement | HTMLElement[] },
         resizerObserver: undefined as ResizeObserver,
-        finalizeInitAsync: async (param0: IUcOptions) => {
-            let ext = this.ucExtends;
-            //ext.srcNode.pushCSS(ext.srcNode.cssFsilePath ?? ext.fileInfo.pathOf.scss, ext.fileInfo.projectInfo.importMetaURL, ext.self);
-            const cssContent = ResourceManage.getContent(ext.guid as never);
-            ext.srcNode.pushCSS(
-                ext.guid,
-                //ext.srcNode.cssFilePdath ?? ext.fileInfo.pathOf.scss,
-                cssContent,//param0.source.cssContents,
-                ext.self);
-            //console.log(cssContent);
-
-            if (ext.isDialogBox) {
-                ext.Events.afterInitlize.on(param0.events.afterInitlize);
-                await ext.Events.afterInitlize.fireAsync([this]);
-            }
-        },
+        // finalizeInitAsync: async (param0: IUcOptions) => {
+        //     let ext = this.ucExtends;
+        //     const cssContent = ResourceManage.getContent(ext.guid as never);
+        //     ext.srcNode.pushCSS(
+        //         ext.guid,
+        //         //ext.srcNode.cssFilePdath ?? ext.fileInfo.pathOf.scss,
+        //         cssContent,//param0.source.cssContents,
+        //         ext.self);
+        //     if (ext.isDialogBox) {
+        //         ext.Events.afterInitlize.on(param0.events.afterInitlize);
+        //         await ext.Events.afterInitlize.fireAsync([this]);
+        //     }
+        // },
         finalizeInit: (param0: IUcOptions) => {
             let ext = this.ucExtends;
             //ext.srcNode.pushCSS(ext.srcNode.cssdFilePath ?? ext.fileInfo.pathOf.scss, ext.fileInfo.projectInfo.importMetaURL, ext.self);
@@ -372,7 +371,11 @@ export class Usercontrol {
                 ext.Events.afterInitlize.fire([this]);
             }
         },
-
+        takeoff: () => {
+            delete this.ucExtends.initializecomponent;
+            delete this.ucExtends.finalizeInit;
+            //delete this.ucExtends.finalizeInitAsync;
+        },
         visibility: 'inherit' as ucVisibility,
         getVisibility: (): ucVisibility => {
             let ext = this.ucExtends;

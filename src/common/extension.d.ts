@@ -1,7 +1,4 @@
 interface EventTarget {
-    ["#clearUcStyleClasses"](): void,
-    ["#copyUcStyleClassesTo"](...eles: HTMLElement[] & any[]): void,
-    ["#delete"](): void,
     ["#data"](): any;
     ["#data"](key: string): any;
     ["#data"](key: string, val: any): void;
@@ -55,9 +52,6 @@ interface String {
 }
 
 
-interface NodeList {
-    ["#on"]<K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void,
-}
 interface Array<T> {
     ["#on"]<K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void,
     ["#fillInto"]: (target: Array<T>, clearTarget?: boolean) => void,

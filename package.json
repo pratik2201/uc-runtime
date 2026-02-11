@@ -16,10 +16,10 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.11.0",
-    "electron": "^39.1.1",
     "rimraf": "^6.0.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3",
+    "electron": "^39.1.1",
     "ucbuilder-devtools": "file:../ucbuilder-devtools"
   },
   "dependencies": {

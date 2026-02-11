@@ -1,25 +1,20 @@
 export class BuildResource {
-    guid;
-    name;
-    type;
-    content;
-    source;
+    constructor() {
+        this.type = null;
+        this.content = null;
+    }
 }
 export class UserResource extends BuildResource {
-    /**
-     * ONLY ONE RESOURCE SHOULD ASSIGN THIS OPTION TRUE TO USE
-     * THAT CSS AS PROJECT'S GLOBAL CSS
-     */
-    isGlobalCss = false;
-    importar;
-    project;
+    constructor() {
+        super(...arguments);
+        /**
+         * ONLY ONE RESOURCE SHOULD ASSIGN THIS OPTION TRUE TO USE
+         * THAT CSS AS PROJECT'S GLOBAL CSS
+         */
+        this.isGlobalCss = false;
+    }
 }
 export class ResourceKeyBridge {
-    // how placeholders look in text
-    static PREFIX = "__RES::";
-    static SUFFIX = "__";
-    // __RES::sharepnl:css:uuid__
-    static PLACEHOLDER_RE = /__RES::([a-zA-Z0-9._:-]+)__/g;
     // ----------------------------
     // make "__RES::key__"
     // ----------------------------
@@ -61,4 +56,8 @@ export class ResourceKeyBridge {
         return value.startsWith(this.PREFIX) && value.endsWith(this.SUFFIX);
     }
 }
-//# sourceMappingURL=enums.js.map
+// how placeholders look in text
+ResourceKeyBridge.PREFIX = "__RES::";
+ResourceKeyBridge.SUFFIX = "__";
+// __RES::sharepnl:css:uuid__
+ResourceKeyBridge.PLACEHOLDER_RE = /__RES::([a-zA-Z0-9._:-]+)__/g;

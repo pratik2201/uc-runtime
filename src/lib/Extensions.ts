@@ -2,47 +2,18 @@
 import { ATTR_OF } from "ap-shared-core/out/ucbuilder/ucUtil.js";
 import { dataManager } from "./dataManager.js";
 
- 
+
 export class Extensions {
     static data: dataManager = new dataManager();
     static isInited: boolean = false;
     static init() {
         if (Extensions.isInited) return;
-        //const commonPrototype = Object.assign({}, HTMLElement.prototype, Element.prototype, EventTarget.prototype);
         this.doCommonDomProto(HTMLElement.prototype);
         this.doCommonDomProto(Element.prototype);
         this.doCommonDomProto(EventTarget.prototype);
 
-        /*const _capitalizeHandle = function () {
-            let child = this as HTMLTextAreaElement;
-            child.addEventListener('beforeinput', (e) => { 'keyup'
-                var text-box = event.target as HTMLInputElement;
-                var start = text-box.selectionStart;
-                var end = text-box.selectionEnd;
-                text-box.value = UcExtra.getAdvanceTextBeforeInput(e).toCamelCase();//text-box.value.toCamelCase();
-                text-box.setSelectionRange(start+1, end+1);
-                e.preventDefault();
-            });
-        }
-        HTMLInputElement.prototype.capitalizeHandle = _capitalizeHandle;
-        HTMLTextAreaElement.prototype.capitalizeHandle = _capitalizeHandle;*/
-
-       
-     
 
 
-        NodeList.prototype["#on"] = function <K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
-            Array.from(this)["#on"](eventList, handlerCallback);
-        }
-
-        Array.prototype["#on"] = function <K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
-            let splEvt: string[] = eventList.split(" ");
-            this.forEach((tar: HTMLElement) => {
-                splEvt.forEach(function (e) {
-                    Extensions.data.onHandler(tar, e as any, handlerCallback);
-                });
-            });
-        }
         Array.prototype["#distinct"] = function <T>(): Array<T> {
             return [...new Set(this)] as unknown as Array<T>;
         }
@@ -165,24 +136,24 @@ export class Extensions {
         // String.prototype["#PHP_ADbD"] = function () {
         //     return ucUtil.PHP_bADD(this as string);
         // }
-      
-       
+
+
 
         /*String.prototype.templateBind = function (row) {
             return ''; //generateTemplateString(this)(row);
         }*/
         String.prototype["#startsWithI"] = function (s) {
-            return this.toLowerCase().startsWith(s.toLowerCase()); 
+            return this.toLowerCase().startsWith(s.toLowerCase());
         }
         String.prototype["#endsWithI"] = function (s) {
-            return this.toLowerCase().endsWith(s.toLowerCase()); 
+            return this.toLowerCase().endsWith(s.toLowerCase());
         }
         String.prototype["#includesI"] = function (this: string, s) {
             let index = (this.toLowerCase()).indexOf(s.toLowerCase());
             if (index != -1) return { result: true, index: index };
-            else return { result: false, index: -1 } 
+            else return { result: false, index: -1 }
         }
-       
+
         // String.prototype["#convertToFullPath"] = function (this: string, importUrl?: string): IResolvePathResult {
         //     let fpath = ProjectManage.reso4lvePathObject(this, importUrl);   
         //     fpath.result = fpath.result?.["#toFilePath"]();
@@ -243,7 +214,7 @@ export class Extensions {
             }
             return str.replace(new RegExp(reg, flag), "");
         }
-        
+
 
         Object.defineProperty(Object.prototype, "getType", {
             value: function () {
@@ -274,29 +245,6 @@ export class Extensions {
 
     }
     static doCommonDomProto(commonPrototype: EventTarget): void {
-        
-       
-      
-        
-        let ATTR_ALLC = ATTR_OF.UC.ALLC;
-        commonPrototype["#clearUcStyleClasses"] = function (this: HTMLElement,): void {
-            this.classList.remove(...(Array.from(this.classList)).filter(s => s.startsWith(ATTR_ALLC)));
-        }
-        commonPrototype["#copyUcStyleClassesTo"] = function (this: HTMLElement, ...to: HTMLElement[]): void {
-            let clst = (Array.from(this.classList)).filter(s => s.startsWith(ATTR_ALLC));
-            to.forEach(d => {
-                d.classList.add(...clst);
-            });
-        }
-        
-
-        commonPrototype["#delete"] = function (this: HTMLElement): void {
-            Extensions.data.deleteObjectRef(this);
-            this.remove();
-        }
-
-    
-
         commonPrototype["#data"] = function (this: HTMLElement, key?: string, value?: any): any {
             switch (arguments.length) {
                 case 0:
@@ -313,8 +261,8 @@ export class Extensions {
                     break;
             }
         }
-         
-      
+
+
     }
 }
 

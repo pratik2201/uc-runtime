@@ -1,8 +1,8 @@
 
-import { safeStringify, normalizeJSON } from "ap-shared-core/out/objectUtil.js"; 
-import { decryptResource } from "ap-shared-core/out/ucbuilder/resources/cryptoResource.js"; 
+import { safeStringify, normalizeJSON } from "ap-shared-core/out/objectUtil.js";
+import { decryptResource } from "ap-shared-core/out/ucbuilder/resources/cryptoResource.js";
 import { BuildResource } from "src/common/resources/enums";
- 
+
 const cache = new Map<string, string>();
 function getCache(key: string, content: string) {
   if (cache.has(key)) return cache.get(key);
@@ -14,9 +14,7 @@ function getCache(key: string, content: string) {
   }
 }
 export class ResourceStorage {
-  static RuntimeProps = {
-    
-  }
+  static RuntimeProps: any = {} as any
   private static map = new Map<string, BuildResource>();
 
   static register(res: BuildResource) {

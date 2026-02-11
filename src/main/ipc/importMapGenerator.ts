@@ -48,7 +48,7 @@ export async function scanAllProjects(
 
       result.push({
         rootPath: relPath.replace(/\\/g, '/'),
-        projectName: json.mainAlias,///*json.name ??*/ path.basename(projectRoot),
+        projectName: undefined,//json.mainAlias,///*json.name ??*/ path.basename(projectRoot),
         browser: json.browser ?? {}
       })
     } catch {

@@ -389,12 +389,12 @@ export class HTMLx {
          const tProject = tc.project;
          const tPref = tProject.config.preference;
  
-         const sHtmlPath = sc.paths[sPref.outDir].html;
-         const tHtmlPath = tc.paths[tPref.outDir].html;*/
+         const sHtmlPath = sc.paths[sPref.outDec].html;
+         const tHtmlPath = tc.paths[tPref.outDec].html;*/
 
         relpath = xfrom.startsWith('{:') ? xfrom : `{:${xfrom}}`;/*nodeFn.path.relativeFilePath(
-            sHtmlPath,//outDynamicCinfo.allPathOf[pref.srcDir].html,
-            tHtmlPath,//targetCinfo.allPathOf[pref.srcDir].html
+            sHtmlPath,//outDynamicCinfo.allPathOf[pref.srcDec].html,
+            tHtmlPath,//targetCinfo.allPathOf[pref.srcDec].html
         );*/
 
         ucProps = ucProps ?? {};

@@ -1,13 +1,14 @@
 import { ExtractArguments, ISourceOptions, ITptOptions, TptOptions } from "../common/enumAndMore.js";
-import { TemplateMaker } from "ap-shared-core/out/template/TemplateMaker.js"; 
+import { TemplateMaker } from "ap-shared-core/out/template/TemplateMaker.js";
 import { ATTR_OF, ucUtil } from "ap-shared-core/out/ucbuilder/ucUtil.js";
 import { ITemplateMeta, ITemplateNodeMeta, splitCSSById } from "ap-shared-core/out/ucbuilder/template.js";
-import { FilterContent, SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js"; 
+import { FilterContent, SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
 import { ResourceManage } from "./ResourceManage.js";
 import { CSSSearchAttributeCondition, CssVariableHandler, CSSVariableScope, StyleBaseType, StylerRegs, VariableList } from "./StylerRegs.js";
 import { ITransferDataNode, Usercontrol } from "./Usercontrol.js";
 import { ResourceKeyRegistry, ResourceKeyList } from "ucbuilder/src/common/resources/enums.js";
 import { AssemblyManager, Assembly } from "./Assembly.js";
+import { normalizeJSON } from "ap-shared-core/out/objectUtil.js";
 
 
 export class Template {
@@ -137,13 +138,20 @@ export class Template {
       // _ext.cfInfo = pera.cfInfo;
       _ext.guid = pera.guid;
       _ext.assembly = AssemblyManager.Parse(_ext.guid);
-      _ext.resource = JSON.parse(ResourceManage.getContent(_ext.guid));
+      const cfg = ResourceManage.getContent(_ext.guid);
+      const cfgObj = normalizeJSON(cfg);
+      _ext.resource = new ITemplateMeta();
+      Object.assign(_ext.resource, cfgObj);
+      _ext.resource.outerCssContents = _ext.resource.outerCssContents ?? '';
+    },
+    takeoff: () => {
+      delete this.extended.initializebase;
     },
     guid: undefined as ResourceKeyList,
     resource: undefined as ITemplateMeta,
-    assembly: undefined as Assembly, 
+    assembly: undefined as Assembly,
     parentUc: undefined as Usercontrol,
-  };
+  }
 }
 export class TemplateNode {
   // static COUNTER = 0;
@@ -262,6 +270,9 @@ export class TemplateNode {
 
       tptExt.Events.onDataExport = (data) =>
         param0.parentUc.ucExtends.Events.onDataExport(data);
+    },
+    takeoff: () => {
+      delete this.extended.initializecomponent;
     },
     sampleNode: undefined as HTMLElement,
     Events: {

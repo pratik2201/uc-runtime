@@ -1,8 +1,7 @@
 
 import { ATTR_OF, GetUniqueId, StyleClassScopeType, ucUtil } from "ap-shared-core/out/ucbuilder/ucUtil.js";
 import { SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js"; 
-import { CssRuntimeResolver } from "./CssRuntimeResolver.js";
-import { nodeFn } from "./nodeFn.js";
+import { CssRuntimeResolver } from "./CssRuntimeResolver.js"; 
 import { Assembly, AssemblyManager } from "./Assembly.js";
 export type VariableList = { [key: string]: string };
 export const patternList = {
@@ -57,30 +56,30 @@ export function dev$minifyCss(content: string) {
     .replace(/\/\/.*/mg, "")).replace(/(;|,|:|{|})[\n\r ]*/gi, "$1");
   return content;
 }
-export function dev$Use_loader(content: string, cssFilePath: string) {
+// export function dev$Use_loader(content: string, cssFilePath: string) {
 
-  content = content.replace(/@use\s*(["'`])((?:\\.|(?!\1)[^\\])*)\1\s*;/gim,
-    (match: string, quationMark: string, path: string, offset: any, input_string: string) => {
-      let themecontents = '';
-      if (cssFilePath != undefined) {
-        const useFilePath = nodeFn.path.resolveFilePath(cssFilePath, path);
-        if (nodeFn.fs.existsSync(useFilePath)) {
-          themecontents = ucUtil.devEsc(nodeFn.fs.readFileSync(useFilePath));
-          if (themecontents != undefined) {
-            try {
-              themecontents = dev$Use_loader(themecontents, useFilePath);
-            } catch (ex) {
-              debugger;
-              console.log(ex);
-            }
-          }
-        }
-      }
-      return themecontents;
-    }
-  );
-  return content;
-}
+//   content = content.replace(/@use\s*(["'`])((?:\\.|(?!\1)[^\\])*)\1\s*;/gim,
+//     (match: string, quationMark: string, path: string, offset: any, input_string: string) => {
+//       let themecontents = '';
+//       if (cssFilePath != undefined) {
+//         const useFilePath = nodeFn.path.resolveFilePath(cssFilePath, path);
+//         if (nodeFn.fs.existsSync(useFilePath)) {
+//           themecontents = ucUtil.devEsc(nodeFn.fs.readFileSync(useFilePath));
+//           if (themecontents != undefined) {
+//             try {
+//               themecontents = dev$Use_loader(themecontents, useFilePath);
+//             } catch (ex) {
+//               debugger;
+//               console.log(ex);
+//             }
+//           }
+//         }
+//       }
+//       return themecontents;
+//     }
+//   );
+//   return content;
+// }
 export class StylerRegs {
   static ScssExtractor(csscontent: string) {
     let ocHandler = new openCloser();
@@ -93,29 +92,7 @@ export class StylerRegs {
     return ocHandler.parse({ openingChar: '{', closingChar: '}' }, csscontent);
   }
   baseType: StyleBaseType = StyleBaseType.UserControl;
-  static initProjectsStyle(): void {
-    SourceNode.init();
-    /*ProjectManage.projects.forEach((row) => {
-      let cssPath = nodeFn.path.resolve(row.projectPath, 'styles.scss');
-      let cssContent = ResourceManage.getResource(row.config.guid ?? cssPath, 'cssFile', cssPath);
-      if (cssContent == undefined) {
-        cssPath = nodeFn.path.resolve(row.projectPath, row.config.projectBaseCssPath);
-        cssContent = ResourceManage.getResource(row.config.guid ?? cssPath, 'cssFile', cssPath);
-      }
-      let _stylepath: string = nodeFn.path.relativeFilePath(row.projectPath, cssPath);
-      row.stampSRC = SourceNode.registerSource({
-        key: _stylepath,
-        baseType: StyleBaseType.Global,
-        assembly: { guid: _stylepath as never, name: row.projectName as never },
-        project: row,
-        mode: '$',
-        accessName: row.projectPrimaryAlice,
-      });
-
-      row.stampSRC.pushCSS(cssPath, dev$Use_loader(dev$minifyCss(cssContent), cssPath), document.body);//row.importMetaURL,
-      //}
-    });*/
-  }
+   
   KEYS: IKeyStampNode = {
     TEMPLATE: "" as string,
     LOCAL: "" as string,

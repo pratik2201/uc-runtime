@@ -1,10 +1,10 @@
-import { ipcMain, type BrowserWindow, type IpcMainEvent } from "electron";
+import { getCloneableObject } from "ap-shared-core/out/objectUtil.js";
+import { type BrowserWindow, type IpcMainEvent } from "electron";
 import fs from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { getCloneableObject } from "ap-shared-core/out/objectUtil.js";
-import { IPC_API_KEY, IPC_GET_KEY, IPC_REGISTER_KEY, UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js"; 
-import { ResourceStorage } from "../ResourceStorage.js";
+import { IPC_API_KEY, IPC_GET_KEY, IPC_REGISTER_KEY, UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js";
 import { AssemblyManager } from "../../renderer/Assembly.js";
+import { ResourceStorage } from "../ResourceStorage.js";
 type IpcMainCallBack = (e: import("electron").IpcMainEvent, ...args: any[]) => void;
 type IpcMainInvokeCallBack = (e: import("electron").IpcMainInvokeEvent, ...args: any[]) => Promise<any>;
 
@@ -73,6 +73,7 @@ export class IpcMainHelper {
      */
     static async init(resourceFile: Promise<any>) {
         await resourceFile;
+        const { ipcMain } = await import("electron");
         ipcMain.on(IPC_API_KEY, (event, ...args: any[]) => {
             let actionKey = args.shift();
             if (this.IPC_ON.has(actionKey))
@@ -112,14 +113,15 @@ export class IpcMainHelper {
         }
         const baseURLForDataURL = options?.baseURLForDataURL ?? htmlUrl;
         let html = fs.readFileSync(htmlPath, "utf-8");
-      //  let projectDirList = await scanAllProjects();
+        //  let projectDirList = await scanAllProjects();
         let importMap = ResourceStorage.RuntimeProps['importmap'];
         importMap = (importMap != undefined) ? importMap : {};
 
         const importMapScript = `<script type="importmap">${importMap}</script>`;
-        console.log(importMapScript);
-        
-        //<script type="module" src="${modulePath}"></script>
+        //<script type="module" > await import("ucbuilder/out/InitRenderer.js"); </script>
+        //console.log(importMapScript);
+
+
         const headRegex = /<head\b[^>]*>/i;
         const htmlRegex = /<html\b[^>]*>/i;
 

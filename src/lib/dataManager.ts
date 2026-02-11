@@ -2,8 +2,8 @@ import { GetUniqueId } from "ap-shared-core/out/ucbuilder/ucUtil.js";
 
 
 export class dataManager {
-    source: {} = {};
-    map: {} = {};
+    //source: {} = {};
+    //map: {} = {};
     static ATTR = {
         DM_DATA: "dm" + GetUniqueId(),
     };
@@ -17,19 +17,12 @@ export class dataManager {
             let _id = "id_" + this.elementIncrementId;
             row = new rowInfo();
             row.id = _id;
-            //console.log(this.source);
-            // console.log(this.elementIncrementId.toAlphabate()+"  ("+this.elementIncrementId+")");
             element[dataManager.ATTR.DM_DATA] = row;
-            //this.source[_id] = element;
         }
         return row;
     };
-
-    getElement(id: string): HTMLElement {
-        return this.source[id];
-    }
-
-    fillObjectRef(targetObject: HTMLElement, arr: string[]): void {
+ 
+   /* fillObjectRef(targetObject: HTMLElement, arr: string[]): void {
         arr.push(this.getId(targetObject).id);
         for (let i = 0, iObj = targetObject.children, ilen = iObj.length; i < ilen; i++) {
             const iItem = iObj[i];
@@ -43,7 +36,7 @@ export class dataManager {
         let keylist: string[] = [];
         this.fillObjectRef(targetObject, keylist);
         keylist.forEach(e => delete this.source[e]);
-    }
+    }*/
 
     getData(targetObject: HTMLElement, key?: string): any {
         let row: rowInfo = this.getId(targetObject);
@@ -69,9 +62,6 @@ export class dataManager {
         }
     }
 
-    // compareElements(ele1: HTMLElement, ele2: HTMLElement): boolean {
-    //     return this.getId(ele1).id === this.getId(ele2).id;
-    // }
 
     initElement(target: HTMLElement & HTMLElement[]): void {
         if (target.length == undefined) {
@@ -87,54 +77,6 @@ export class dataManager {
 
             }
 
-        }
-    }
-
-    setEvent<K extends keyof HTMLElementEventMap>(element: HTMLElement, eventName: K, key: string, handler: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
-        let evt: {} = {};
-        let row: rowInfo = this.getId(element);
-        if (eventName in row.event) {
-            evt = row.event[eventName];
-            evt[key] = handler;
-        } else {
-            evt[key] = handler;
-            row.event[eventName] = evt;
-        }
-        element.addEventListener(eventName, handler as any, false);
-    }
-
-    unSetEvent<K extends keyof HTMLElementEventMap>(element: HTMLElement, eventName: K, key?: string, handler?: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
-        let evt: {} = {};
-        if (handler == undefined) {
-            let row: rowInfo = this.getId(element);
-            if (eventName in row.event) {
-                evt = row.event[eventName];
-                if (key == undefined) {
-                    Object.keys(evt).forEach(s => element.removeEventListener(eventName, evt[s], false));
-                }
-                else {
-                    handler = evt[key];
-                    element.removeEventListener(eventName as any, handler as any, false);
-                }
-            }
-        } else element.removeEventListener(eventName as any, handler as any, false);
-    }
-
-    onHandler<K extends keyof HTMLElementEventMap>(element: HTMLElement, eventName: K, handler: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
-        let eType: string[] = eventName.split(".");
-        if (eType.length == 0) {
-            this.setEvent(element, eType[0] as any, `dataManager_onHandler_${GetUniqueId()}`, handler);
-        } else {
-            this.setEvent(element, eType[0] as any, eType[1], handler);
-        }
-    }
-
-    offHandler<K extends keyof HTMLElementEventMap>(element: HTMLElement, eventName: K, handler: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
-        let eType: string[] = eventName.split(".");
-        if (eType.length == 0) {
-            this.unSetEvent(element, eType[0] as any, undefined, handler);
-        } else {
-            this.unSetEvent(element, eType[0] as any, eType[1], handler);
         }
     }
 }

@@ -5,11 +5,7 @@ import { Template } from "./Template.js";
 import { Usercontrol } from "./Usercontrol.js";
 
 export class intenseGenerator {
-    static setCSS_globalVar(varList: VariableList, _path: string): void {
-        // let rt = GetDeclaration(_path);//ProjectManage.getInfo(_path, getMetaUrl(_path, ProjectManage.projects));
-        // console.log(rt); 
-        // CssVariableHandler.SetCSSVarValue(varList, '' + rt.project['id'], 'g');
-    }
+    
     static generateUC<T = string>(/*path: T,*/ classObj: any,/* importMetaURL: string,*/ pera: IUcOptions, ...args: any[]): Usercontrol {
         const param0: IUcOptions = objectOpt.copyProps(pera, UcOptions);
         
