@@ -1,4 +1,4 @@
-import { getCloneableObject } from "ap-shared-core/out/objectUtil.js";
+import { getCloneableObject, safeStringify } from "ap-shared-core/out/objectUtil.js";
 import { type BrowserWindow, type IpcMainEvent } from "electron";
 import fs from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -115,9 +115,10 @@ export class IpcMainHelper {
         let html = fs.readFileSync(htmlPath, "utf-8");
         //  let projectDirList = await scanAllProjects();
         let importMap = ResourceStorage.RuntimeProps['importmap'];
+         
         importMap = (importMap != undefined) ? importMap : {};
 
-        const importMapScript = `<script type="importmap">${importMap}</script>`;
+        const importMapScript = `<script type="importmap">${safeStringify(importMap)}</script>`;
         //<script type="module" > await import("ucbuilder/out/InitRenderer.js"); </script>
         //console.log(importMapScript);
 

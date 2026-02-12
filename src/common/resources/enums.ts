@@ -9,6 +9,7 @@ export type ResourceKeyList = keyof ResourceKeyRegistry;
 export type BuildResourceType = "css" | "html" | "image" | "text" | "raw" | "data" | "string";
 export class BuildResource {
     guid: string;
+    encrypt?: boolean = false;
     name?: string;
     type: BuildResourceType;
     content: string;

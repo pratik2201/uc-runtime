@@ -10,6 +10,7 @@ export class Assembly {
     ucConfigGuid: ResourceKeyList;
     srcNode?: SourceNode;
     defaultLoadAt?: HTMLElement;
+    //encryptResource?: boolean;
     //config: UserUCConfig;
 }
 export class AssemblyManager {
