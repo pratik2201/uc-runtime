@@ -1,9 +1,10 @@
-import UcDefaultConfig from "ap-shared-core/out/ucbuilder-devtools/userConfigManage.js";
+import UcDefaultConfig from "ap-shared-core/out/uc-dev/userConfigManage.js";
 
 
 export { UcDefaultConfig };
 export {
-    UserResource, AssemblyList, AssemblyRegistry, ResourceKeyRegistry, ResourceKeyList, ResourceNamedList, ResourceNamedRegistry
+    UserResource, AssemblyList, AssemblyRegistry, ResourceKeyRegistry, ResourceKeyList,
+    ResourceNamedList, ResourceNamedRegistry
 
 } from "./common/resources/enums.js";
 export { ResourceStorage } from "./main/ResourceStorage.js";

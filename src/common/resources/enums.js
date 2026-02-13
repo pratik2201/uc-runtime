@@ -1,7 +1,6 @@
 export class BuildResource {
     constructor() {
-        this.type = null;
-        this.content = null;
+        this.encrypt = false;
     }
 }
 export class UserResource extends BuildResource {

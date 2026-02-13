@@ -1,4 +1,4 @@
-import { ProjectRowBase } from "ap-shared-core/out/ucbuilder/configResources.js";
+import { ProjectRowBase } from "ap-shared-core/out/uc-control/configResources.js";
 import { BridgeAPI,  IPC_API_KEY, IPC_GET_KEY, IPC_REGISTER_KEY, IpcRendererCallBack, UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js";
 import { getCloneableObject } from "ap-shared-core/out/objectUtil.js";
  

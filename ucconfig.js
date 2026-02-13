@@ -8,6 +8,12 @@ export default UcDefaultConfig({
     preference: {
         build: {
             ResourceStorageFile: 'designerFiles/Resources.ts',
+            RuntimeResources: [
+                {
+                    fromDeclare: 'src', toDeclares: ['out'],
+                    includeExtensions: [".html", ".scss", ".mjs", ".css", ".svg", ".png", ".jpg", ".ico"],
+                }
+            ]
         },
         dirDeclaration: {
             src: {
@@ -31,7 +37,7 @@ export default UcDefaultConfig({
         fileCommonDeclaration: {
             designer: { subDirPath: 'designerFiles' },
             scss: { extension: '.scss' },
-            html: { subDirPath: 'htmlFiles', extension: '.html' },
+            html: { extension: '.html' },
         },
         outDec: "out",
         srcDec: "src",

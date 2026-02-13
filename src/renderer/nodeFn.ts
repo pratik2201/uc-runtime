@@ -1,4 +1,4 @@
-import { ucUtil } from 'ap-shared-core/out/ucbuilder/ucUtil.js';
+import { ucUtil } from 'ap-shared-core/out/uc-control/ucUtil.js';
 import fs from 'fs';
 import { PreloadFullFill } from "../common/ipc/enumAndMore.js";
 import { IpcRendererHelper } from './ipc/IpcRendererHelper.js';

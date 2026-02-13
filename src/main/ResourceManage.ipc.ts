@@ -1,8 +1,9 @@
 
-import { BuildResource } from "ucbuilder/src/common/resources/enums.js";
+
 import { IpcMainGroup } from "./ipc/IpcMainHelper.js";
-import { encryptResource, decryptResource } from "ap-shared-core/out/ucbuilder/resources/cryptoResource.js";
+import { encryptResource, decryptResource } from "ap-shared-core/out/uc-control/resources/cryptoResource.js";
 import { ResourceStorage } from "./ResourceStorage.js";
+import { BuildResource } from "../common/resources/enums.js";
 
 export default function () {
     const main = IpcMainGroup('ucbuilder/src/renderer/ResourceManage'); 

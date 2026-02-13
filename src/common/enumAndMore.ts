@@ -1,4 +1,4 @@
-import { ITemplateMeta, IUsercontrolMeta } from "ap-shared-core/out/ucbuilder/Template.js";
+import { ITemplateMeta, IUsercontrolMeta } from "ap-shared-core/out/uc-control/Template.js";
 import { IKeyStampNode } from "../renderer/StylerRegs.js";
 import { Usercontrol } from "../renderer/Usercontrol.js"; 
 import { ResourceKeyRegistry, ResourceKeyList } from "./resources/enums.js";

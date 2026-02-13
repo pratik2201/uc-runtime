@@ -1,7 +1,7 @@
 {
   "include": [
     "src"
-   ],
+  ],
   "exclude": [
     "out",
     "node_modules"
@@ -10,10 +10,11 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "target": "ESNext",
-  "rootDir": "src",
-  "outDir": "out",
-  "baseUrl": ".",
-    "strict": true,
+    "rootDir": "src",
+    "outDir": "out",
+    "baseUrl": ".",
+    "declaration": true,
+    "sourceMap": true,
     "allowJs": true,
     "strictNullChecks": false,
     "esModuleInterop": true,
@@ -26,15 +27,12 @@
     "experimentalDecorators": true,
     "removeComments": false,
     "noImplicitAny": false,
-    "declaration": true,
-    "sourceMap": true,
     "inlineSources": true,
-    "inlineSourceMap": false,
     "typeRoots": [
       "./node_modules/@types"
     ],
     "paths": {
-      "ucbuilder/*": [
+      "uc-control/*": [
         "./*"
       ]
     }

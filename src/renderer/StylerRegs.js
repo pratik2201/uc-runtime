@@ -2,7 +2,7 @@ import { ATTR_OF, GetUniqueId, ucUtil } from "ap-shared-core/out/ucbuilder/ucUti
 import { SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
 import { AssemblyManager } from "ap-shared-core/out/ucbuilder/Assembly.js";
 import { CssRuntimeResolver } from "./CssRuntimeResolver.js";
-//import { ProjectManage } from "ucbuilder-devtools/out/renderer/ProjectManage.js";
+//import { ProjectManage } from "uc-dev/out/renderer/ProjectManage.js";
 import { nodeFn } from "./nodeFn.js";
 export const patternList = {
     styleTagSelector: /<style([\n\r\w\W.]*?)>([\n\r\w\W.]*?)<\/style>/gi,

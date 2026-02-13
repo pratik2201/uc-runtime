@@ -1,6 +1,6 @@
 
 import { safeStringify, normalizeJSON } from "ap-shared-core/out/objectUtil.js";
-import { decryptResource } from "ap-shared-core/out/ucbuilder/resources/cryptoResource.js";
+import { decryptResource } from "ap-shared-core/out/uc-control/resources/cryptoResource.js";
 import { BuildResource } from "src/common/resources/enums";
 
 const cache = new Map<string, string>();

@@ -1,5 +1,5 @@
 {
-  "name": "ucbuilder",
+  "name": "uc-control",
   "version": "3.0.0-beta.0",
   "type": "module",
   "description": ":Shree Ganeshay Namah: \n new way app design",
@@ -20,7 +20,7 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3",
     "electron": "^39.1.1",
-    "ucbuilder-devtools": "file:../ucbuilder-devtools"
+    "uc-dev": "file:../uc-dev"
   },
   "dependencies": {
     "ap-shared-core": "file:../ap-shared-core"

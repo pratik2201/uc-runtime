@@ -1,15 +1,14 @@
 import { ExtractArguments, ISourceOptions, ITptOptions, TptOptions } from "../common/enumAndMore.js";
 import { TemplateMaker } from "ap-shared-core/out/template/TemplateMaker.js";
-import { ATTR_OF, ucUtil } from "ap-shared-core/out/ucbuilder/ucUtil.js";
-import { ITemplateMeta, ITemplateNodeMeta, splitCSSById } from "ap-shared-core/out/ucbuilder/template.js";
+import { ATTR_OF, ucUtil } from "ap-shared-core/out/uc-control/ucUtil.js";
+import { ITemplateMeta, ITemplateNodeMeta, splitCSSById } from "ap-shared-core/out/uc-control/template.js";
 import { FilterContent, SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
 import { ResourceManage } from "./ResourceManage.js";
 import { CSSSearchAttributeCondition, CssVariableHandler, CSSVariableScope, StyleBaseType, StylerRegs, VariableList } from "./StylerRegs.js";
 import { ITransferDataNode, Usercontrol } from "./Usercontrol.js";
-import { ResourceKeyRegistry, ResourceKeyList } from "ucbuilder/src/common/resources/enums.js";
 import { AssemblyManager, Assembly } from "./Assembly.js";
-import { normalizeJSON } from "ap-shared-core/out/objectUtil.js";
-
+import { normalizeJSON } from "ap-shared-core/out/objectUtil.js"; 
+import { ResourceKeyRegistry, ResourceKeyList } from "../core-main.js";
 
 export class Template {
   static MATERIAL: ISourceOptions = {
