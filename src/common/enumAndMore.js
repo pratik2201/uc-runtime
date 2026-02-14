@@ -1,4 +1,4 @@
-import { ITemplateMeta, IUsercontrolMeta } from "ap-shared-core/out/ucbuilder/Template.js";
+import { ITemplateMeta, IUsercontrolMeta } from "ap-shared-core/out/uc-control/Template.js";
 export class FileEntry {
     type = 'textFile';
     value = '';

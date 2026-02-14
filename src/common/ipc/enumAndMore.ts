@@ -30,7 +30,6 @@ export interface BridgeAPI {
     on?: (chennel, callback: IpcRendererCallBack) => void;
     INIT_IMPORT_MAP?: (_win: Window) => void;
 }
-export const IPC_API_KEY = `ucbuilderAPI`; //_${(Math.random()*98464562)}_`;
 export function IPC_GET_KEY(actionKey: string, regKey: IPC_REGISTER_KEY) {
     return actionKey + ";" + regKey;
 }
@@ -38,11 +37,3 @@ export function IPC_SPLIT_KEY(actionKey: string): { action: string, regKey: stri
     let rtrn = actionKey.split(';');
     return { action: rtrn[0], regKey: rtrn[1] };
 }
-
-
-
-// export function getMetaUrl<K>(fullPath: string, ar: ProjectRowBase<K>[]): string {
-//     fullPath = correctpath(fullPath);
-//     return ar.find((row: ProjectRowBase<K>) => fullPath.startsWith(row.projectPath))?.importMetaURL;
-// }
-

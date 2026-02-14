@@ -1,7 +1,8 @@
 import { ContextBridge, IpcRenderer, IpcRendererEvent } from "electron";
-import { basename, dirname, join, normalize, relative, resolve, isAbsolute, extname, sep } from "path";
+import { basename, dirname, extname, isAbsolute, join, normalize, relative, resolve, sep } from "path";
+import { AssemblyManager } from "uc-control/core-main.js";
 import { fileURLToPath, pathToFileURL } from "url";
-import { BridgeAPI, IPC_API_KEY } from "../../common/ipc/enumAndMore.js";
+import { BridgeAPI, IPC_GET_KEY, UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js";
 export class IpcPreload {
     private static IS_INITED = false;
     static init(contextBridge: ContextBridge, ipcRenderer: IpcRenderer) {
@@ -22,11 +23,13 @@ export class IpcPreload {
                 normalize: (path) => normalize(path),
                 relative: (from, to) => relative(from, to),
                 join: (...paths) => join(...paths),
-                extname:(path) => extname(path),
+                extname: (path) => extname(path),
                 resolve: (...paths) => resolve(...paths)
             }
         };
-        contextBridge.exposeInMainWorld(IPC_API_KEY, {
+        
+      
+        contextBridge.exposeInMainWorld(AssemblyManager.AKey, {
             //fromMain: (chennel: string, callback: (e: IpcRendererEvent, ...args: any[]) => void) => ipcRenderer.on(chennel, callback),
             sendSync: (chennel: string, ...args: any[]) => ipcRenderer.sendSync(chennel, ...args),
             send: (chennel: string, ...args: any[]) => ipcRenderer.send(chennel, ...args),
@@ -34,12 +37,12 @@ export class IpcPreload {
             on: (chennel, callback = (event: IpcRendererEvent, ...args: any[]) => { }) => {
                 ipcRenderer.on(chennel, callback);
             },
-            fullFill: fullFill, 
+            fullFill: fullFill,
         } as BridgeAPI);
         contextBridge.exposeInMainWorld("env", {
             NODE_ENV: process.env.NODE_ENV
         });
-        console.log('IpcPreload inited..');         
+        console.log('IpcPreload inited..');
         IpcPreload.IS_INITED = true;
     }
 

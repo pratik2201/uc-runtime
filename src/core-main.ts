@@ -1,6 +1,5 @@
 import UcDefaultConfig from "ap-shared-core/out/uc-dev/userConfigManage.js";
 
-
 export { UcDefaultConfig };
 export {
     UserResource, AssemblyList, AssemblyRegistry, ResourceKeyRegistry, ResourceKeyList,
@@ -10,5 +9,5 @@ export {
 export { ResourceStorage } from "./main/ResourceStorage.js";
 export { Assembly, AssemblyManager } from "./renderer/Assembly.js";
 
-export { IpcMainHelper } from "./main/ipc/IpcMainHelper.js";
+export { IpcMainHelper,IpcMainGroup } from "./main/ipc/IpcMainHelper.js";
 export { IpcPreload } from "./main/ipc/IpcPreload.js";

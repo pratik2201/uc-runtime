@@ -4,7 +4,6 @@ import { decryptResource } from "ap-shared-core/out/uc-control/resources/cryptoR
 import { BuildResource } from "src/common/resources/enums";
 
 const cache = new Map<string, string>();
-
 function getCache(key: string, res: BuildResource) {
   if (res == undefined) return null;
   if (cache.has(key)) return cache.get(key);
@@ -17,7 +16,8 @@ function getCache(key: string, res: BuildResource) {
   }
 }
 export class ResourceStorage { 
-  static RuntimeProps: any = {} as any
+  static RuntimeProps: any = {} as any;
+ 
   private static map = new Map<string, BuildResource>();
 
   static register(res: BuildResource) {

@@ -1,6 +1,7 @@
-import { ProjectRowBase } from "ap-shared-core/out/uc-control/configResources.js";
-import { BridgeAPI,  IPC_API_KEY, IPC_GET_KEY, IPC_REGISTER_KEY, IpcRendererCallBack, UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js";
 import { getCloneableObject } from "ap-shared-core/out/objectUtil.js";
+import { ProjectRowBase } from "ap-shared-core/out/uc-control/configResources.js";
+import { BridgeAPI, IPC_GET_KEY, IPC_REGISTER_KEY, IpcRendererCallBack, UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js";
+import { AssemblyManager } from "../Assembly.js";
  
 export interface IRelativeRendere {
     sendSync: (key: string, args: any[]) => any;
@@ -14,15 +15,7 @@ export interface IRelativeRendere {
 export class IpcRendererHelper {
 
     static IPC_ON: { [actionKey: string]: IpcRendererCallBack } = {};
-    private static loadRelativeChennels(importMetaUrl: string): Promise<any> {
-        //let ns = IpcRendererHelper.getRelativeURL(importMetaUrl);
-        //let s = GetRootPathByUrl_M(ns, this.ucConfigList);
-        /*if (typeof window !== "undefined") {
-
-            return IpcRendererHelper.Invoke('loadChennels', [importMetaUrl],UC_ACCESS_KEY);
-        }*/
-        return undefined;
-    }
+    
      //static ucConfigList: ProjectRdowBase[] = [];
     static Group(ukey: string) { // donedanadonerootpath
         if (typeof window === "undefined") return;
@@ -42,28 +35,13 @@ export class IpcRendererHelper {
             },
             onLoadedCallBack: [],
             isReadyForUse: false
-        };
-        (async () => {
-            let res = await IpcRendererHelper.loadRelativeChennels(ukey);
-            if (res == false) {
-                rtrn.isReadyForUse = false;
-            } else {
-                rtrn.isReadyForUse = true;
-                for (let i = 0, iObj = rtrn.onLoadedCallBack, ilen = iObj.length; i < ilen; i++) {
-                    const callback = iObj[i];
-                    callback();
-                }
-            }
-        })();
+        }; 
         return rtrn;
     }
     static _Window: Window = undefined;
     static init = (_win: Window) => {
-        let cb = window[IPC_API_KEY] as BridgeAPI;
-        //this.ucConfigList = this.sendSync('ucConfigList', [], UC_ACCESS_KEY); // cb.sendSync(IPC_API_KEY, 'ucConfigList;');
-        cb.on(IPC_API_KEY, this.onCallback);
-        //console.log(cb.sendSync(IPC_API_KEY, 'ucConfigList;'));
-
+        let cb = window[AssemblyManager.AKey] as BridgeAPI;
+        cb.on(AssemblyManager.AKey, this.onCallback);
         console.log('IpcRendererHelper inited..');
     }
     static onCallback = (event, ...args: any[]) => {
@@ -72,22 +50,21 @@ export class IpcRendererHelper {
             IpcRendererHelper.IPC_ON[actionKey](event, ...args);
         } else {
             console.log(`no 'ON EVENT' found [${actionKey}]  in Renderer`);
-
         }
     }
     static sendSync(key: string, args: any[], regKey?: IPC_REGISTER_KEY) {
         args = getCloneableObject(args);
         let win = this._Window ?? window;
-        let apk = win[IPC_API_KEY] as BridgeAPI;
-        return apk.sendSync(IPC_API_KEY, IPC_GET_KEY(key, regKey), ...args);
+        let apk = win[AssemblyManager.AKey] as BridgeAPI;
+        return apk.sendSync(AssemblyManager.AKey, IPC_GET_KEY(key, regKey), ...args);
 
         //return WINDOW_API.sendSync(key, args, importMetaUrl, win);
     }
     static send(key: string, args: any[], regKey?: IPC_REGISTER_KEY) {
         args = getCloneableObject(args);
         let win = this._Window ?? window;
-        let apk = win[IPC_API_KEY] as BridgeAPI;
-        return apk.send(IPC_API_KEY, IPC_GET_KEY(key, regKey), ...args);
+        let apk = win[AssemblyManager.AKey] as BridgeAPI;
+        return apk.send(AssemblyManager.AKey, IPC_GET_KEY(key, regKey), ...args);
 
         //return WINDOW_API.send(key, args, importMetaUrl, win);
 
@@ -101,25 +78,19 @@ export class IpcRendererHelper {
     }
     static Invoke(key: string, args: any[], importMetaUrl: IPC_REGISTER_KEY) {
         let win = this._Window ?? window;
-        let apk = win[IPC_API_KEY] as BridgeAPI;
+        let apk = win[AssemblyManager.AKey] as BridgeAPI;
 
-        return apk.invoke(IPC_API_KEY, IPC_GET_KEY(key, importMetaUrl), ...args);
+        return apk.invoke(AssemblyManager.AKey, IPC_GET_KEY(key, importMetaUrl), ...args);
     }
+    static get ipcaccesskey(): string {
+        return this.sendSync('aKey', [{}], UC_ACCESS_KEY);
+    }
+     
     static get assemblies(): ProjectRowBase {
         return this.sendSync('assemblies', [{}], UC_ACCESS_KEY);
     }
     static get ucConfig(): ProjectRowBase {
         return this.sendSync('ucConfig', [{}], UC_ACCESS_KEY);
-    }
-    // static get importMap() { 
-    //     return this.sendSync('impdortMap', [{}], UC_ACCESS_KEY);
-    // }
-    static ipcChannels = new Set();
-    // static get ipcChennelList() {
-    //     return this.sendSync('ipcChennelList', [{}],UC_ACCESS_KEY);
-    // }
-    static getRelativeURL(_path: string) {
-        if (_path.match(/\.ipc\.js$/i) != null) return _path;
-        return _path.replace(/\.js$/i, ".ipc.js");
-    }
+    } 
+    static ipcChannels = new Set();     
 }

@@ -1,7 +1,7 @@
-import { StyleClassScopeType } from "ap-shared-core/out/ucbuilder/ucUtil.js";
+import { StyleClassScopeType } from "ap-shared-core/out/uc-control/ucUtil.js";
 import { SourceNode } from "../lib/StampGenerator.js";
-import { Assembly } from "ap-shared-core/out/ucbuilder/Assembly.js";
 import { CssRuntimeResolver } from "./CssRuntimeResolver.js";
+import { Assembly } from "./Assembly.js";
 export type VariableList = {
     [key: string]: string;
 };
@@ -39,11 +39,9 @@ export type CSSVariableScopeSort = "g" | "l" | "i" | "t";
 export type CSSSearchAttributeCondition = "*" | "^" | "$";
 export declare const WRAPPER_TAG_NAME: string;
 export declare function dev$minifyCss(content: string): string;
-export declare function dev$Use_loader(content: string, cssFilePath: string): string;
 export declare class StylerRegs {
     static ScssExtractor(csscontent: string): OCIterator[];
     baseType: StyleBaseType;
-    static initProjectsStyle(): void;
     KEYS: IKeyStampNode;
     controlXName: string;
     static templateID: number;

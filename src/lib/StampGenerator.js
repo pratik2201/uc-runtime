@@ -1,4 +1,4 @@
-import { ucUtil, ATTR_OF } from "ap-shared-core/out/ucbuilder/ucUtil.js";
+import { ucUtil, ATTR_OF } from "ap-shared-core/out/uc-control/ucUtil.js";
 import { StyleBaseType, StylerRegs, WRAPPER_TAG_NAME } from "../renderer/StylerRegs.js";
 export var STYLER_SELECTOR_TYPE;
 (function (STYLER_SELECTOR_TYPE) {
@@ -98,8 +98,9 @@ export class SourceNode {
         }
         this.pushCSSByContent(cssGuid, cssContent, localNodeElement);
     }
-    static resourcesHT = document.createElement("programres");
+    static resourcesHT;
     static init() {
+        this.resourcesHT = document.createElement("programres");
         this.resourcesHT.setAttribute("stamp", 'program.stamp');
         document.head.appendChild(this.resourcesHT);
     }
@@ -123,12 +124,21 @@ export class SourceNode {
     setWrapper(ele) {
         const k = this.styler.KEYS;
         if (SourceNode.MODE == STYLER_SELECTOR_TYPE.CLASS_SELECTOR) {
-            ele["#clearUcStyleClasses"]();
+            SourceNode.clearUcStyleClasses(ele);
             ele.classList.add(ATTR_OF.__CLASS(k.LOCAL, 'm'), ATTR_OF.__CLASS(k.ROOT, 'r'));
         }
         else {
             ele.setAttribute(ATTR_OF.UC.ALL, `${k.LOCAL}_${k.ROOT}`);
         }
+    }
+    static copyUcStyleClassesTo(_this, ...to) {
+        let clst = (Array.from(_this.classList)).filter(s => s.startsWith(ATTR_OF.UC.ALLC));
+        to.forEach(d => {
+            d.classList.add(...clst);
+        });
+    }
+    static clearUcStyleClasses(ele) {
+        ele.classList.remove(...(Array.from(ele.classList)).filter(s => s.startsWith(ATTR_OF.UC.ALLC)));
     }
     passElement = (ele, options) => {
         options = Object.assign(Object.assign({}, PassElementOptions), options);

@@ -1,4 +1,5 @@
-import { BuildResource, ResourceKeyList, ResourceKeyRegistry, ResourceNamedRegistry } from "src/common/resources/enums";
+import { ResourceKeyList, ResourceKeyRegistry, ResourceNamedRegistry } from "uc-control/core-main.js";
+import { BuildResource } from "../common/resources/enums.js";
 import { IpcRendererHelper } from "./ipc/IpcRendererHelper.js";
 export class ResourceManage {
     static renderer = IpcRendererHelper.Group('ucbuilder/src/renderer/ResourceManage');

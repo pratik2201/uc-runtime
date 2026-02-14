@@ -1,21 +1,18 @@
 
-import { IPC_API_KEY } from "../../common/ipc/enumAndMore.js";
 import { Extensions } from "../../lib/Extensions.js";
 import { SourceNode } from "../../lib/StampGenerator.js";
 import { TabIndexManager } from "../../lib/TabIndexManager.js";
 import { WinManager } from "../../lib/WinManager.js";
-import { AssemblyManager, Assembly } from "../../renderer/Assembly.js";
+import { Assembly, AssemblyManager } from "../../renderer/Assembly.js";
 import { IpcRendererHelper } from "../../renderer/ipc/IpcRendererHelper.js";
-import { nodeFn } from "../../renderer/nodeFn.js";
 import { ResourceManage } from "../../renderer/ResourceManage.js";
-import { StyleBaseType, StylerRegs } from "../../renderer/StylerRegs.js";
+import { StyleBaseType } from "../../renderer/StylerRegs.js";
 let isExecuted = false;
 async function initRenderer() {
   if (isExecuted) return;
   isExecuted = true;
   IpcRendererHelper.init(window);
-  nodeFn.fullfill = window[IPC_API_KEY].fullFill;
-
+  
   TabIndexManager.init();
   Extensions.init();
   SourceNode.init();
@@ -38,16 +35,4 @@ async function initRenderer() {
   WinManager.initEvent();
   console.log('All Done... ');
 }
-await initRenderer();
-
-
-
-// function getImportMap() {
-//   const script = document.querySelector(
-//     'script[type="importmap"]'
-//   ) as HTMLScriptElement | null;
-//   if (!script?.textContent) {
-//     throw new Error("ImportMapResolver: importmap script not found");
-//   }
-//   return JSON.parse(script.textContent);
-// }
+await initRenderer(); 

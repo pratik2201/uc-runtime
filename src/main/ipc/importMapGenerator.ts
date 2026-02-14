@@ -1,4 +1,5 @@
 //import { UserUCConfig } from '../../configResources.js' 
+import { safeStringify } from 'ap-shared-core/out/objectUtil.js'
 import { cleanPath } from 'ap-shared-core/out/uc-control/ucUtil.js'
 import fs from 'fs'
 import path from 'path'
@@ -43,7 +44,7 @@ export async function scanAllProjects(
 
     try {
       // const json = JSON.parse(fs.readFileSync(ucconfigPath, 'utf8'))
-      const json = undefined ;//await ImportUserConfig(ucconfigPath) as UserUCConfig;
+      const json = undefined;//await ImportUserConfig(ucconfigPath) as UserUCConfig;
       const relPath = path.relative(mainRoot, projectRoot) || '.'
 
       result.push({
@@ -135,18 +136,33 @@ export function createImportMap(htmlPath: string, projects: ProjectEntry[], base
   return importMap
 }
 
-export function injectImportMap(html: string, importMap: any) {
-  const importMapScript = `<script type="importmap">${JSON.stringify(importMap)}</script>`;
+// export function injectImportMap(html: string, importMap: any) {
+//   const importMapScript = `<script type="importmap">${JSON.stringify(importMap)}</script>`;
 
-  if (/<head>/i.test(html)) {
-    return html.replace(/<head>/i, `<head>\n${importMapScript}`);
-  } else if (/<html[^>]*>/i.test(html)) {
-    return html.replace(/<html[^>]*>/i, `$&\n<head>${importMapScript}</head>`);
-  } else {
-    return `${importMapScript}\n${html}`;
+//   if (/<head>/i.test(html)) {
+//     return html.replace(/<head>/i, `<head>\n${importMapScript}`);
+//   } else if (/<html[^>]*>/i.test(html)) {
+//     return html.replace(/<html[^>]*>/i, `$&\n<head>${importMapScript}</head>`);
+//   } else {
+//     return `${importMapScript}\n${html}`;
+//   }
+// }
+export function injectImportMap(htmlContent: string, importMap: any) {
+  importMap = (importMap != undefined) ? importMap : {};
+  const importMapScript = `<script type="importmap">${safeStringify(importMap)}</script>`;
+  const headRegex = /<head\b[^>]*>/i;
+  const htmlRegex = /<html\b[^>]*>/i;
+  if (headRegex.test(htmlContent)) {
+    htmlContent = htmlContent.replace(headRegex, match => match + importMapScript);
   }
+  else if (htmlRegex.test(htmlContent)) {
+    htmlContent = htmlContent.replace(htmlRegex, match => `${match}\n<head>${importMapScript}</head>`);
+  }
+  else {
+    htmlContent = `${importMapScript}\n${htmlContent}`;
+  }
+  return htmlContent;
 }
-
 function findSubProjects(rootDir: string): string[] {
   const nodeModules = path.join(rootDir, "node_modules");
   if (!fs.existsSync(nodeModules)) return [];

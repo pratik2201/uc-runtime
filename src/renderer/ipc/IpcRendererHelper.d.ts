@@ -1,4 +1,4 @@
-import { ProjectRowBase } from "ap-shared-core/out/ucbuilder/configResources.js";
+import { ProjectRowBase } from "ap-shared-core/out/uc-control/configResources.js";
 import { IPC_REGISTER_KEY, IpcRendererCallBack } from "../../common/ipc/enumAndMore.js";
 export interface IRelativeRendere {
     sendSync: (key: string, args: any[]) => any;

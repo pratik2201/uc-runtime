@@ -9,11 +9,10 @@ export class Assembly {
     cssGuid: ResourceKeyList;
     ucConfigGuid: ResourceKeyList;
     srcNode?: SourceNode;
-    defaultLoadAt?: HTMLElement;
-    //encryptResource?: boolean;
-    //config: UserUCConfig;
+    defaultLoadAt?: HTMLElement; 
 }
 export class AssemblyManager {
+    static AKey = '9795E46A-A93F-4DC3-B6D6-F2696FA0CEC5';
     private static counter = 0;
     static assemblies: ResourceKeyRegistry = {} as any;
     static getAssemblies() { return this.assemblies; }

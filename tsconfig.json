@@ -1,7 +1,7 @@
 {
   "include": [
     "src"
-  ],
+   ],
   "exclude": [
     "out",
     "node_modules"
@@ -34,7 +34,10 @@
     "paths": {
       "uc-control/*": [
         "./*"
-      ]
+      ],
+      "ap-shared-core/*": [
+        "../ap-shared-core/*"
+      ],
     }
   }
 }

@@ -1,6 +1,6 @@
-import { Assembly } from "ap-shared-core/out/ucbuilder/Assembly.js";
 import { CSSSearchAttributeCondition, IKeyStampNode, StyleBaseType, StylerRegs } from "../renderer/StylerRegs.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
+import { Assembly } from "../renderer/Assembly.js";
 export declare enum STYLER_SELECTOR_TYPE {
     CLASS_SELECTOR = 1,
     ATTRIB_SELECTOR = 2
@@ -56,6 +56,8 @@ export declare class SourceNode {
     static init(): void;
     static ExtendControlObject(rtrn: {}, xname: string, ctr: any, ignoreEmpty?: boolean): void;
     setWrapper(ele: HTMLElement): void;
+    static copyUcStyleClassesTo(_this: HTMLElement, ...to: HTMLElement[]): void;
+    static clearUcStyleClasses(ele: HTMLElement): void;
     passElement: <A = HTMLElement | HTMLElement[]>(ele: A, options?: IPassElementOptions) => {
         [xname: string]: HTMLElement | HTMLElement[];
     };
