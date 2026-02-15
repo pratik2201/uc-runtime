@@ -1,9 +1,9 @@
-import { AssemblyList, ResourceKeyList, ResourceKeyRegistry } from "../common/resources/enums.js";
+import { AssemblyList, AssemblyRegistry, ResourceKeyList, ResourceKeyRegistry } from "../common/resources/enums.js";
 import { SourceNode } from "../lib/StampGenerator.js";
 
 
 export class Assembly {
-    name: AssemblyList;
+    name: keyof AssemblyRegistry;
     id?: number;
     guid: string;
     cssGuid: ResourceKeyList;

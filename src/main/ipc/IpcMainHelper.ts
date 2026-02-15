@@ -111,11 +111,23 @@ export class IpcMainHelper {
         }, UC_ACCESS_KEY);
     }
     static INITIAL_SCRIPT = "";
-    
-    static async load(win: BrowserWindow, options?: Electron.LoadURLOptions) {
-        let htmlContent = ResourceStorage.RuntimeProps['htmlfile'];
+
+    static async load(win: BrowserWindow, options?: Electron.LoadURLOptions, codeFilePath?: string) {
+        let htmlContent = ResourceStorage.RuntimeProps['htmlcontent'];
         if (htmlContent == undefined) {
-            htmlContent = ``;
+            //const cfile = codeFilePath.
+            
+            htmlContent = `<!DOCTYPE html>
+<html> 
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="content-type" content="application/xhtml+xml; charset=utf-8" />  
+  <script type="module" src="${codeFilePath}"></script>
+</head> 
+<body>
+</body> 
+</html>`;
         }
         htmlContent = injectImportMap(htmlContent, ResourceStorage.RuntimeProps['importmap']);
         win.loadURL("data:text/html;charset=utf-8," + encodeURIComponent(htmlContent), options);
