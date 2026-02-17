@@ -10,6 +10,7 @@ import { ResourceManage } from "../../renderer/ResourceManage.js";
 import { ResourceNamedList } from "uc-control/src/core-main";
 import { injectImportMap } from "./importMapGenerator.js";
 import { ResourceKeyRegistry, ResourceNamedRegistry } from "../../common/resources/enums.js";
+import { join } from "node:path";
 type IpcMainCallBack = (e: import("electron").IpcMainEvent, ...args: any[]) => void;
 type IpcMainInvokeCallBack = (e: import("electron").IpcMainInvokeEvent, ...args: any[]) => Promise<any>;
 
@@ -116,7 +117,6 @@ export class IpcMainHelper {
         let htmlContent = ResourceStorage.RuntimeProps['htmlcontent'];
         if (htmlContent == undefined) {
             //const cfile = codeFilePath.
-            
             htmlContent = `<!DOCTYPE html>
 <html> 
 <head>
@@ -129,21 +129,46 @@ export class IpcMainHelper {
 </body> 
 </html>`;
         }
+        console.log('configManage inited.');
         htmlContent = injectImportMap(htmlContent, ResourceStorage.RuntimeProps['importmap']);
-        win.loadURL("data:text/html;charset=utf-8," + encodeURIComponent(htmlContent), options);
+        await this._load("data:text/html;charset=utf-8," + encodeURIComponent(htmlContent), win, options);
     }
     static async loadContent(htmlContent: string, win: BrowserWindow, options?: Electron.LoadURLOptions) {
         console.log('configManage inited.');
         htmlContent = injectImportMap(htmlContent, ResourceStorage.RuntimeProps['importmap']);
-        win.loadURL("data:text/html;charset=utf-8," + encodeURIComponent(htmlContent), options);
+        await this._load("data:text/html;charset=utf-8," + encodeURIComponent(htmlContent), win, options);
     }
     static async loadURL(_path: string, win: BrowserWindow, options?: Electron.LoadURLOptions) {
         console.log('configManage inited.');
         let htmlPath = _path.startsWith('file:///') ? fileURLToPath(_path) : _path;
         let htmlContent = fs.readFileSync(htmlPath, "utf-8");
-
         htmlContent = injectImportMap(htmlContent, ResourceStorage.RuntimeProps['importmap']);
-        win.loadURL("data:text/html;charset=utf-8," + encodeURIComponent(htmlContent), options);
+        await this._load("data:text/html;charset=utf-8," + encodeURIComponent(htmlContent), win, options);
     }
 
+    private static async _load(
+        _path: string,
+        win: BrowserWindow,
+        options: Electron.LoadURLOptions = {}
+    ) {
+        let basePath: string;
+        const { app } = await import('electron');
+        console.log(app.isPackaged);
+
+        if (app.isPackaged) {
+            // packaged → resources/app.asar
+            basePath = join(process.resourcesPath, "app.asar");
+        } else {
+            // dev → project root
+            basePath = process.cwd();
+        }
+
+        const baseURL = pathToFileURL(basePath + "/").href;
+
+        options.baseURLForDataURL ??= baseURL;
+        console.log(options.baseURLForDataURL);
+
+
+        win.loadURL(_path, options);
+    }
 } 

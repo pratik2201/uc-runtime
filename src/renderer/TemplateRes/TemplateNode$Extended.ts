@@ -11,9 +11,9 @@ import { ITransferDataNode } from "../UsercontrolRes/Usercontrol$Event.js";
 
 export class TemplateNode$Extended {
     constructor(tnodeMain: TemplateNode) {
-        this.main = tnodeMain;
+        this.tnode = tnodeMain;
     }
-    main: TemplateNode;
+    tnode: TemplateNode;
     template: Template;
     srcNode: SourceNode;
     accessName: string;

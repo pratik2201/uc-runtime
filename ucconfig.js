@@ -3,7 +3,8 @@ export default UcDefaultConfig({
     guid: "097DF085-D799-43EC-A783-CBFA4F228820",
     browser: {
         resolveProjects: ['ap-shared-core'],
-        importmap: {}
+        importmap: {},
+        
     },
     preference: {
         build: {

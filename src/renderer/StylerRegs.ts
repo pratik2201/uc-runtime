@@ -1,7 +1,7 @@
 
 import { ATTR_OF, GetUniqueId, StyleClassScopeType, ucUtil } from "ap-shared-core/out/uc-control/ucUtil.js";
-import { SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js"; 
-import { CssRuntimeResolver } from "./CssRuntimeResolver.js"; 
+import { SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
+import { CssRuntimeResolver } from "./CssRuntimeResolver.js";
 import { Assembly, AssemblyManager } from "./Assembly.js";
 export type VariableList = { [key: string]: string };
 export const patternList = {
@@ -92,7 +92,7 @@ export class StylerRegs {
     return ocHandler.parse({ openingChar: '{', closingChar: '}' }, csscontent);
   }
   baseType: StyleBaseType = StyleBaseType.UserControl;
-   
+
   KEYS: IKeyStampNode = {
     TEMPLATE: "" as string,
     LOCAL: "" as string,

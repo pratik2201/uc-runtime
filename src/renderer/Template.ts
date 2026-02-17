@@ -9,7 +9,7 @@ import { AssemblyManager, Assembly } from "./Assembly.js";
 import { normalizeJSON } from "ap-shared-core/out/objectUtil.js";
 import { ResourceKeyRegistry, ResourceKeyList } from "../core-main.js";
 import { ITransferDataNode } from "./UsercontrolRes/Usercontrol$Event.js";
-import { ITemplateMeta, ITemplateNodeMeta } from "ap-shared-core/out/uc-control/Template.js";
+import { ITemplateContent, ITemplateNodeMeta } from "ap-shared-core/out/uc-control/Template.js";
 import { TemplateNode$Extended } from "./TemplateRes/TemplateNode$Extended.js";
 import { Template$Extended } from "./TemplateRes/Template$Extended.js";
 
@@ -28,7 +28,7 @@ export class Template {
    * @returns 
    */
   static GetObjectOfTemplate(guid: keyof ResourceKeyRegistry/*cssGuid: string, htmlResKey: keyof ResourceKeyRegistry, cssResKey: keyof ResourceKeyRegistry*/) {
-    let res = JSON.parse(ResourceManage.getContent(guid)) as ITemplateMeta;
+    let res = JSON.parse(ResourceManage.getContent(guid)) as ITemplateContent;
     for (const [k, v] of Object.entries(res.templates)) {
       v.accessKey = k;
       v.objectKey = guid + '#' + k;

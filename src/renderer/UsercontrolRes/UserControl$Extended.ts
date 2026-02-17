@@ -1,6 +1,6 @@
 import { normalizeJSON } from "ap-shared-core/out/objectUtil.js";
 import { TemplateMaker } from "ap-shared-core/out/template/TemplateMaker.js";
-import { IUsercontrolMeta } from "ap-shared-core/out/uc-control/Template.js";
+import { ICoupleNode, IUsercontrolContent } from "ap-shared-core/out/uc-control/Template.js";
 import { ATTR_OF } from "ap-shared-core/out/uc-control/ucUtil.js";
 import { ResourceKeyList } from "src/common/resources/enums.js";
 import { IUcOptions, UCGenerateMode, UcStates, WhatToDoWithTargetElement, objectOpt } from "../../common/enumAndMore.js";
@@ -54,7 +54,7 @@ export class UserControl$Extended {
     form: Usercontrol;
     dialogForm: Usercontrol;
     PARENT: Usercontrol;
-    resource: IUsercontrolMeta;
+    resource: IUsercontrolContent;
     srcNode: SourceNode;
     assembly: Assembly;
     wrapperHT: HTMLElement;
@@ -134,10 +134,14 @@ export class UserControl$Extended {
         ucExt.mode = param0.mode;
         if (param0.guid != undefined) {
             ucExt.guid = param0.guid;
-            const content = ResourceManage.getContent(param0.guid as never);
-            ucExt.resource = new IUsercontrolMeta();
-            const jsn = normalizeJSON(content);
-            Object.assign(ucExt.resource, jsn);
+            const cfg = ResourceManage.getContent(this.guid);
+            const cfgObj: ICoupleNode = normalizeJSON(cfg);
+            //const content = ResourceManage.getContent(param0.guid as never) as ;
+            ucExt.resource = new IUsercontrolContent();
+            ucExt.resource.htmlContents = ResourceManage.getContent(cfgObj.htmlGuid as any);
+            ucExt.resource.cssContents = ResourceManage.getContent(cfgObj.cssGuid as any);
+            /*const jsn = normalizeJSON(content);
+            Object.assign(ucExt.resource, jsn);*/
         }
         if (param0.events.beforeInitlize != undefined) param0.events.beforeInitlize(this.main);
         ucExt.isForm = (param0.parentUc == undefined);

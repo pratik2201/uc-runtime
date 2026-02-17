@@ -1,9 +1,9 @@
 
 
+import { decryptResource, encryptResource } from "ap-shared-core/out/uc-control/resources/cryptoResource.js";
+import { BuildResource, ResourceNamedRegistry } from "../common/resources/enums.js";
 import { IpcMainGroup } from "./ipc/IpcMainHelper.js";
-import { encryptResource, decryptResource } from "ap-shared-core/out/uc-control/resources/cryptoResource.js";
 import { ResourceStorage } from "./ResourceStorage.js";
-import { BuildResource } from "../common/resources/enums.js";
 
 export default function () {
     const main = IpcMainGroup('ucbuilder/src/renderer/ResourceManage'); 
@@ -28,10 +28,10 @@ export default function () {
     main.On('getContent', (event, key: string) => {
         event.returnValue = ResourceStorage.getContent(key); 
     });
-    main.On('getByName', (event, name: string) => {
+    main.On('getByName', (event, name: keyof ResourceNamedRegistry) => {
         event.returnValue = ResourceStorage.getByName(name); 
     });
-    main.On('getContentByName', (event, name: string) => { 
+    main.On('getContentByName', (event, name: keyof ResourceNamedRegistry) => { 
         event.returnValue = ResourceStorage.getContentByName(name); 
     });
     main.On('keys', (event) => {

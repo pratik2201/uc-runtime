@@ -1,6 +1,6 @@
-import { ITemplateMeta, IUsercontrolMeta } from "ap-shared-core/out/uc-control/Template.js";
+import { ITemplateContent, IUsercontrolContent } from "ap-shared-core/out/uc-control/Template.js";
 import { IKeyStampNode } from "../renderer/StylerRegs.js";
-import { Usercontrol } from "../renderer/Usercontrol.js"; 
+import { Usercontrol } from "../renderer/Usercontrol.js";
 import { ResourceKeyRegistry, ResourceKeyList } from "./resources/enums.js";
 export type UCGenerateMode = "client" | "designer";
 export type UcStates = "normal" | "dock" | "minimize" | "maximize";
@@ -118,13 +118,13 @@ export const SourceOptions: ISourceOptions = {
 
 export type WhatToDoWithTargetElement = "replace" | "append";
 
-export interface IUcOptions { 
+export interface IUcOptions {
   cssKeyStamp?: IKeyStampNode,
   guid?: ResourceKeyList;
   mode?: UCGenerateMode;
   // session?: SessionOptions;
   // source?: ISourceOptions;
-  source?: IUsercontrolMeta;
+  source?: IUsercontrolContent;
   parentUc?: Usercontrol;
   accessName?: string,
   context?: any,
@@ -141,7 +141,7 @@ export const UcOptions: IUcOptions = {
   mode: 'client',
   accessName: '',
   //session: newObjectOpt.clone<SessionOptions>(sessionOptions),
-  source: new IUsercontrolMeta(), //objectOpt.clone<ISourceOptions>(SourceOptions),
+  source: new IUsercontrolContent(), //objectOpt.clone<ISourceOptions>(SourceOptions),
   //loadAt: document.body,
   // decisionForTargerElement: 'append',  // waitForDecision
   events: {
@@ -161,17 +161,19 @@ export function ExtractArguments(args: IArguments): IArguments {
   } else return args;
 }
 
-export interface ITptOptions { 
+export interface ITptOptions {
   MakeEmptyTemplate?: boolean;
   //source?: ISourceOptions;
-  guid?: ResourceKeyList;
-  source?: ITemplateMeta;
+  guid?: keyof ResourceKeyRegistry;
+  htmlGuid?: keyof ResourceKeyRegistry;
+  cssGuid?: keyof ResourceKeyRegistry;
+  source?: ITemplateContent;
   //cssBaseFilePath?: string;
   parentUc?: Usercontrol;
 }
 export const TptOptions: ITptOptions = {
   MakeEmptyTemplate: false,
-  source: new ITemplateMeta,//objectOpt.clone<ISourceOptions>(SourceOptions),
+  source: new ITemplateContent,//objectOpt.clone<ISourceOptions>(SourceOptions),
 };
 //namespace ucbuilder.global.objectOptions {
 

@@ -24,6 +24,10 @@ export class AssemblyManager {
         }
     }
     static Parse(guid: ResourceKeyList) {
+        if (guid == undefined) {
+            debugger;
+            return;
+        }
         const k = (guid as string).split(':', 1)?.shift() as AssemblyList;
         return this.assemblies[k] as Assembly;
     }
