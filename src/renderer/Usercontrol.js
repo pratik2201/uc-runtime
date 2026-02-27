@@ -1,4 +1,4 @@
-import { ATTR_OF, GetUniqueId } from "ap-shared-core/out/uc-control/ucUtil.js";
+import { ATTR_OF, GetUniqueId } from "ap-shared-core/out/uc-runtime/ucUtil.js";
 import { ExtractArguments } from "../common/enumAndMore.js";
 import { UserControl$Extended } from "./UsercontrolRes/UserControl$Extended.js";
 export class Usercontrol {

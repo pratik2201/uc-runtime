@@ -8,7 +8,7 @@ import { IpcRendererHelper } from "../../renderer/ipc/IpcRendererHelper.js";
 import { ResourceManage } from "../../renderer/ResourceManage.js";
 import { StyleBaseType } from "../../renderer/StylerRegs.js";
 let isExecuted = false;
-async function initRenderer() {
+export async function INIT_RENDERER() {
   if (isExecuted) return;
   isExecuted = true;
   IpcRendererHelper.init(window);
@@ -28,11 +28,10 @@ async function initRenderer() {
       baseType: StyleBaseType.Global,
       assembly: _newAssembly,
       mode: '$',
-      accessName: _newAssembly.name,
+      accessName: _newAssembly.name as any,
     });
     _newAssembly.srcNode.pushCSS(_newAssembly.cssGuid, ResourceManage.getContent(_newAssembly.cssGuid), document.body);
   }
   WinManager.initEvent();
   console.log('All Done... ');
 }
-await initRenderer(); 

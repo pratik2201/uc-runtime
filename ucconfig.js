@@ -3,8 +3,7 @@ export default UcDefaultConfig({
     guid: "097DF085-D799-43EC-A783-CBFA4F228820",
     browser: {
         resolveProjects: ['ap-shared-core'],
-        importmap: {},
-        
+        importmap: {}, 
     },
     preference: {
         build: {
@@ -12,6 +11,10 @@ export default UcDefaultConfig({
             RuntimeResources: [
                 {
                     fromDeclare: 'src', toDeclares: ['out'],
+                    includeExtensions: [".html", ".scss", ".mjs", ".css", ".svg", ".png", ".jpg", ".ico"],
+                },
+                {
+                    fromDeclare: 'src', toDeclares: ['dist'],
                     includeExtensions: [".html", ".scss", ".mjs", ".css", ".svg", ".png", ".jpg", ".ico"],
                 }
             ]
@@ -33,6 +36,9 @@ export default UcDefaultConfig({
                     designer: { extension: '.designer.js' },
                     tsLayout: { extension: '.html.js' },
                 }
+            },
+            dist: {
+                dirPath: 'dist',                
             }
         },
         fileCommonDeclaration: {

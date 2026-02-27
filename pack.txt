@@ -1,3 +1,0 @@
-"exports": {
-    "./core":  "./out/core.js"
-  },

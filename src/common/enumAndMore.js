@@ -1,4 +1,4 @@
-import { ITemplateMeta, IUsercontrolMeta } from "ap-shared-core/out/uc-control/Template.js";
+import { ITemplateContent, IUsercontrolContent } from "ap-shared-core/out/uc-runtime/Template.js";
 export class FileEntry {
     type = 'textFile';
     value = '';
@@ -95,7 +95,7 @@ export const UcOptions = {
     mode: 'client',
     accessName: '',
     //session: newObjectOpt.clone<SessionOptions>(sessionOptions),
-    source: new IUsercontrolMeta(), //objectOpt.clone<ISourceOptions>(SourceOptions),
+    source: new IUsercontrolContent(), //objectOpt.clone<ISourceOptions>(SourceOptions),
     //loadAt: document.body,
     // decisionForTargerElement: 'append',  // waitForDecision
     events: {
@@ -113,9 +113,17 @@ export function ExtractArguments(args) {
     else
         return args;
 }
-export const TptOptions = {
-    MakeEmptyTemplate: false,
-    source: new ITemplateMeta, //objectOpt.clone<ISourceOptions>(SourceOptions),
-};
+export class ITptOptions {
+    MakeEmptyTemplate = false;
+    //source?: ISourceOptions;
+    guid;
+    htmlContent;
+    cssContent;
+    //couple?: ICoupleNode;
+    //content?: ICoupleContent;
+    source = new ITemplateContent();
+    //cssBaseFilePath?: string;
+    parentUc;
+}
 //namespace ucbuilder.global.objectOptions {
 //# sourceMappingURL=enumAndMore.js.map

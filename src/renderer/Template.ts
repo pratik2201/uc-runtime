@@ -1,17 +1,12 @@
-import { ExtractArguments, ISourceOptions, ITptOptions, TptOptions } from "../common/enumAndMore.js";
-import { TemplateMaker } from "ap-shared-core/out/template/TemplateMaker.js";
-import { ATTR_OF, ucUtil } from "ap-shared-core/out/uc-control/ucUtil.js";
-import { FilterContent, SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
+import { ITemplateContent, ITemplateNodeMeta } from "ap-shared-core/out/uc-runtime/Template.js";
+import { ExtractArguments, ISourceOptions, ITptOptions } from "../common/enumAndMore.js";
+import { ResourceKeyList, ResourceKeyRegistry } from "../core-main.js";
+import { SourceNode } from "../lib/StampGenerator.js";
+import { AssemblyManager } from "./Assembly.js";
 import { ResourceManage } from "./ResourceManage.js";
-import { CSSSearchAttributeCondition, CssVariableHandler, CSSVariableScope, StyleBaseType, StylerRegs, VariableList } from "./StylerRegs.js";
-import { Usercontrol } from "./Usercontrol.js";
-import { AssemblyManager, Assembly } from "./Assembly.js";
-import { normalizeJSON } from "ap-shared-core/out/objectUtil.js";
-import { ResourceKeyRegistry, ResourceKeyList } from "../core-main.js";
-import { ITransferDataNode } from "./UsercontrolRes/Usercontrol$Event.js";
-import { ITemplateContent, ITemplateNodeMeta } from "ap-shared-core/out/uc-control/Template.js";
-import { TemplateNode$Extended } from "./TemplateRes/TemplateNode$Extended.js";
+import { CSSSearchAttributeCondition, StyleBaseType } from "./StylerRegs.js";
 import { Template$Extended } from "./TemplateRes/Template$Extended.js";
+import { TemplateNode$Extended } from "./TemplateRes/TemplateNode$Extended.js";
 
 export class Template {
   static MATERIAL: ISourceOptions = {
@@ -39,7 +34,7 @@ export class Template {
     let tnode = new TemplateNode(this);
     let tExt = this.extended;
 
-    let cfg = Object.assign({}, TptOptions);
+    let cfg = new ITptOptions();
     //cfg.cfInfo = tExt.cfInfo;
 
     cfg.parentUc = tExt.parentUc;

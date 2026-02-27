@@ -62,7 +62,7 @@ export declare class SourceNode {
         [xname: string]: HTMLElement | HTMLElement[];
     };
     static transferAttributes(fromEl: HTMLElement, toEl: HTMLElement): void;
-    static tramsformForm(htnode: HTMLElement): HTMLElement;
+    static tramsformForm(htnode: HTMLElement): HTMLElement<any>;
     loadHTML(setTabindex?: boolean): void;
     release: () => Promise<void>;
     static MODE: STYLER_SELECTOR_TYPE;

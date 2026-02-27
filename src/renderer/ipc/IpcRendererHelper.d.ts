@@ -1,4 +1,4 @@
-import { ProjectRowBase } from "ap-shared-core/out/uc-control/configResources.js";
+import { ProjectRowBase } from "ap-shared-core/out/uc-runtime/configResources.js";
 import { IPC_REGISTER_KEY, IpcRendererCallBack } from "../../common/ipc/enumAndMore.js";
 export interface IRelativeRendere {
     sendSync: (key: string, args: any[]) => any;
@@ -13,7 +13,6 @@ export declare class IpcRendererHelper {
     static IPC_ON: {
         [actionKey: string]: IpcRendererCallBack;
     };
-    private static loadRelativeChennels;
     static Group(ukey: string): IRelativeRendere;
     static _Window: Window;
     static init: (_win: Window) => void;
@@ -22,8 +21,8 @@ export declare class IpcRendererHelper {
     static send(key: string, args: any[], regKey?: IPC_REGISTER_KEY): void;
     static On(actionKey: string, callback: IpcRendererCallBack, regKey?: IPC_REGISTER_KEY): void;
     static Invoke(key: string, args: any[], importMetaUrl: IPC_REGISTER_KEY): Promise<any>;
+    static get ipcaccesskey(): string;
     static get assemblies(): ProjectRowBase;
     static get ucConfig(): ProjectRowBase;
     static ipcChannels: Set<unknown>;
-    static getRelativeURL(_path: string): string;
 }

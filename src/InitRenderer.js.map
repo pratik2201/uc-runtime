@@ -1,1 +1,0 @@
-{"version":3,"file":"InitRenderer.js","sourceRoot":"","sources":["InitRenderer.ts"],"names":[],"mappings":"AAAA,cAAc,yBAAyB,CAAC","sourcesContent":["export * from './main/ipc/ShubhLabh.js';"]}

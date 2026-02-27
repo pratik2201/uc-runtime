@@ -1,7 +1,8 @@
 import { ucWinFrame$Designer } from "../designerFiles/controls/ucWinFrame.uc.designer.js";
 
 export class ucWinFrame extends ucWinFrame$Designer {
-
+    private isMaximized = false;
+    private savedRect: any = null;
     async $() {
         const parentExt = this.ucExtends.PARENT.ucExtends;
         this.ucExtends.initalComponents.changeStage(this.container1);
@@ -10,6 +11,15 @@ export class ucWinFrame extends ucWinFrame$Designer {
         this.cmd_close.addEventListener('mousedown', (e) => {
             e.preventDefault();
             parentExt.close();
+        });
+        this.cmd_max.addEventListener('mousedown', e => {
+            e.preventDefault();
+            this.maximize();
+        });
+
+        this.cmd_restore.addEventListener('mousedown', e => {
+            e.preventDefault();
+            this.restore();
         });
 
         this.movableContainer(this.ucExtends.PARENT.ucExtends.wrapperHT, this.lbl_title);
@@ -147,4 +157,45 @@ export class ucWinFrame extends ucWinFrame$Designer {
             container.style.cursor = "default";
         }
     }
+    maximize() {
+
+        if (this.isMaximized) return;
+
+        const win = this.ucExtends.PARENT.ucExtends.wrapperHT;
+        const r = win.getBoundingClientRect();
+
+        this.savedRect = {
+            left: r.left,
+            top: r.top,
+            width: r.width,
+            height: r.height
+        };
+
+        win.style.position = "fixed";
+        win.style.left = "0px";
+        win.style.top = "0px";
+        win.style.width = "100vw";
+        win.style.height = "100vh";
+
+        this.isMaximized = true;
+
+        this.cmd_max.style.display = "none";
+        this.cmd_restore.style.display = "block";
+    }
+    restore() {
+
+        if (!this.isMaximized || !this.savedRect) return;
+
+        const win = this.ucExtends.PARENT.ucExtends.wrapperHT;
+
+        win.style.left = this.savedRect.left + "px";
+        win.style.top = this.savedRect.top + "px";
+        win.style.width = this.savedRect.width + "px";
+        win.style.height = this.savedRect.height + "px";
+
+        this.isMaximized = false;
+
+        this.cmd_max.style.display = "block";
+        this.cmd_restore.style.display = "none";
+    } 
 }

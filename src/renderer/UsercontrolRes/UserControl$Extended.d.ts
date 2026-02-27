@@ -1,9 +1,9 @@
+import { ResourceKeyList } from "ap-shared-core/out/enums.js";
+import { IUsercontrolContent } from "ap-shared-core/out/uc-runtime/Template.js";
 import { IUcOptions, UCGenerateMode, UcStates, WhatToDoWithTargetElement } from "../../common/enumAndMore.js";
-import { IUsercontrolMeta } from "ap-shared-core/out/uc-control/Template.js";
 import { IPassElementOptions, SourceNode } from "../../lib/StampGenerator.js";
-import { CSSVariableScope, VariableList } from "../StylerRegs.js";
-import { ResourceKeyList } from "src/common/resources/enums.js";
 import { Assembly } from "../Assembly.js";
+import { CSSVariableScope, VariableList } from "../StylerRegs.js";
 import { Usercontrol } from "../Usercontrol.js";
 import { Usercontrol$Event } from "./Usercontrol$Event.js";
 export type UcDialogResult = "none" | "ok" | 'cancel' | 'close';
@@ -32,7 +32,7 @@ export declare class UserControl$Extended {
     form: Usercontrol;
     dialogForm: Usercontrol;
     PARENT: Usercontrol;
-    resource: IUsercontrolMeta;
+    resource: IUsercontrolContent;
     srcNode: SourceNode;
     assembly: Assembly;
     wrapperHT: HTMLElement;
@@ -43,9 +43,7 @@ export declare class UserControl$Extended {
     dependant: Usercontrol[];
     isForm: boolean;
     get formExtends(): UserControl$Extended;
-    get self(): HTMLElement;
-    set caption(text: string);
-    get caption(): string;
+    get self(): HTMLElement<any>;
     lastFocuedElement: HTMLElement;
     keepVisible_Till_I_Exist: (I: Usercontrol) => void;
     find: (skey: string) => HTMLElement[];
@@ -90,6 +88,8 @@ export declare class UserControl$Extended {
     passElement: (ele: HTMLElement | HTMLElement[], options?: IPassElementOptions) => {
         [xname: string]: HTMLElement | HTMLElement[];
     };
+    set caption(text: string);
+    get caption(): string;
     designer: {
         setCaption: (text: string) => void;
         getAllControls: () => {

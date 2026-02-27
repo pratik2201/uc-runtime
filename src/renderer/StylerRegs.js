@@ -1,4 +1,4 @@
-import { ATTR_OF, GetUniqueId, ucUtil } from "ap-shared-core/out/uc-control/ucUtil.js";
+import { ATTR_OF, GetUniqueId, ucUtil } from "ap-shared-core/out/uc-runtime/ucUtil.js";
 import { SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
 import { CssRuntimeResolver } from "./CssRuntimeResolver.js";
 import { AssemblyManager } from "./Assembly.js";

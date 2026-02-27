@@ -1,4 +1,4 @@
-import { ucUtil, ATTR_OF } from "ap-shared-core/out/uc-control/ucUtil.js";
+import { ucUtil, ATTR_OF } from "ap-shared-core/out/uc-runtime/ucUtil.js";
 import { StyleBaseType, StylerRegs, WRAPPER_TAG_NAME } from "../renderer/StylerRegs.js";
 export var STYLER_SELECTOR_TYPE;
 (function (STYLER_SELECTOR_TYPE) {

@@ -1,6 +1,12 @@
+export { INIT_RENDERER } from "./InitRenderer.js";
 export { AssemblyManager } from "./renderer/Assembly.js";
 export { ITptOptions, IUcOptions } from "./common/enumAndMore.js";
 export { intenseGenerator } from "./renderer/intenseGenerator.js";
 export { VariableList } from "./renderer/StylerRegs.js";
 export { Template, TemplateNode } from "./renderer/Template.js";
 export { Usercontrol } from "./renderer/Usercontrol.js";
+export { ResourceManage } from "./renderer/ResourceManage.js";
+export { TabIndexManager,TabContainerClearNode } from "./lib/TabIndexManager.js";
+export { CommonEvent } from "./global/commonEvent.js";
+export { IpcRendererHelper } from "./renderer/ipc/IpcRendererHelper.js";
+export { WinManager } from "./lib/WinManager.js";

@@ -1,9 +1,11 @@
-import { getCloneableObject, safeStringify } from "ap-shared-core/out/objectUtil.js";
+import { getCloneableObject } from "ap-shared-core/out/objectUtil.js";
 import fs from "node:fs";
+import { join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { IPC_API_KEY, IPC_GET_KEY, UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js";
+import { IPC_GET_KEY, UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js";
 import { AssemblyManager } from "../../renderer/Assembly.js";
 import { ResourceStorage } from "../ResourceStorage.js";
+import { injectImportMap } from "./importMapGenerator.js";
 export function IpcMainGroup(regKey) {
     if (typeof window !== "undefined")
         return;
@@ -32,13 +34,13 @@ export class IpcMainHelper {
     static Send(actionKey, evt, args, importMetaUrl = "") {
         args = getCloneableObject(args);
         //args.forEach(s => s = getCloneableObject(s));
-        evt.sender.send(IPC_API_KEY, IPC_GET_KEY(actionKey, importMetaUrl), ...args);
+        evt.sender.send(AssemblyManager.AKey, IPC_GET_KEY(actionKey, importMetaUrl), ...args);
     }
     static Reply(actionKey, evt, args, importMetaUrl = "") {
         //console.log(...args);
         args = getCloneableObject(args);
         //args.forEach(s => s = getCloneableObject(s));
-        evt.reply(IPC_API_KEY, IPC_GET_KEY(actionKey, importMetaUrl), ...args);
+        evt.reply(AssemblyManager.AKey, IPC_GET_KEY(actionKey, importMetaUrl), ...args);
     }
     static IPC_ON = new Map(); //{ [actionKey: string]: IpcMainCallBack } = {};
     static IPC_HANDLE = new Map(); // { [actionKey: string]: IpcMainInvokeCallBack } = {};
@@ -58,8 +60,9 @@ export class IpcMainHelper {
      */
     static async init(resourceFile) {
         await resourceFile;
+        console.log(['MAIN', AssemblyManager.AKey]);
         const { ipcMain } = await import("electron");
-        ipcMain.on(IPC_API_KEY, (event, ...args) => {
+        ipcMain.on(AssemblyManager.AKey, (event, ...args) => {
             let actionKey = args.shift();
             if (this.IPC_ON.has(actionKey))
                 this.IPC_ON.get(actionKey)(event, ...args);
@@ -68,7 +71,7 @@ export class IpcMainHelper {
                 console.log(`!!! no 'ON EVENT' found [${actionKey}]`);
             }
         });
-        ipcMain.handle(IPC_API_KEY, async (event, ...args) => {
+        ipcMain.handle(AssemblyManager.AKey, async (event, ...args) => {
             let actionKey = args.shift();
             if (this.IPC_HANDLE.has(actionKey))
                 return await this.IPC_HANDLE.get(actionKey)(event, ...args);
@@ -78,42 +81,62 @@ export class IpcMainHelper {
             }
         });
         (await import('../ResourceManage.ipc.js')).default();
+        IpcMainHelper.On('aKey', (event, args) => {
+            event.returnValue = AssemblyManager.AKey;
+        }, UC_ACCESS_KEY);
         IpcMainHelper.On('assemblies', (event, args) => {
             event.returnValue = AssemblyManager.getAssemblies();
         }, UC_ACCESS_KEY);
     }
     static INITIAL_SCRIPT = "";
+    static async load(win, options, codeFilePath) {
+        let htmlContent = ResourceStorage.RuntimeProps['htmlcontent'];
+        if (htmlContent == undefined) {
+            //const cfile = codeFilePath.
+            htmlContent = `<!DOCTYPE html>
+<html> 
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="content-type" content="application/xhtml+xml; charset=utf-8" />  
+  <script type="module" src="${codeFilePath}"></script>
+</head> 
+<body>
+</body> 
+</html>`;
+        }
+        console.log('configManage inited.');
+        htmlContent = injectImportMap(htmlContent, ResourceStorage.RuntimeProps['importmap']);
+        await this._load("data:text/html;charset=utf-8," + encodeURIComponent(htmlContent), win, options);
+    }
+    static async loadContent(htmlContent, win, options) {
+        console.log('configManage inited.');
+        htmlContent = injectImportMap(htmlContent, ResourceStorage.RuntimeProps['importmap']);
+        await this._load("data:text/html;charset=utf-8," + encodeURIComponent(htmlContent), win, options);
+    }
     static async loadURL(_path, win, options) {
         console.log('configManage inited.');
-        let htmlUrl, htmlPath;
-        if (_path.startsWith('file:///')) {
-            htmlUrl = _path;
-            htmlPath = fileURLToPath(_path);
+        let htmlPath = _path.startsWith('file:///') ? fileURLToPath(_path) : _path;
+        let htmlContent = fs.readFileSync(htmlPath, "utf-8");
+        htmlContent = injectImportMap(htmlContent, ResourceStorage.RuntimeProps['importmap']);
+        await this._load("data:text/html;charset=utf-8," + encodeURIComponent(htmlContent), win, options);
+    }
+    static async _load(_path, win, options = {}) {
+        let basePath;
+        const { app } = await import('electron');
+        console.log(app.isPackaged);
+        if (app.isPackaged) {
+            // packaged → resources/app.asar
+            basePath = join(process.resourcesPath, "app.asar");
         }
         else {
-            htmlUrl = pathToFileURL(_path).href;
-            htmlPath = _path;
+            // dev → project root
+            basePath = process.cwd();
         }
-        const baseURLForDataURL = options?.baseURLForDataURL ?? htmlUrl;
-        let html = fs.readFileSync(htmlPath, "utf-8");
-        //  let projectDirList = await scanAllProjects();
-        let importMap = ResourceStorage.RuntimeProps['importmap'];
-        importMap = (importMap != undefined) ? importMap : {};
-        const importMapScript = `<script type="importmap">${safeStringify(importMap)}</script>`;
-        //<script type="module" > await import("ucbuilder/out/InitRenderer.js"); </script>
-        //console.log(importMapScript);
-        const headRegex = /<head\b[^>]*>/i;
-        const htmlRegex = /<html\b[^>]*>/i;
-        if (headRegex.test(html)) {
-            html = html.replace(headRegex, match => match + importMapScript);
-        }
-        else if (htmlRegex.test(html)) {
-            html = html.replace(htmlRegex, match => `${match}\n<head>${importMapScript}</head>`);
-        }
-        else {
-            html = `${importMapScript}\n${html}`;
-        }
-        win.loadURL("data:text/html;charset=utf-8," + encodeURIComponent(html), options);
+        const baseURL = pathToFileURL(basePath + "/").href;
+        options.baseURLForDataURL ??= baseURL;
+        console.log(options.baseURLForDataURL);
+        win.loadURL(_path, options);
     }
 }
 //# sourceMappingURL=IpcMainHelper.js.map

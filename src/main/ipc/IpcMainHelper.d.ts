@@ -21,6 +21,9 @@ export declare class IpcMainHelper {
      */
     static init(resourceFile: Promise<any>): Promise<void>;
     static INITIAL_SCRIPT: string;
+    static load(win: BrowserWindow, options?: Electron.LoadURLOptions, codeFilePath?: string): Promise<void>;
+    static loadContent(htmlContent: string, win: BrowserWindow, options?: Electron.LoadURLOptions): Promise<void>;
     static loadURL(_path: string, win: BrowserWindow, options?: Electron.LoadURLOptions): Promise<void>;
+    private static _load;
 }
 export {};

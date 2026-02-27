@@ -35,7 +35,7 @@ declare class TabIndexManager {
     static SKIP_CONTAINER_EVENTS: boolean;
     static _HELLO_KON: (ele: HTMLElement, e: KeyboardEvent, cnt: TabContainerClearNode[]) => Promise<boolean>;
     static moveNext: (target: HTMLElement, ev: KeyboardEvent, goAhead?: boolean) => Promise<void>;
-    static getDirectParent(element: any): HTMLElement;
+    static getDirectParent(element: any): HTMLElement<any>;
     static getDirectElement(container: HTMLElement, index: number): HTMLElement;
     static focusTo(htele: HTMLElement): void;
     static getTindex(target: HTMLElement): number | null;

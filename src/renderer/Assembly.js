@@ -8,6 +8,7 @@ export class Assembly {
     defaultLoadAt;
 }
 export class AssemblyManager {
+    static AKey = '9795E46A-A93F-4DC3-B6D6-F2696FA0CEC5';
     static counter = 0;
     static assemblies = {};
     static getAssemblies() { return this.assemblies; }
@@ -18,6 +19,10 @@ export class AssemblyManager {
         }
     }
     static Parse(guid) {
+        if (guid == undefined) {
+            debugger;
+            return;
+        }
         const k = guid.split(':', 1)?.shift();
         return this.assemblies[k];
     }

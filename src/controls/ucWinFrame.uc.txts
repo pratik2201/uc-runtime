@@ -1,0 +1,13 @@
+<WRAPPER x-caption="Frame">
+  <MAIN-CONTAINER>
+    <TITLE-BAR x-name="titlebar1">
+      <TITLE-TEXT x-name="lbl_title">TITLE</TITLE-TEXT>
+      <div class="win-buttons">
+        <ICON-BUTTON x-name="cmd_restore">🗗</ICON-BUTTON>
+        <ICON-BUTTON x-name="cmd_max">🗖</ICON-BUTTON>
+        <ICON-BUTTON x-name="cmd_close">╳</ICON-BUTTON>
+      </div>
+    </TITLE-BAR>
+    <CONTAINER x-name="container1"></CONTAINER>
+  </MAIN-CONTAINER>
+</WRAPPER>

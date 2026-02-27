@@ -1,16 +1,8 @@
-import { IPC_API_KEY, IPC_GET_KEY, UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js";
 import { getCloneableObject } from "ap-shared-core/out/objectUtil.js";
+import { IPC_GET_KEY, UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js";
+import { AssemblyManager } from "../Assembly.js";
 export class IpcRendererHelper {
     static IPC_ON = {};
-    static loadRelativeChennels(importMetaUrl) {
-        //let ns = IpcRendererHelper.getRelativeURL(importMetaUrl);
-        //let s = GetRootPathByUrl_M(ns, this.ucConfigList);
-        /*if (typeof window !== "undefined") {
-
-            return IpcRendererHelper.Invoke('loadChennels', [importMetaUrl],UC_ACCESS_KEY);
-        }*/
-        return undefined;
-    }
     //static ucConfigList: ProjectRdowBase[] = [];
     static Group(ukey) {
         if (typeof window === "undefined")
@@ -34,27 +26,12 @@ export class IpcRendererHelper {
             onLoadedCallBack: [],
             isReadyForUse: false
         };
-        (async () => {
-            let res = await IpcRendererHelper.loadRelativeChennels(ukey);
-            if (res == false) {
-                rtrn.isReadyForUse = false;
-            }
-            else {
-                rtrn.isReadyForUse = true;
-                for (let i = 0, iObj = rtrn.onLoadedCallBack, ilen = iObj.length; i < ilen; i++) {
-                    const callback = iObj[i];
-                    callback();
-                }
-            }
-        })();
         return rtrn;
     }
     static _Window = undefined;
     static init = (_win) => {
-        let cb = window[IPC_API_KEY];
-        //this.ucConfigList = this.sendSync('ucConfigList', [], UC_ACCESS_KEY); // cb.sendSync(IPC_API_KEY, 'ucConfigList;');
-        cb.on(IPC_API_KEY, this.onCallback);
-        //console.log(cb.sendSync(IPC_API_KEY, 'ucConfigList;'));
+        let cb = window[AssemblyManager.AKey];
+        cb.on(AssemblyManager.AKey, this.onCallback);
         console.log('IpcRendererHelper inited..');
     };
     static onCallback = (event, ...args) => {
@@ -69,15 +46,15 @@ export class IpcRendererHelper {
     static sendSync(key, args, regKey) {
         args = getCloneableObject(args);
         let win = this._Window ?? window;
-        let apk = win[IPC_API_KEY];
-        return apk.sendSync(IPC_API_KEY, IPC_GET_KEY(key, regKey), ...args);
+        let apk = win[AssemblyManager.AKey];
+        return apk.sendSync(AssemblyManager.AKey, IPC_GET_KEY(key, regKey), ...args);
         //return WINDOW_API.sendSync(key, args, importMetaUrl, win);
     }
     static send(key, args, regKey) {
         args = getCloneableObject(args);
         let win = this._Window ?? window;
-        let apk = win[IPC_API_KEY];
-        return apk.send(IPC_API_KEY, IPC_GET_KEY(key, regKey), ...args);
+        let apk = win[AssemblyManager.AKey];
+        return apk.send(AssemblyManager.AKey, IPC_GET_KEY(key, regKey), ...args);
         //return WINDOW_API.send(key, args, importMetaUrl, win);
     }
     static On(actionKey, callback, regKey) {
@@ -88,8 +65,11 @@ export class IpcRendererHelper {
     }
     static Invoke(key, args, importMetaUrl) {
         let win = this._Window ?? window;
-        let apk = win[IPC_API_KEY];
-        return apk.invoke(IPC_API_KEY, IPC_GET_KEY(key, importMetaUrl), ...args);
+        let apk = win[AssemblyManager.AKey];
+        return apk.invoke(AssemblyManager.AKey, IPC_GET_KEY(key, importMetaUrl), ...args);
+    }
+    static get ipcaccesskey() {
+        return this.sendSync('aKey', [{}], UC_ACCESS_KEY);
     }
     static get assemblies() {
         return this.sendSync('assemblies', [{}], UC_ACCESS_KEY);
@@ -97,17 +77,6 @@ export class IpcRendererHelper {
     static get ucConfig() {
         return this.sendSync('ucConfig', [{}], UC_ACCESS_KEY);
     }
-    // static get importMap() { 
-    //     return this.sendSync('impdortMap', [{}], UC_ACCESS_KEY);
-    // }
     static ipcChannels = new Set();
-    // static get ipcChennelList() {
-    //     return this.sendSync('ipcChennelList', [{}],UC_ACCESS_KEY);
-    // }
-    static getRelativeURL(_path) {
-        if (_path.match(/\.ipc\.js$/i) != null)
-            return _path;
-        return _path.replace(/\.js$/i, ".ipc.js");
-    }
 }
 //# sourceMappingURL=IpcRendererHelper.js.map

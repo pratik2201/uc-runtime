@@ -1,7 +1,7 @@
 
+import { BuildResource, ResourceNamedRegistry } from "ap-shared-core/out/enums.js";
 import { normalizeJSON, safeStringify } from "ap-shared-core/out/objectUtil.js";
-import { decryptResource } from "ap-shared-core/out/uc-control/resources/cryptoResource.js";
-import { BuildResource, ResourceNamedRegistry, UserResource } from "../common/resources/enums.js";
+import { decryptResource } from "ap-shared-core/out/uc-runtime/resources/cryptoResource.js"; 
 
 
 

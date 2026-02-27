@@ -1,4 +1,4 @@
-import { ResourceKeyBridge } from "../common/resources/enums.js";
+import { ResourceKeyBridge } from "ap-shared-core/out/enums.js";
 import { ResourceManage } from "./ResourceManage.js";
 const SCSS_IMPORT_RE = /@(use|import)\s+(?:url\()?["']([^"')]+)["']\)?\s*;/gi;
 const CSS_URL_RE = /url\(\s*["']?([^"')]+)["']?\s*\)/gi;

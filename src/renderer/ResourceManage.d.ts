@@ -1,4 +1,5 @@
-import { BuildResource, ResourceKeyList, ResourceKeyRegistry, ResourceNamedRegistry } from "src/common/resources/enums";
+import { ResourceKeyList, ResourceKeyRegistry, ResourceNamedRegistry } from "../core-main.js";
+import { BuildResource } from "ap-shared-core/out/enums.js";
 export declare class ResourceManage {
     static renderer: import("./ipc/IpcRendererHelper.js").IRelativeRendere;
     static x1: (res: string) => any;

@@ -5,7 +5,7 @@ export {
     UserResource, AssemblyList, AssemblyRegistry, ResourceKeyRegistry, ResourceKeyList,
     ResourceNamedList, ResourceNamedRegistry
 
-} from "./common/resources/enums.js";
+} from "ap-shared-core/out/enums.js";
 export { ResourceStorage } from "./main/ResourceStorage.js";
 export { Assembly, AssemblyManager } from "./renderer/Assembly.js";
 

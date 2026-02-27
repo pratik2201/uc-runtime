@@ -1,7 +1,7 @@
-import { AssemblyList, ResourceKeyList, ResourceKeyRegistry } from "../common/resources/enums.js";
+import { AssemblyRegistry, ResourceKeyList, ResourceKeyRegistry, AssemblyList } from "ap-shared-core/out/enums.js";
 import { SourceNode } from "../lib/StampGenerator.js";
 export declare class Assembly {
-    name: AssemblyList;
+    name: keyof AssemblyRegistry;
     id?: number;
     guid: string;
     cssGuid: ResourceKeyList;
@@ -10,6 +10,7 @@ export declare class Assembly {
     defaultLoadAt?: HTMLElement;
 }
 export declare class AssemblyManager {
+    static AKey: string;
     private static counter;
     static assemblies: ResourceKeyRegistry;
     static getAssemblies(): ResourceKeyRegistry;

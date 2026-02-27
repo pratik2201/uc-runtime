@@ -1,16 +1,12 @@
-import { getCloneableObject, safeStringify } from "ap-shared-core/out/objectUtil.js";
+import { getCloneableObject } from "ap-shared-core/out/objectUtil.js";
 import { type BrowserWindow, type IpcMainEvent } from "electron";
 import fs from "node:fs";
+import { join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { IPC_GET_KEY, IPC_REGISTER_KEY, UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js";
 import { AssemblyManager } from "../../renderer/Assembly.js";
 import { ResourceStorage } from "../ResourceStorage.js";
-import { randomUUID } from "node:crypto";
-import { ResourceManage } from "../../renderer/ResourceManage.js";
-import { ResourceNamedList } from "uc-control/src/core-main";
 import { injectImportMap } from "./importMapGenerator.js";
-import { ResourceKeyRegistry, ResourceNamedRegistry } from "../../common/resources/enums.js";
-import { join } from "node:path";
 type IpcMainCallBack = (e: import("electron").IpcMainEvent, ...args: any[]) => void;
 type IpcMainInvokeCallBack = (e: import("electron").IpcMainInvokeEvent, ...args: any[]) => Promise<any>;
 

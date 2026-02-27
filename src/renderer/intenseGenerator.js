@@ -1,4 +1,4 @@
-import { objectOpt, TptOptions, UcOptions } from "../common/enumAndMore.js";
+import { ITptOptions, objectOpt, UcOptions } from "../common/enumAndMore.js";
 export class intenseGenerator {
     static generateUC(/*path: T,*/ classObj, /* importMetaURL: string,*/ pera, ...args) {
         const param0 = objectOpt.copyProps(pera, UcOptions);
@@ -28,7 +28,7 @@ export class intenseGenerator {
         return rtrn;
     };
     static generateTPT(classObj, pera, ...args) {
-        let param0 = objectOpt.copyProps(pera, TptOptions);
+        let param0 = Object.assign(new ITptOptions(), pera);
         //  param0.cfInfo.parseUrl(path, 'out', callerMetaUrl);
         let uc = (new (classObj)());
         // uc.extended.initializebase(param0);
@@ -38,7 +38,7 @@ export class intenseGenerator {
         return uc;
     }
     static async generateTPTAsync(classObj, pera, ...args) {
-        let param0 = Object.assign(pera, TptOptions);
+        let param0 = Object.assign(new ITptOptions(), pera);
         //  param0.cfInfo.parseUrl(path, 'out', callerMetaUrl);
         args.push(param0);
         let uc = (new (classObj)());

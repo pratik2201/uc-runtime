@@ -1,11 +1,9 @@
-import { normalizeJSON } from "ap-shared-core/out/objectUtil.js";
-import { ITemplateContent, ICoupleNode, splitCSSById } from "ap-shared-core/out/uc-control/Template.js";
+import { ICoupleNode, ITemplateContent, splitCSSById } from "ap-shared-core/out/uc-runtime/Template.js";
+import { ucUtil } from "ap-shared-core/out/uc-runtime/ucUtil.js";
+import { Assembly, ResourceKeyList } from "uc-runtime/src/core-main";
 import { AssemblyManager, ITptOptions, Template } from "../../core.js";
-import { ResourceManage } from "../ResourceManage.js";
 import { StylerRegs } from "../StylerRegs.js";
 import { Usercontrol } from "../Usercontrol.js";
-import { ResourceKeyList, Assembly } from "uc-control/src/core-main";
-import { ucUtil } from "ap-shared-core/out/uc-control/ucUtil.js";
 
 export class Template$Extended {
     constructor(main: Template) {
@@ -15,21 +13,31 @@ export class Template$Extended {
     initializebase = (pera: ITptOptions) => {
         StylerRegs.templateID++;
         this.parentUc = pera.parentUc;
-        let cfgObj: ICoupleNode;
-        if (pera.guid != undefined) {
+        let htmlContent: string = undefined;
+        let cssContent: string = undefined;
+        let cfgObj: ICoupleNode = {};
+        /*if (pera.guid != undefined) {
             this.guid = pera.guid;
-            this.assembly = AssemblyManager.Parse(this.guid);
+            this.assembly = AssemblyManager.Parse(this.guid);            
             const cfg = ResourceManage.getContent(this.guid);
             cfgObj = normalizeJSON(cfg);
-        } else if (pera.htmlGuid != undefined && pera.cssGuid != undefined) {
-            cfgObj.cssGuid = pera.cssGuid;
-            cfgObj.htmlGuid = pera.htmlGuid;
+            htmlContent = ResourceManage.getContent(cfgObj.htmlGuid as any);
+            cssContent = ResourceManage.getContent(cfgObj.cssGuid as any);
+        } else {*/
+        this.guid = pera.guid;
+        this.assembly = AssemblyManager.Parse(this.guid);
+        htmlContent = pera.htmlContent;
+        cssContent = pera.cssContent;
+        //}
+        /* {
+            console.warn([`no info for template in `, pera]);
+            return;
+        }*/
+        if (this.resource == undefined && htmlContent != undefined && cssContent != undefined) {
+            this.resource = GetTemplateMetaByContent$Renderer(htmlContent, cssContent);
+            Object.assign(this.resource, cfgObj);
+            this.resource.outerCssContents = this.resource.outerCssContents ?? '';
         }
-        const htmlContent = ResourceManage.getContent(cfgObj.htmlGuid as any);
-        const cssContent = ResourceManage.getContent(cfgObj.cssGuid as any);
-        this.resource = GetTemplateMetaByContent$Renderer(htmlContent, cssContent);
-        Object.assign(this.resource, cfgObj);
-        this.resource.outerCssContents = this.resource.outerCssContents ?? '';
     }
     takeoff = () => {
         delete this.initializebase;

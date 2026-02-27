@@ -1,8 +1,8 @@
 import { ContextBridge, IpcRenderer, IpcRendererEvent } from "electron";
 import { basename, dirname, extname, isAbsolute, join, normalize, relative, resolve, sep } from "path";
-import { AssemblyManager } from "uc-control/core-main.js";
 import { fileURLToPath, pathToFileURL } from "url";
 import { BridgeAPI, IPC_GET_KEY, UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js";
+import { AssemblyManager } from "../../core-main.js";
 export class IpcPreload {
     private static IS_INITED = false;
     static init(contextBridge: ContextBridge, ipcRenderer: IpcRenderer) {

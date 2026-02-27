@@ -1,6 +1,6 @@
-import { basename, dirname, join, normalize, relative, resolve, isAbsolute, extname, sep } from "path";
+import { basename, dirname, extname, isAbsolute, join, normalize, relative, resolve, sep } from "path";
 import { fileURLToPath, pathToFileURL } from "url";
-import { IPC_API_KEY } from "../../common/ipc/enumAndMore.js";
+import { AssemblyManager } from "../../core-main.js";
 export class IpcPreload {
     static IS_INITED = false;
     static init(contextBridge, ipcRenderer) {
@@ -25,7 +25,7 @@ export class IpcPreload {
                 resolve: (...paths) => resolve(...paths)
             }
         };
-        contextBridge.exposeInMainWorld(IPC_API_KEY, {
+        contextBridge.exposeInMainWorld(AssemblyManager.AKey, {
             //fromMain: (chennel: string, callback: (e: IpcRendererEvent, ...args: any[]) => void) => ipcRenderer.on(chennel, callback),
             sendSync: (chennel, ...args) => ipcRenderer.sendSync(chennel, ...args),
             send: (chennel, ...args) => ipcRenderer.send(chennel, ...args),

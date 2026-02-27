@@ -1,16 +1,17 @@
 {
-  "name": "uc-control",
+  "name": "uc-runtime",
   "version": "3.0.0-beta.0",
   "type": "module",
   "exports": {
-    "./*": "./out/*", 
+    "./*": "./dist/*",
     "./package.json": "./package.json"
   },
   "description": ":Shree Ganeshay Namah: \n new way app design",
   "scripts": {
-    "clean": "rimraf out",
+    "clean": "rimraf out && rimraf dist",
     "start": "electron .",
-    "build:designer": "ucbuilder-devtools build",
+    "build:es": "node build-es.js",
+    "build:designer": "uc-dev build",
     "build:dts": "tsc --emitDeclarationOnly",
     "build": "tsc",
     "rebuild": "npm run clean && npm run build && npm run build:dts",
@@ -20,13 +21,14 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.11.0",
+    "electron": "^39.1.1",
+    "esbuild": "^0.27.2",
     "rimraf": "^6.0.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.9.3",
-    "electron": "^39.1.1",
-    "uc-dev": "file:../uc-dev"
+    "typescript": "^5.9.3"  
   },
   "dependencies": {
+    
     "ap-shared-core": "file:../ap-shared-core"
   },
   "keywords": [

@@ -1,4 +1,4 @@
-import { GetUniqueId } from "ap-shared-core/out/uc-control/ucUtil.js";
+import { GetUniqueId } from "ap-shared-core/out/uc-runtime/ucUtil.js";
 const eventRecord = {
     callback: () => { },
     stamp: '',

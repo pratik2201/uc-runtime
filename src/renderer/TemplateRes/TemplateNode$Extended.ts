@@ -1,8 +1,7 @@
 import { TemplateMaker } from "ap-shared-core/out/template/TemplateMaker.js";
-import { ITemplateNodeMeta } from "ap-shared-core/out/uc-control/Template.js";
-import { ATTR_OF } from "ap-shared-core/out/uc-control/ucUtil.js";
+import { ITemplateNodeMeta } from "ap-shared-core/out/uc-runtime/Template.js";
+import { ATTR_OF } from "ap-shared-core/out/uc-runtime/ucUtil.js";
 import { ITptOptions } from "../../core.js";
-import { TptOptions } from "../../enumAndMore.js";
 import { SourceNode, FilterContent, STYLER_SELECTOR_TYPE } from "../../lib/StampGenerator.js";
 import { VariableList, CSSVariableScope, CssVariableHandler, StyleBaseType } from "../StylerRegs.js";
 import { TemplateNode, Template } from "../Template.js";
@@ -70,7 +69,7 @@ export class TemplateNode$Extended {
     ) => {
         let tptExt = this;
         const mainExt = tptExt.template.extended;
-        let param0 = Object.assign(Object.assign({}, TptOptions), _args);
+        let param0 = Object.assign(new ITptOptions(), _args);
         tptExt.accessName = tptPathOpt.accessKey;
         tptExt.srcNode = SourceNode.registerSource(
             {

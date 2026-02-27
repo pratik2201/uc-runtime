@@ -1,14 +1,12 @@
 import { TemplateMaker } from "ap-shared-core/out/template/TemplateMaker.js";
+import { IUsercontrolContent } from "ap-shared-core/out/uc-runtime/Template.js";
+import { ATTR_OF } from "ap-shared-core/out/uc-runtime/ucUtil.js";
 import { objectOpt } from "../../common/enumAndMore.js";
-import { IUsercontrolMeta } from "ap-shared-core/out/uc-control/Template.js";
-import { ATTR_OF } from "ap-shared-core/out/uc-control/ucUtil.js";
 import { FilterContent, STYLER_SELECTOR_TYPE, SourceNode } from "../../lib/StampGenerator.js";
 import { TabIndexManager } from "../../lib/TabIndexManager.js";
 import { WinManager } from "../../lib/WinManager.js";
-import { ResourceManage } from "../ResourceManage.js";
-import { CssVariableHandler, StyleBaseType } from "../StylerRegs.js";
 import { AssemblyManager } from "../Assembly.js";
-import { normalizeJSON } from "ap-shared-core/out/objectUtil.js";
+import { CssVariableHandler, StyleBaseType } from "../StylerRegs.js";
 import { Usercontrol } from "../Usercontrol.js";
 import { Usercontrol$Event } from "./Usercontrol$Event.js";
 ;
@@ -55,12 +53,6 @@ export class UserControl$Extended {
     isForm = false;
     get formExtends() { return this.form.ucExtends; }
     get self() { return this.wrapperHT; }
-    set caption(text) {
-        this.designer.setCaption(text);
-    }
-    get caption() {
-        return this.wrapperHT.getAttribute('x-caption');
-    }
     lastFocuedElement;
     keepVisible_Till_I_Exist = (I) => {
         let _this = this;
@@ -128,13 +120,36 @@ export class UserControl$Extended {
     initializecomponent = (param0) => {
         let ucExt = this;
         ucExt.mode = param0.mode;
-        if (param0.guid != undefined) {
-            ucExt.guid = param0.guid;
-            const content = ResourceManage.getContent(param0.guid);
-            ucExt.resource = new IUsercontrolMeta();
-            const jsn = normalizeJSON(content);
-            Object.assign(ucExt.resource, jsn);
-        }
+        // if (param0.guid != undefined) {
+        //     ucExt.guid = param0.guid;
+        //     const cfg = ResourceManage.getContent(this.guid);
+        //     const cfgObj: ICoupleNode = normalizeJSON(cfg);
+        //     //const content = ResourceManage.getContent(param0.guid as never) as ;
+        //     ucExt.resource = new IUsercontrolContent();
+        //     ucExt.resource.htmlContents = ResourceManage.getContent(cfgObj.htmlGuid as any);
+        //     ucExt.resource.cssContents = ResourceManage.getContent(cfgObj.cssGuid as any);
+        //     /*const jsn = normalizeJSON(content);
+        //     Object.assign(ucExt.resource, jsn);*/
+        // }
+        let htmlContent = undefined;
+        let cssContent = undefined;
+        let cfgObj = {};
+        /*if (pera.guid != undefined) {
+            this.guid = pera.guid;
+            this.assembly = AssemblyManager.Parse(this.guid);
+            const cfg = ResourceManage.getContent(this.guid);
+            cfgObj = normalizeJSON(cfg);
+            htmlContent = ResourceManage.getContent(cfgObj.htmlGuid as any);
+            cssContent = ResourceManage.getContent(cfgObj.cssGuid as any);
+        } else {*/
+        this.guid = param0.guid;
+        this.assembly = AssemblyManager.Parse(this.guid);
+        htmlContent = param0.htmlContent;
+        cssContent = param0.cssContent;
+        ucExt.resource = new IUsercontrolContent();
+        ucExt.resource.htmlContents = param0.htmlContent; //ResourceManage.getContent(cfgObj.htmlGuid as any);
+        ucExt.resource.cssContents = param0.cssContent; // ResourceManage.getContent(cfgObj.cssGuid as any);
+        ucExt.resource.htmlRow = {};
         if (param0.events.beforeInitlize != undefined)
             param0.events.beforeInitlize(this.main);
         ucExt.isForm = (param0.parentUc == undefined);
@@ -279,7 +294,6 @@ export class UserControl$Extended {
         _extend.visibility = 'visible';
         if (defaultFocusAt)
             TabIndexManager.focusTo(defaultFocusAt);
-        //return undefined as Usercontrol
     };
     dialogResolver;
     showDialog = async ({ defaultFocusAt = undefined, at = undefined, keepCurrentVisible = true } = {}) => {
@@ -329,44 +343,6 @@ export class UserControl$Extended {
         return _ext.dependant.find(s => s.ucExtends.guid == guid);
     };
     Events;
-    // Events = {
-    //     /** @private  */
-    //     _contextChange: new CommonEvent<() => void>(),
-    //     get contextChange() { return this.dialogExt().Events._contextChange; },
-    //     /** @private  */
-    //     _afterInitlize: new CommonEvent<(uc: Usercontrol) => void>(),
-    //     get afterInitlize() { return this.dialogExt().Events._afterInitlize; },
-    //     // @ts-ignore
-    //     beforeClose: new CommonEvent<(args: { prevent?: boolean }) => void>(),
-    //     afterClose: new CommonEvent<(uc?: Usercontrol) => void>(),
-    //     /*
-    //     // @ts-ignore
-    //      beforeHide: new CommonEvent<({ prevent = false }) => void>(),
-    //      afterHide: new CommonEvent<() => void>(),*/
-    //     onDestruction: new CommonEvent<({ }) => void>(),
-    //     captionChanged: new CommonEvent<(newCaptionText: string) => void>(),
-    //     winStateChanged: new CommonEvent<(state: UcStates) => void>(),
-    //     //activate: new CommonEvent<() => void>(),
-    //     _activate: new CommonEvent<() => void>(),
-    //     get activate() { return this.dialogExt().Events._activate; },
-    //     _deactivate: new CommonEvent<() => void>(),
-    //     get deactivate() { return this.dialogExt().Events._deactivate; },
-    //     beforeFreez: new CommonEvent<(newUc: Usercontrol) => void>(),
-    //     beforeUnFreez: new CommonEvent<(oldUc: Usercontrol) => void>(),
-    //     loaded: new CommonEvent<() => void>(),
-    //     loadLastSession: new CommonEvent<() => void>(),
-    //     /** @private  */
-    //     _newSessionGenerate: new CommonEvent<() => void>(),
-    //     get newSessionGenerate() { return this.formExt().Events._newSessionGenerate; },
-    //     /** @private  */
-    //     _completeSessionLoad: new CommonEvent<() => void>(),
-    //     get completeSessionLoad() { return this.formExt().Events._completeSessionLoad; },
-    //     sizeChanged: new CommonEvent<(size: ResizeObserverEntry[]) => void>(),
-    //     formExt: () => this.form.ucExtends,
-    //     dialogExt: () => this.dialogForm.ucExtends,
-    //     onDataExport: (_data: ITransferDataNode) => { return false; },
-    //     onDataImport: (_data: ITransferDataNode) => { return false; },
-    // }
     distructOnClose = true;
     close = async () => {
         let _ext = this;
@@ -384,6 +360,12 @@ export class UserControl$Extended {
     passElement = (ele, options) => {
         return this.srcNode.passElement(ele, options);
     };
+    set caption(text) {
+        this.designer.setCaption(text);
+    }
+    get caption() {
+        return this.wrapperHT.getAttribute('x-caption');
+    }
     designer = {
         setCaption: (text) => {
             this.wrapperHT.setAttribute("x-caption", text);
@@ -434,4 +416,42 @@ export class UserControl$Extended {
         return false;
     };
 }
+// Events = {
+//     /** @private  */
+//     _contextChange: new CommonEvent<() => void>(),
+//     get contextChange() { return this.dialogExt().Events._contextChange; },
+//     /** @private  */
+//     _afterInitlize: new CommonEvent<(uc: Usercontrol) => void>(),
+//     get afterInitlize() { return this.dialogExt().Events._afterInitlize; },
+//     // @ts-ignore
+//     beforeClose: new CommonEvent<(args: { prevent?: boolean }) => void>(),
+//     afterClose: new CommonEvent<(uc?: Usercontrol) => void>(),
+//     /*
+//     // @ts-ignore
+//      beforeHide: new CommonEvent<({ prevent = false }) => void>(),
+//      afterHide: new CommonEvent<() => void>(),*/
+//     onDestruction: new CommonEvent<({ }) => void>(),
+//     captionChanged: new CommonEvent<(newCaptionText: string) => void>(),
+//     winStateChanged: new CommonEvent<(state: UcStates) => void>(),
+//     //activate: new CommonEvent<() => void>(),
+//     _activate: new CommonEvent<() => void>(),
+//     get activate() { return this.dialogExt().Events._activate; },
+//     _deactivate: new CommonEvent<() => void>(),
+//     get deactivate() { return this.dialogExt().Events._deactivate; },
+//     beforeFreez: new CommonEvent<(newUc: Usercontrol) => void>(),
+//     beforeUnFreez: new CommonEvent<(oldUc: Usercontrol) => void>(),
+//     loaded: new CommonEvent<() => void>(),
+//     loadLastSession: new CommonEvent<() => void>(),
+//     /** @private  */
+//     _newSessionGenerate: new CommonEvent<() => void>(),
+//     get newSessionGenerate() { return this.formExt().Events._newSessionGenerate; },
+//     /** @private  */
+//     _completeSessionLoad: new CommonEvent<() => void>(),
+//     get completeSessionLoad() { return this.formExt().Events._completeSessionLoad; },
+//     sizeChanged: new CommonEvent<(size: ResizeObserverEntry[]) => void>(),
+//     formExt: () => this.form.ucExtends,
+//     dialogExt: () => this.dialogForm.ucExtends,
+//     onDataExport: (_data: ITransferDataNode) => { return false; },
+//     onDataImport: (_data: ITransferDataNode) => { return false; },
+// }
 //# sourceMappingURL=UserControl$Extended.js.map

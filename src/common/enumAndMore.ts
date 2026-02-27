@@ -1,7 +1,7 @@
-import { ITemplateContent, IUsercontrolContent } from "ap-shared-core/out/uc-control/Template.js";
+import { ICoupleContent, ICoupleNode, ITemplateContent, IUsercontrolContent } from "ap-shared-core/out/uc-runtime/Template.js";
 import { IKeyStampNode } from "../renderer/StylerRegs.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
-import { ResourceKeyRegistry, ResourceKeyList } from "./resources/enums.js";
+import { ResourceKeyRegistry } from "uc-runtime/src/core-main.js";
 export type UCGenerateMode = "client" | "designer";
 export type UcStates = "normal" | "dock" | "minimize" | "maximize";
 // ResourceManage.d.ts
@@ -120,7 +120,10 @@ export type WhatToDoWithTargetElement = "replace" | "append";
 
 export interface IUcOptions {
   cssKeyStamp?: IKeyStampNode,
-  guid?: ResourceKeyList;
+  guid?: keyof ResourceKeyRegistry;
+  htmlContent?: string;
+  cssContent?: string;
+
   mode?: UCGenerateMode;
   // session?: SessionOptions;
   // source?: ISourceOptions;
@@ -161,20 +164,19 @@ export function ExtractArguments(args: IArguments): IArguments {
   } else return args;
 }
 
-export interface ITptOptions {
-  MakeEmptyTemplate?: boolean;
+export class ITptOptions {
+  MakeEmptyTemplate? = false;
   //source?: ISourceOptions;
   guid?: keyof ResourceKeyRegistry;
-  htmlGuid?: keyof ResourceKeyRegistry;
-  cssGuid?: keyof ResourceKeyRegistry;
-  source?: ITemplateContent;
+  htmlContent?: string;
+  cssContent?: string;
+  //couple?: ICoupleNode;
+  //content?: ICoupleContent;
+  source? = new ITemplateContent();
   //cssBaseFilePath?: string;
   parentUc?: Usercontrol;
 }
-export const TptOptions: ITptOptions = {
-  MakeEmptyTemplate: false,
-  source: new ITemplateContent,//objectOpt.clone<ISourceOptions>(SourceOptions),
-};
+
 //namespace ucbuilder.global.objectOptions {
 
 

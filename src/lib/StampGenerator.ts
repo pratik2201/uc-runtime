@@ -1,5 +1,5 @@
 
-import { ucUtil, ATTR_OF } from "ap-shared-core/out/uc-control/ucUtil.js";
+import { ucUtil, ATTR_OF } from "ap-shared-core/out/uc-runtime/ucUtil.js";
 import { CSSSearchAttributeCondition, IKeyStampNode, StyleBaseType, StylerRegs, WRAPPER_TAG_NAME } from "../renderer/StylerRegs.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
 import { Assembly } from "../renderer/Assembly.js";

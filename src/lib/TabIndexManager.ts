@@ -1,7 +1,7 @@
 
 import { KeyboardKey } from "ap-shared-core/out/hardware.js";
 import { WinManager } from "./WinManager.js";
-import { ucUtil } from "ap-shared-core/out/uc-control/ucUtil.js";
+import { ucUtil } from "ap-shared-core/out/uc-runtime/ucUtil.js";
 interface TabIndexRow {
     container: HTMLElement;
     element: HTMLElement;

@@ -1,14 +1,14 @@
-import { ITptOptions, IUcOptions, objectOpt, TptOptions, UcOptions } from "../common/enumAndMore.js";
+import { ITptOptions, IUcOptions, objectOpt, UcOptions } from "../common/enumAndMore.js";
 
 import { CssVariableHandler, VariableList } from "./StylerRegs.js";
 import { Template } from "./Template.js";
 import { Usercontrol } from "./Usercontrol.js";
 
 export class intenseGenerator {
-    
+
     static generateUC<T = string>(/*path: T,*/ classObj: any,/* importMetaURL: string,*/ pera: IUcOptions, ...args: any[]): Usercontrol {
         const param0: IUcOptions = objectOpt.copyProps(pera, UcOptions);
-        
+
         const toSend = [];
         toSend.push(...args, param0);
         const uc: Usercontrol = (new (classObj)(...toSend));
@@ -19,7 +19,7 @@ export class intenseGenerator {
     static async generateUCAsync<T = string>(/*path: T,*/ classObj: any,/* importMetaURL: string,*/ pera: IUcOptions, ...args: any[]): Promise<Usercontrol> {
         let param0: IUcOptions = objectOpt.copyProps(pera, UcOptions);
 
-         
+
         let toSend = [];
         toSend.push(...args, param0);
         let uc: Usercontrol = (new (classObj)(...toSend));
@@ -36,9 +36,9 @@ export class intenseGenerator {
         //  rtrn.htmlFile = nodeFn.resource.getResource(`html-${guid}`, 'htmlFile');
         return rtrn;
     }
-    static generateTPT(  classObj: any ,pera: ITptOptions, ...args: any[]): Template {
-        let param0: ITptOptions = objectOpt.copyProps(pera, TptOptions);
-        
+    static generateTPT(classObj: any, pera: ITptOptions, ...args: any[]): Template {
+        let param0: ITptOptions = Object.assign(new ITptOptions(), pera);
+
         //  param0.cfInfo.parseUrl(path, 'out', callerMetaUrl);
         let uc: Template = (new (classObj)());
         // uc.extended.initializebase(param0);
@@ -46,9 +46,9 @@ export class intenseGenerator {
         if (uc['$']) uc['$'](...args);
         return uc;
     }
-    static async generateTPTAsync( classObj: any, pera: ITptOptions, ...args: any[]): Promise<any> {
-        let param0: ITptOptions = Object.assign(pera, TptOptions);
-         //  param0.cfInfo.parseUrl(path, 'out', callerMetaUrl);
+    static async generateTPTAsync(classObj: any, pera: ITptOptions, ...args: any[]): Promise<any> {
+        let param0: ITptOptions = Object.assign(new ITptOptions(), pera);
+        //  param0.cfInfo.parseUrl(path, 'out', callerMetaUrl);
         args.push(param0);
         let uc: Template = (new (classObj)());
         // uc.extended.initializebase(param0);

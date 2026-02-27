@@ -1,4 +1,4 @@
-import { StyleClassScopeType } from "ap-shared-core/out/uc-control/ucUtil.js";
+import { StyleClassScopeType } from "ap-shared-core/out/uc-runtime/ucUtil.js";
 import { SourceNode } from "../lib/StampGenerator.js";
 import { CssRuntimeResolver } from "./CssRuntimeResolver.js";
 import { Assembly } from "./Assembly.js";

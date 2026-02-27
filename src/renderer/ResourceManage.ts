@@ -1,6 +1,6 @@
-import { ResourceKeyList, ResourceKeyRegistry, ResourceNamedRegistry } from "uc-control/core-main.js";
-import { BuildResource } from "../common/resources/enums.js";
+import { ResourceKeyList, ResourceKeyRegistry, ResourceNamedRegistry } from "../core-main.js";
 import { IpcRendererHelper } from "./ipc/IpcRendererHelper.js";
+import { BuildResource } from "ap-shared-core/out/enums.js";
 export class ResourceManage {
     static renderer = IpcRendererHelper.Group('ucbuilder/src/renderer/ResourceManage');
 
@@ -61,5 +61,6 @@ export class ResourceManage {
     static getContentByName = <K extends keyof ResourceNamedRegistry>(name: K,CHECK_RESOURCE_PATH_IS_CORRECT_OR_NOT?:ResourceNamedRegistry[K]) => {
         return this.renderer.sendSync('getContentByName', [name]) as string;
     }
- 
+  
+  
 }

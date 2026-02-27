@@ -1,14 +1,12 @@
-import { normalizeJSON } from "ap-shared-core/out/objectUtil.js";
+import { ResourceKeyList } from "ap-shared-core/out/enums.js";
 import { TemplateMaker } from "ap-shared-core/out/template/TemplateMaker.js";
-import { ICoupleNode, IUsercontrolContent } from "ap-shared-core/out/uc-control/Template.js";
-import { ATTR_OF } from "ap-shared-core/out/uc-control/ucUtil.js";
-import { ResourceKeyList } from "src/common/resources/enums.js";
+import { ICoupleNode, IUsercontrolContent } from "ap-shared-core/out/uc-runtime/Template.js";
+import { ATTR_OF } from "ap-shared-core/out/uc-runtime/ucUtil.js";
 import { IUcOptions, UCGenerateMode, UcStates, WhatToDoWithTargetElement, objectOpt } from "../../common/enumAndMore.js";
 import { FilterContent, IPassElementOptions, STYLER_SELECTOR_TYPE, SourceNode } from "../../lib/StampGenerator.js";
 import { TabIndexManager } from "../../lib/TabIndexManager.js";
 import { WinManager } from "../../lib/WinManager.js";
 import { Assembly, AssemblyManager } from "../Assembly.js";
-import { ResourceManage } from "../ResourceManage.js";
 import { CSSVariableScope, CssVariableHandler, StyleBaseType, VariableList } from "../StylerRegs.js";
 import { Usercontrol } from "../Usercontrol.js";
 import { Usercontrol$Event } from "./Usercontrol$Event.js";
@@ -132,17 +130,38 @@ export class UserControl$Extended {
     initializecomponent = (param0: IUcOptions): void => {
         let ucExt = this;
         ucExt.mode = param0.mode;
-        if (param0.guid != undefined) {
-            ucExt.guid = param0.guid;
+        // if (param0.guid != undefined) {
+        //     ucExt.guid = param0.guid;
+        //     const cfg = ResourceManage.getContent(this.guid);
+        //     const cfgObj: ICoupleNode = normalizeJSON(cfg);
+        //     //const content = ResourceManage.getContent(param0.guid as never) as ;
+        //     ucExt.resource = new IUsercontrolContent();
+        //     ucExt.resource.htmlContents = ResourceManage.getContent(cfgObj.htmlGuid as any);
+        //     ucExt.resource.cssContents = ResourceManage.getContent(cfgObj.cssGuid as any);
+        //     /*const jsn = normalizeJSON(content);
+        //     Object.assign(ucExt.resource, jsn);*/
+        // }
+
+        let htmlContent: string = undefined;
+        let cssContent: string = undefined;
+        let cfgObj: ICoupleNode = {};
+        /*if (pera.guid != undefined) {
+            this.guid = pera.guid;
+            this.assembly = AssemblyManager.Parse(this.guid);            
             const cfg = ResourceManage.getContent(this.guid);
-            const cfgObj: ICoupleNode = normalizeJSON(cfg);
-            //const content = ResourceManage.getContent(param0.guid as never) as ;
-            ucExt.resource = new IUsercontrolContent();
-            ucExt.resource.htmlContents = ResourceManage.getContent(cfgObj.htmlGuid as any);
-            ucExt.resource.cssContents = ResourceManage.getContent(cfgObj.cssGuid as any);
-            /*const jsn = normalizeJSON(content);
-            Object.assign(ucExt.resource, jsn);*/
-        }
+            cfgObj = normalizeJSON(cfg);
+            htmlContent = ResourceManage.getContent(cfgObj.htmlGuid as any);
+            cssContent = ResourceManage.getContent(cfgObj.cssGuid as any);
+        } else {*/
+        this.guid = param0.guid;
+        this.assembly = AssemblyManager.Parse(this.guid);
+        htmlContent = param0.htmlContent;
+        cssContent = param0.cssContent;
+        ucExt.resource = new IUsercontrolContent();
+        ucExt.resource.htmlContents = param0.htmlContent; //ResourceManage.getContent(cfgObj.htmlGuid as any);
+        ucExt.resource.cssContents = param0.cssContent; // ResourceManage.getContent(cfgObj.cssGuid as any);
+        ucExt.resource.htmlRow = {};
+
         if (param0.events.beforeInitlize != undefined) param0.events.beforeInitlize(this.main);
         ucExt.isForm = (param0.parentUc == undefined);
         if (ucExt.isForm) {

@@ -32,7 +32,7 @@
       "./node_modules/@types"
     ],
     "paths": {
-      "uc-control/*": [
+      "uc-runtime/*": [
         "./*"
       ],
       "ap-shared-core/*": [
