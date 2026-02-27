@@ -1,5 +1,4 @@
-import { getCloneableObject } from "ap-shared-core/out/objectUtil.js";
-import { ProjectRowBase } from "ap-shared-core/out/uc-runtime/configResources.js";
+import { getCloneableObject, ProjectRowBase } from "ap-shared-core/core-common.js";
 import { BridgeAPI, IPC_GET_KEY, IPC_REGISTER_KEY, IpcRendererCallBack, UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js";
 import { AssemblyManager } from "../Assembly.js";
  

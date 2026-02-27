@@ -1,5 +1,5 @@
-import { getCloneableObject } from "ap-shared-core/out/objectUtil.js";
-import { type BrowserWindow, type IpcMainEvent } from "electron";
+ 
+import type  { BrowserWindow, IpcMainEvent } from "electron";
 import fs from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -7,6 +7,7 @@ import { IPC_GET_KEY, IPC_REGISTER_KEY, UC_ACCESS_KEY } from "../../common/ipc/e
 import { AssemblyManager } from "../../renderer/Assembly.js";
 import { ResourceStorage } from "../ResourceStorage.js";
 import { injectImportMap } from "./importMapGenerator.js";
+import { getCloneableObject } from "ap-shared-core/core-common.js";
 type IpcMainCallBack = (e: import("electron").IpcMainEvent, ...args: any[]) => void;
 type IpcMainInvokeCallBack = (e: import("electron").IpcMainInvokeEvent, ...args: any[]) => Promise<any>;
 

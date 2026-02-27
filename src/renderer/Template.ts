@@ -1,4 +1,4 @@
-import { ITemplateContent, ITemplateNodeMeta } from "ap-shared-core/out/uc-runtime/Template.js";
+import { ITemplateContent, ITemplateNodeMeta } from "ap-shared-core/core.js";
 import { ExtractArguments, ISourceOptions, ITptOptions } from "../common/enumAndMore.js";
 import { ResourceKeyList, ResourceKeyRegistry } from "../core-main.js";
 import { SourceNode } from "../lib/StampGenerator.js";

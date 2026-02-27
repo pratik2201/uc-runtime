@@ -1,5 +1,4 @@
-
-import { ATTR_OF } from "ap-shared-core/out/uc-runtime/ucUtil.js";
+ 
 import { dataManager } from "./dataManager.js";
 
 

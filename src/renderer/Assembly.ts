@@ -1,4 +1,4 @@
-import { AssemblyRegistry, ResourceKeyList, ResourceKeyRegistry, AssemblyList } from "ap-shared-core/out/enums.js";
+import { AssemblyRegistry, ResourceKeyList, ResourceKeyRegistry, AssemblyList } from "ap-shared-core/core-common.js";
 import { SourceNode } from "../lib/StampGenerator.js";
 
 

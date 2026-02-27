@@ -1,4 +1,6 @@
-import { GetUniqueId } from "ap-shared-core/out/uc-runtime/ucUtil.js";
+import { GetUniqueId } from "ap-shared-core/core-common.js";
+
+ 
 
 
 export class dataManager {

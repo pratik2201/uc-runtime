@@ -1,7 +1,7 @@
-//import { UserUCConfig } from '../../configResources.js' 
-import { safeStringify } from 'ap-shared-core/out/objectUtil.js'
-import { cleanPath } from 'ap-shared-core/out/uc-runtime/ucUtil.js'
+//import { UserUCConfig } from '../../configResources.js'  
+import { safeStringify } from 'ap-shared-core/core-common.js'
 import fs from 'fs'
+import { cleanPath } from 'node_modules/ap-shared-core/out/uc-runtime/ucUtil.js'
 import path from 'path'
 //import { ImportUserConfig } from 'uc-dev/out/lib/usderConfigManage.js'
 

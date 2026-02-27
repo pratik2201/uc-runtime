@@ -1,7 +1,7 @@
-import { ResourceKeyList } from "ap-shared-core/out/enums.js";
-import { TemplateMaker } from "ap-shared-core/out/template/TemplateMaker.js";
-import { ICoupleNode, IUsercontrolContent } from "ap-shared-core/out/uc-runtime/Template.js";
-import { ATTR_OF } from "ap-shared-core/out/uc-runtime/ucUtil.js";
+import { ResourceKeyList } from "ap-shared-core/core-common.js";
+import { TemplateMaker } from "ap-shared-core/core-common.js";
+import { ICoupleNode, IUsercontrolContent } from "ap-shared-core/core.js";
+import { ATTR_OF } from "ap-shared-core/core-common.js";
 import { IUcOptions, UCGenerateMode, UcStates, WhatToDoWithTargetElement, objectOpt } from "../../common/enumAndMore.js";
 import { FilterContent, IPassElementOptions, STYLER_SELECTOR_TYPE, SourceNode } from "../../lib/StampGenerator.js";
 import { TabIndexManager } from "../../lib/TabIndexManager.js";

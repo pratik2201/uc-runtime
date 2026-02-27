@@ -1,13 +1,14 @@
-import { ICoupleNode, ITemplateContent, splitCSSById } from "ap-shared-core/out/uc-runtime/Template.js";
-import { ucUtil } from "ap-shared-core/out/uc-runtime/ucUtil.js";
-import { Assembly, ResourceKeyList } from "uc-runtime/src/core-main";
+import { ICoupleNode, ITemplateContent, splitCSSById, ucUtil } from "ap-shared-core/core.js";
 import { AssemblyManager, ITptOptions, Template } from "../../core.js";
 import { StylerRegs } from "../StylerRegs.js";
-import { Usercontrol } from "../Usercontrol.js";
+import { Usercontrol } from "../Usercontrol.js"; 
+import { Assembly } from "../Assembly.js";
+import { ResourceKeyList } from "ap-shared-core/core-common.js";
 
 export class Template$Extended {
     constructor(main: Template) {
         this.main = main;
+        
     }
     main: Template;
     initializebase = (pera: ITptOptions) => {

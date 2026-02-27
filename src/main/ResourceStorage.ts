@@ -1,7 +1,5 @@
-
-import { BuildResource, ResourceNamedRegistry } from "ap-shared-core/out/enums.js";
-import { normalizeJSON, safeStringify } from "ap-shared-core/out/objectUtil.js";
-import { decryptResource } from "ap-shared-core/out/uc-runtime/resources/cryptoResource.js"; 
+import { BuildResource, normalizeJSON, ResourceNamedRegistry, safeStringify } from "ap-shared-core/core-common.js";
+import { decryptResource } from "ap-shared-core/core-main.js";
 
 
 
@@ -53,7 +51,7 @@ export class ResourceStorage {
     return getCache(key, v) ?? null; // this.map.get(key)?.content ?? null;
   }
   static getByName(name: keyof ResourceNamedRegistry) {
-    let v = this.map.values().find(s => s.name == name);
+    let v = Array.from(this.map.values()).find(s => s.name == name);
     if (v != undefined) {
       v = JSON.parse(JSON.stringify(v));
       v.content = getCache(name, v);
@@ -63,7 +61,7 @@ export class ResourceStorage {
   }
 
   static getContentByName(name: keyof ResourceNamedRegistry) {
-    let v = this.map.values().find(s => s.name == name);//?.content ?? null;
+    let v = Array.from(this.map.values()).find(s => s.name == name);//?.content ?? null;
     return getCache(name, v);//this.map.values().find(s => s.name == name)?.content ?? null;
   }
 

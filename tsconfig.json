@@ -1,19 +1,19 @@
 {
   "include": [
-    "src"
-   ],
+    "src/core.ts",
+    "src/core-main.ts",
+    "src/common/extension.d.ts"
+  ],
   "exclude": [
-    "out",
+    "dist",
     "node_modules"
   ],
   "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "target": "ESNext",
-    "rootDir": "src",
-    "outDir": "out",
+    "target": "es2022",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "declarationDir": "dist", 
     "baseUrl": ".",
-    "declaration": true,
     "sourceMap": true,
     "allowJs": true,
     "strictNullChecks": false,
@@ -22,22 +22,25 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "noEmit": false,
-    "skipLibCheck": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "removeComments": false,
     "noImplicitAny": false,
     "inlineSources": true,
-    "typeRoots": [
-      "./node_modules/@types"
-    ],
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "stripInternal": true,
+    "skipLibCheck": true,
     "paths": {
       "uc-runtime/*": [
-        "./*"
+        "./dist/*"
       ],
       "ap-shared-core/*": [
-        "../ap-shared-core/*"
+        "../ap-shared-core/src/*"
       ],
-    }
-  }
+    },
+  },
+  // "references": [
+  //   { "path": "../ap-shared-core" }
+  // ]
 }

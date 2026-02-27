@@ -1,22 +1,28 @@
 {
   "name": "uc-runtime",
   "version": "3.0.0-beta.0",
-  "type": "module",
+  "type": "module",  
   "exports": {
-    "./*": "./dist/*",
-    "./package.json": "./package.json"
+    "./core.js": {
+      "import": "./dist/core.js",
+      "types": "./dist/core.d.ts"
+    },
+    "./core-main.js": {
+      "import": "./dist/core-main.js",
+      "types": "./dist/core-main.d.ts"
+    },
+    "./package.json": {
+      "import": "./package.json"
+    }
   },
   "description": ":Shree Ganeshay Namah: \n new way app design",
   "scripts": {
     "clean": "rimraf out && rimraf dist",
-    "start": "electron .",
     "build:es": "node build-es.js",
-    "build:designer": "uc-dev build",
-    "build:dts": "tsc --emitDeclarationOnly",
-    "build": "tsc",
-    "rebuild": "npm run clean && npm run build && npm run build:dts",
-    "rebuild:start": "npm run rebuild && npm run start"
-  },
+    "build:designer": "uc-dev build --ignreq",
+    "build:types": "tsc -p tsconfig-types.json", 
+    "rebuild": "npm run clean && npm run build:es && npm run build:types && npm run build:designer"
+   },
   "author": "ap",
   "license": "ISC",
   "devDependencies": {
@@ -25,26 +31,24 @@
     "esbuild": "^0.27.2",
     "rimraf": "^6.0.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.9.3"  
-  },
-  "dependencies": {
-    
+    "typescript": "^5.9.3"  ,
     "ap-shared-core": "file:../ap-shared-core"
   },
+  "dependencies": {
+  },
   "keywords": [
-    "electron app designer",
-    "app developement",
-    "way design",
-    "ui design",
+    "designer",
+    "app developement", "usercontrol","template",
+    "ui designer", "runtime designer",
     "winform designer",
     "software developement"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/pratik2201/ucbuilder.git"
+    "url": "https://github.com/pratik2201/uc-runtime.git"
   },
   "bugs": {
-    "url": "https://github.com/pratik2201/ucbuilder/issues"
+    "url": "https://github.com/pratik2201/uc-runtime/issues"
   },
-  "homepage": "https://github.com/pratik2201/ucbuilder#readme"
+  "homepage": "https://github.com/pratik2201/uc-runtime#readme"
 }

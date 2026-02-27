@@ -1,6 +1,7 @@
 
+import { GetUniqueId } from "ap-shared-core/core-common.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
-import { GetUniqueId } from "ap-shared-core/out/uc-runtime/ucUtil.js";
+ 
 
 
 interface EventRecord {

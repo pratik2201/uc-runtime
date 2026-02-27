@@ -1,7 +1,7 @@
-import { ATTR_OF, GetUniqueId } from "ap-shared-core/out/uc-runtime/ucUtil.js";
+
+import { ResourceKeyRegistry, ATTR_OF, GetUniqueId } from "ap-shared-core/core-common.js";
 import { ExtractArguments, ISourceOptions, IUcOptions } from "../common/enumAndMore.js";
 import { UserControl$Extended } from "./UsercontrolRes/UserControl$Extended.js";
-import { ResourceKeyRegistry } from "ap-shared-core/out/enums.js";
 export type UcDialogResult = "none" | "ok" | 'cancel' | 'close';
 export type ucVisibility = 'inherit' | 'visible' | 'hidden';
 

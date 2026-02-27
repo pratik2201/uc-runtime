@@ -1,7 +1,10 @@
-import { ICoupleContent, ICoupleNode, ITemplateContent, IUsercontrolContent } from "ap-shared-core/out/uc-runtime/Template.js";
+ 
+
+import { ResourceKeyRegistry } from "ap-shared-core/core-common.js";
+import { IUsercontrolContent, ITemplateContent } from "ap-shared-core/core.js";
 import { IKeyStampNode } from "../renderer/StylerRegs.js";
-import { Usercontrol } from "../renderer/Usercontrol.js";
-import { ResourceKeyRegistry } from "uc-runtime/src/core-main.js";
+import { Usercontrol } from "../renderer/Usercontrol.js"; 
+ 
 export type UCGenerateMode = "client" | "designer";
 export type UcStates = "normal" | "dock" | "minimize" | "maximize";
 // ResourceManage.d.ts

@@ -1,8 +1,9 @@
 
-import { ATTR_OF, GetUniqueId, StyleClassScopeType, ucUtil } from "ap-shared-core/out/uc-runtime/ucUtil.js";
 import { SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
 import { CssRuntimeResolver } from "./CssRuntimeResolver.js";
 import { Assembly, AssemblyManager } from "./Assembly.js";
+import { GetUniqueId, ATTR_OF, StyleClassScopeType } from "ap-shared-core/core-common.js";
+import { ucUtil } from "ap-shared-core/core.js"; 
 export type VariableList = { [key: string]: string };
 export const patternList = {
   styleTagSelector: /<style([\n\r\w\W.]*?)>([\n\r\w\W.]*?)<\/style>/gi,
