@@ -1,17 +1,11 @@
 {
   "include": [
-    "src/core.ts",
-    "src/core-main.ts",
-    "src/common/extension.d.ts"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules"
-  ],
+    "src"
+  ], 
   "compilerOptions": {
-    "target": "es2022",
+    "target": "esnext",
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "declarationDir": "dist", 
     "baseUrl": ".",
     "sourceMap": true,
@@ -32,14 +26,9 @@
     "stripInternal": true,
     "skipLibCheck": true,
     "paths": {
-      "uc-runtime/*": [
-        "./dist/*"
-      ],
-      "ap-shared-core/*": [
-        "../ap-shared-core/src/*"
-      ],
+      "uc-runtime/*": ["./*"]
     },
-  },
+  }
   // "references": [
   //   { "path": "../ap-shared-core" }
   // ]

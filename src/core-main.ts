@@ -1,6 +1,8 @@
 export { UcDefaultConfig } from "ap-shared-core/core-main.js";
-
-export { AssemblyList, AssemblyRegistry, ResourceKeyList, ResourceKeyRegistry, ResourceNamedList, ResourceNamedRegistry, UserResource } from "ap-shared-core/core-common.js";
+export {
+  AssemblyList, AssemblyRegistry, ResourceKeyList, ResourceKeyRegistry, ResourceNamedList,
+  ResourceNamedRegistry, UserResource
+} from "ap-shared-core/core-common.js";
 export { ResourceStorage } from "./main/ResourceStorage.js";
 export { Assembly, AssemblyManager } from "./renderer/Assembly.js";
 

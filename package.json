@@ -1,7 +1,7 @@
 {
   "name": "uc-runtime",
   "version": "3.0.0-beta.0",
-  "type": "module",  
+  "type": "module",
   "exports": {
     "./core.js": {
       "import": "./dist/core.js",
@@ -11,18 +11,17 @@
       "import": "./dist/core-main.js",
       "types": "./dist/core-main.d.ts"
     },
-    "./package.json": {
-      "import": "./package.json"
-    }
+    "./package.json": "./package.json",
+    "./designerFiles/Resources.js": "./dist/designerFiles/Resources.js"
   },
   "description": ":Shree Ganeshay Namah: \n new way app design",
   "scripts": {
     "clean": "rimraf out && rimraf dist",
     "build:es": "node build-es.js",
     "build:designer": "uc-dev build --ignreq",
-    "build:types": "tsc -p tsconfig-types.json", 
-    "rebuild": "npm run clean && npm run build:es && npm run build:types && npm run build:designer"
-   },
+    "build:types": "tsc -p tsconfig-types.json",
+    "rebuild": "npm run clean  &&  npm run build:es && npm run build:designer &&  npm run build:es && npm run build:types"
+  },
   "author": "ap",
   "license": "ISC",
   "devDependencies": {
@@ -31,15 +30,17 @@
     "esbuild": "^0.27.2",
     "rimraf": "^6.0.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.9.3"  ,
+    "typescript": "^5.9.3",
     "ap-shared-core": "file:../ap-shared-core"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "keywords": [
     "designer",
-    "app developement", "usercontrol","template",
-    "ui designer", "runtime designer",
+    "app developement",
+    "usercontrol",
+    "template",
+    "ui designer",
+    "runtime designer",
     "winform designer",
     "software developement"
   ],

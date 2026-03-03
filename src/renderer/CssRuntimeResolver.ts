@@ -1,6 +1,5 @@
 
-import { ResourceKeyList } from "ap-shared-core/core-common.js";
-import { ResourceKeyBridge } from "node_modules/ap-shared-core/out/enums.js";
+import { ResourceKeyBridge, ResourceKeyList } from "ap-shared-core/core-common.js"; 
 import { ResourceManage } from "./ResourceManage.js";
 
 

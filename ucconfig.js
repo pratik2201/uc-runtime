@@ -1,5 +1,4 @@
 import { UcDefaultConfig } from "uc-runtime/core-main.js";
- 
 export default UcDefaultConfig({
     guid: "f1441d07-173e-42ef-8ce0-df5f564c546e", 
     cli:{
@@ -9,14 +8,9 @@ export default UcDefaultConfig({
         outputFileExt: ".js", 
         designerDir: "designerFiles",
         srcDir: "src", 
-        outDir: "dist", 
-        
-        ResourceStorageFile: "src/designerFiles/Resources.ts", 
-        baseCssPath: "styles.scss",
-        baseHtmlPath:"index.html",
-        baseCodePath:"index.ts",
-        mainProcessFilePath:"",
-        preloadScriptFilePath:"",
+        outDir: "dist",  
+        ResourceStorageFile: "designerFiles/Resources.ts", 
+        baseCssPath: "styles.scss",   
         devtools:true,
         removeMenu:true,
     },
