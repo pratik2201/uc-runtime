@@ -25,7 +25,6 @@
   "author": "ap",
   "license": "ISC",
   "devDependencies": {
-    "ap-shared-core": "file:../ap-shared-core",
     "@types/node": "^20.11.0",
     "electron": "^39.1.1",
     "esbuild": "^0.27.2",
