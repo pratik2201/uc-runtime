@@ -1,6 +1,6 @@
 {
   "name": "uc-runtime",
-  "version": "3.0.0-beta.2",
+  "version": "3.0.0",
   "type": "module",
   "exports": {
     "./core.js": {

@@ -39,6 +39,22 @@ It separates:
 
 uc-dev generates and builds designer files that work on top of uc-runtime.
 
+## 🔁 How to use inside any `*.uc.html` file
+syntex
+```html 
+<tagName x-from="path to `.uc.html` file" ><!-- elements if usercontrol support/need child elements --></tagName>
+```
+example use of `WinFrame` Usercontrol from project `uc-controls`
+```html
+<wrapper>
+   <WinFrame x-name="winFrame1" x-from="uc-controls/WinFrame.uc.html" >
+       <h1>Hello From Uc Project</h1>
+   </WinFrame>
+</wrapper>
+```
+as the above you can create your own ui controls and call those like this
+
+
 ## 🔁 Works With
 - Package	Purpose
 - uc-dev	CLI builder
