@@ -1,6 +1,6 @@
 {
   "name": "uc-runtime",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "type": "module",
   "exports": {
     "./core.js": {
@@ -25,6 +25,7 @@
   "author": "ap",
   "license": "ISC",
   "devDependencies": {
+    
     "@types/node": "^20.11.0",
     "electron": "^39.1.1",
     "esbuild": "^0.27.2",
@@ -34,6 +35,7 @@
   },
   "dependencies": {
     
+    "ap-shared-core": "file:../ap-shared-core"
     
   },
   "keywords": [

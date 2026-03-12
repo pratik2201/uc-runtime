@@ -1,32 +1,35 @@
 import { UcDefaultConfig } from "uc-runtime/core-main.js";
 export default UcDefaultConfig({
-    guid: "f1441d07-173e-42ef-8ce0-df5f564c546e", 
-    cli:{
-        useElectron: false, 
-        useTypeScript: true, 
-        codeFileExt: ".ts", 
-        outputFileExt: ".js", 
+    guid: "f1441d07-173e-42ef-8ce0-df5f564c546e",
+    cli: {
+        useElectron: false,
+        useTypeScript: true,
+        codeFileExt: ".ts",
+        outputFileExt: ".js",
         designerDir: "designerFiles",
-        srcDir: "src", 
-        outDir: "dist",  
-        ResourceStorageFile: "designerFiles/Resources.ts", 
-        baseCssPath: "styles.scss",   
-        devtools:true,
-        removeMenu:true,
+        srcDir: "src",
+        outDir: "dist",
+        ResourceStorageFile: "designerFiles/Resources.ts",
+        baseCssPath: "styles.scss",
+        devtools: true,
+        removeMenu: true,
     },
     browser: {
-        resolveProjects: [  "uc-runtime",  "uc-dev",  ],
+        resolveProjects: ["uc-dev"],
         importmap: {
-            
-        },       
+            "core.js":"dist/core.js",
+            "core-main.js": "dist/core-main.js",
+            "package.json": "package.json",
+            "designerFiles/Resources.js": "dist/designerFiles/Resources.js"
+        },
     },
-    projectBaseCssPath: "",   
+    projectBaseCssPath: "",
     preference: {
-        build: { 
-            ignorePath: [  "node_modules",  ".git",  ".vscode",  "dist",  ],
+        build: {
+            ignorePath: ["node_modules", ".git", ".vscode", "dist",],
             RuntimeResources: [
                 {
-                    includeExtensions: [  ".jpg",  ".png",  ".html",  ".scss",  ".ico",  ".svg",  ],
+                    includeExtensions: [".jpg", ".png", ".html", ".scss", ".ico", ".svg",],
                     fromDeclare: "src",
                     toDeclares: ["out"]
                 }
@@ -36,7 +39,7 @@ export default UcDefaultConfig({
                 sequencePadSize: 8,
             }
         },
-        
+
         dirDeclaration: {
             src: {
                 /* 
@@ -61,11 +64,12 @@ export default UcDefaultConfig({
                  *   
                  *  Same for out declaration 
                  */
-                fileDeclaration:  { code :  {  extension : '.ts',  } ,
-    designer :  {  subDirPath : 'designerFiles',  extension : '.designer.ts',  } ,
-    scss :  {  extension : '.scss',  } ,
-    html :  {  extension : '.html',  } ,
-     } 
+                fileDeclaration: {
+                    code: { extension: '.ts', },
+                    designer: { subDirPath: 'designerFiles', extension: '.designer.ts', },
+                    scss: { extension: '.scss', },
+                    html: { extension: '.html', },
+                }
             },
             out: {
                 /* 
@@ -74,21 +78,23 @@ export default UcDefaultConfig({
                 ./[]/lib/file.uc.html     =>    ./lib/file.uc.html
                 */
                 dirPath: 'dist',
-                fileDeclaration:   { code :  {  extension : '.js',  } ,
-    designer :  {  subDirPath : 'designerFiles',  extension : '.designer.js',  } ,
-    scss :  {  extension : '.scss',  } ,
-    html :  {  extension : '.html',  } ,
-     } 
+                fileDeclaration: {
+                    code: { extension: '.js', },
+                    designer: { subDirPath: 'designerFiles', extension: '.designer.js', },
+                    scss: { extension: '.scss', },
+                    html: { extension: '.html', },
+                }
             }
-        }, 
-         /**
-         * A common Declaration  for all declarations specified in `dirDeclaration` 
-         * (i.e src,out)
-         */
-        fileCommonDeclaration:  { designer :  {  subDirPath : 'designerFiles',  } ,
-    scss :  {  extension : '.scss',  } ,
-    html :  {  extension : '.html',  } ,
-     } ,        
+        },
+        /**
+        * A common Declaration  for all declarations specified in `dirDeclaration` 
+        * (i.e src,out)
+        */
+        fileCommonDeclaration: {
+            designer: { subDirPath: 'designerFiles', },
+            scss: { extension: '.scss', },
+            html: { extension: '.html', },
+        },
         /**
          * specify dirDeclaration key for source
          */
