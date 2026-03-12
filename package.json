@@ -35,7 +35,6 @@
   },
   "dependencies": {
     
-    "ap-shared-core": "file:../ap-shared-core"
     
   },
   "keywords": [
