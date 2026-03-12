@@ -1,6 +1,6 @@
 {
   "name": "uc-runtime",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "type": "module",
   "exports": {
     "./core.js": {
@@ -25,7 +25,6 @@
   "author": "ap",
   "license": "ISC",
   "devDependencies": {
-    
     "@types/node": "^20.11.0",
     "electron": "^39.1.1",
     "esbuild": "^0.27.2",
@@ -33,10 +32,7 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3"
   },
-  "dependencies": {
-    
-    
-  },
+  "dependencies": {},
   "keywords": [
     "designer",
     "app developement",
