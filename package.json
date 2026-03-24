@@ -33,7 +33,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "ap-shared-core": "file:../ap-shared-core"
+   
   },
   "keywords": [
     "designer",
