@@ -150,7 +150,7 @@ export class IpcMainHelper {
     ) {
         let basePath: string;
         const { app } = await import('electron');
-        console.log(app.isPackaged);
+       // console.log(app.isPackaged);
 
         if (app.isPackaged) {
             // packaged → resources/app.asar
@@ -163,7 +163,7 @@ export class IpcMainHelper {
         const baseURL = pathToFileURL(basePath + "/").href;
 
         options.baseURLForDataURL ??= baseURL;
-        console.log(options.baseURLForDataURL);
+       // console.log(options.baseURLForDataURL);
 
 
         win.loadURL(_path, options);
