@@ -30,6 +30,7 @@ ResourceStorage.bulkRegister(Resources);
 
 ResourceStorage.RuntimeProps['importmap'] = ResourceStorage.RuntimeProps['importmap'] ?? ResourceStorage.getContent("uc-runtime:f1441d07-173e-42ef-8ce0-df5f564c546e:00000000");
 
+try { (await import("../main/ResourceManage.ipc.js")).default(); } catch(ex){ console.log(ex); } 
 
 AssemblyManager.Register({
      name: "uc-runtime",

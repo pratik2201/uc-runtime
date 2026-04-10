@@ -2,8 +2,9 @@
 import { SourceNode, STYLER_SELECTOR_TYPE } from "../lib/StampGenerator.js";
 import { CssRuntimeResolver } from "./CssRuntimeResolver.js";
 import { Assembly, AssemblyManager } from "./Assembly.js";
-import { GetUniqueId, ATTR_OF, StyleClassScopeType } from "ap-shared-core/core-common.js";
+import { GetUniqueId, ATTR_OF, StyleClassScopeType, ResourceKeyBridge } from "ap-shared-core/core-common.js";
 import { ucUtil } from "ap-shared-core/core.js"; 
+import { ResourceManage } from "./ResourceManage.js";
 export type VariableList = { [key: string]: string };
 export const patternList = {
   styleTagSelector: /<style([\n\r\w\W.]*?)>([\n\r\w\W.]*?)<\/style>/gi,
@@ -199,9 +200,12 @@ export class StylerRegs {
     _params.callCounter++;
     let _curAssembly = _this.assembly;
     //let _curProject = _this.projectInfo;
-
+   // debugger;
     let rtrn = this.cssResolver.resolveImports(_params.data);
-
+    //console.log([this.main.myObjectKey]);
+    
+    //console.log(rtrn);
+    
 
     rtrn = this.opnClsr.doTask("{", "}", rtrn,
       (selectorText: string, styleContent: string, count: number): string => {
@@ -287,7 +291,7 @@ export class StylerRegs {
 
 
   pushChild(cssGuid: string, node: StylerRegs, accessKey: string): void {
-    console.log(cssGuid);
+    //console.log(cssGuid);
 
     let sreg: StylerRegs = this.children.find((s: StylerRegs) => s.cssGuid == cssGuid);
     if (sreg == undefined) {
@@ -330,9 +334,12 @@ export class RootAndExcludeHandler {
     selectorText.replace(
       patternList.subUcFatcher,
       (match: string, quationMark: string, cssGuid: string, UCselector: string) => {
+        const extrectedCssGuid = ResourceKeyBridge.extractKey(cssGuid)
         let tree: StylerRegs = this.main.children.find(
-          (s: StylerRegs) => s.cssGuid == cssGuid || s.controlXName == cssGuid
+          (s: StylerRegs) => s.cssGuid == extrectedCssGuid || s.controlXName == cssGuid
         );
+        //console.log(tree);
+        
         if (tree != undefined) {
           let nscope: string =
             _params.callCounter == 1

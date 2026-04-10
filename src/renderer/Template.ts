@@ -22,7 +22,7 @@ export class Template {
    * @param cssdata 
    * @returns 
    */
-  static GetObjectOfTemplate(guid: keyof ResourceKeyRegistry/*cssGuid: string, htmlResKey: keyof ResourceKeyRegistry, cssResKey: keyof ResourceKeyRegistry*/) {
+  static GetObjectOfTemplate(guid: keyof ResourceKeyRegistry) {
     let res = JSON.parse(ResourceManage.getContent(guid)) as ITemplateContent;
     for (const [k, v] of Object.entries(res.templates)) {
       v.accessKey = k;

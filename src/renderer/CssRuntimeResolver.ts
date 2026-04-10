@@ -1,5 +1,5 @@
 
-import { ResourceKeyBridge, ResourceKeyList } from "ap-shared-core/core-common.js"; 
+import { ResourceKeyBridge, ResourceKeyList } from "ap-shared-core/core-common.js";
 import { ResourceManage } from "./ResourceManage.js";
 
 
@@ -7,6 +7,7 @@ import { ResourceManage } from "./ResourceManage.js";
 const SCSS_IMPORT_RE =
   /@(use|import)\s+(?:url\()?["']([^"')]+)["']\)?\s*;/gi;
 
+const RES_KEY_RE = /__RES::([A-Za-z0-9_-]+:[A-F0-9-]+:\d+)__/g;
 const CSS_URL_RE =
   /url\(\s*["']?([^"')]+)["']?\s*\)/gi;
 
@@ -44,8 +45,31 @@ export class CssRuntimeResolver {
   // ---------- IMPORT / USE ----------
 
   resolveImports(css: string): string {
-
+   //console.log([css]);
+    
     return css.replace(SCSS_IMPORT_RE, (_m, _type, value) => {
+ 
+     // if (!ResourceKeyBridge.isPlaceholder(value)) return "";
+      const realKey =  ResourceKeyBridge.extractKey(value) as ResourceKeyList;
+      //console.log([2,realKey]);
+        if (!realKey) return "";
+      console.log(['**********:',realKey]);
+      
+      // circular safe
+      if (this.loaded.has(realKey)) return "";
+      this.loaded.add(realKey);
+
+      const res = ResourceManage.get(realKey);
+       //console.log(res);
+     
+      if (!res || res.type !== "css") {
+        console.warn("CSS import missing:", realKey);
+        return "";
+      }
+
+      return this.resolveCss(res.content);
+    });
+    /*return css.replace(SCSS_IMPORT_RE, (_m, _type, value) => {
 
       if (!ResourceKeyBridge.isPlaceholder(value)) return "";
 
@@ -63,7 +87,9 @@ export class CssRuntimeResolver {
       }
 
       return this.resolveCss(res.content);
-    });
+    });*/
+
+
   }
 
   // ---------- URL(...) ----------
