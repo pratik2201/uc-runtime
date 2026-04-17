@@ -11,7 +11,10 @@ export { ResourceManage } from "./renderer/ResourceManage.js";
 export { TabIndexManager, TabContainerClearNode } from "./lib/TabIndexManager.js";
 export { CommonEvent } from "./global/commonEvent.js";
 export { IpcRendererHelper } from "./renderer/ipc/IpcRendererHelper.js";
-export { WinManager, ShortcutNode } from "./lib/WinManager.js";
+export { WinManager  } from "./lib/WinManager.js";
 export { KeyboardKeyEnum } from "ap-shared-core/core-common.js";
-export type { KeyboardKey } from "ap-shared-core/core-common.js";
+export { KeyboardKey, ShortcutManager } from "./lib/ShortcutManager.js";
+export { ShortcutContext } from "./lib/ShortcutCore.js";
+
+//export type { KeyboardKey } from "ap-shared-core/core-common.js";
 export { PreloadFullFill } from "./common/ipc/enumAndMore.js";

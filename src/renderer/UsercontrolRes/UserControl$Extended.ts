@@ -10,6 +10,8 @@ import { Assembly, AssemblyManager } from "../Assembly.js";
 import { CSSVariableScope, CssVariableHandler, StyleBaseType, VariableList } from "../StylerRegs.js";
 import { Usercontrol } from "../Usercontrol.js";
 import { Usercontrol$Event } from "./Usercontrol$Event.js";
+import {   ShortcutManager } from "../../lib/ShortcutManager.js";
+import { ShortcutContext } from "../../core.js";
 export type UcDialogResult = "none" | "ok" | 'cancel' | 'close';
 export type ucVisibility = 'inherit' | 'visible' | 'hidden';
 export interface ITransferDataNode {
@@ -28,6 +30,7 @@ export class UserControl$Extended {
     constructor() {
 
     }
+    shortCutContext: ShortcutContext;
     private main: Usercontrol;
     init(main: Usercontrol) {
         this.main = main;
@@ -166,9 +169,11 @@ export class UserControl$Extended {
         ucExt.isForm = (param0.parentUc == undefined);
         if (ucExt.isForm) {
             ucExt.dialogForm = this.main;
+            ucExt.shortCutContext = new ShortcutContext(ShortcutContext.globalRef);
             ucExt.show = () => { throw new Error('Parent Free Usercontrol SHOULD be CALL by `showDialog` \n ' + ucExt.guid) };
         } else {
             ucExt.dialogForm = param0.parentUc.ucExtends.dialogForm;
+            ucExt.shortCutContext = ucExt.dialogForm.ucExtends.shortCutContext;
             ucExt.showDialog = () => { throw new Error('with Parent Usercontrol SHOULD be CALL by `show` \n ' + ucExt.guid) };
         }
         if (ucExt.isForm) {
@@ -347,6 +352,7 @@ export class UserControl$Extended {
 
         _extends.Events.loaded.fireAsync();
 
+        ShortcutManager.ref.pushFormContext(_extends.shortCutContext);
 
         if (!defaultFocusAt) {
             TabIndexManager.moveNext(_extends.self, undefined);

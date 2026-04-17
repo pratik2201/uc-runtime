@@ -53,7 +53,7 @@ export class CssRuntimeResolver {
       const realKey =  ResourceKeyBridge.extractKey(value) as ResourceKeyList;
       //console.log([2,realKey]);
         if (!realKey) return "";
-      console.log(['**********:',realKey]);
+      //console.log(['**********:',realKey]);
       
       // circular safe
       if (this.loaded.has(realKey)) return "";

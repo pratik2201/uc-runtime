@@ -1,111 +1,112 @@
-import { GetUniqueId, KeyboardKey } from 'ap-shared-core/core-common.js'; 
+import { GetUniqueId, KeyboardKey } from 'ap-shared-core/core-common.js';
 import { CommonEvent } from "../global/commonEvent.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
 import { TabIndexManager } from "./TabIndexManager.js";
+import { ShortcutManager } from './ShortcutManager.js';
 
-type ShortcutCallback = (e: KeyboardEvent) => void;
-export class ShortcutNode {
-    private shortcutMap: Record<string, ShortcutCallback> = {};
-    register(keys: KeyboardKey[][], callback: ShortcutCallback, override = false) {
-        const rtrn: string[] = [];
-        keys.forEach(key => {
-            const combo = key.slice().sort().join("+");
+// type ShortcutCallback = (e: KeyboardEvent) => void;
+// export class ShortcutNode {
+//     private shortcutMap: Record<string, ShortcutCallback> = {};
+//     register(keys: KeyboardKey[][], callback: ShortcutCallback, override = false) {
+//         const rtrn: string[] = [];
+//         keys.forEach(key => {
+//             const combo = key.slice().sort().join("+");
 
-            if (!(combo in this.shortcutMap)) {
-                this.shortcutMap[combo] = callback;
-                console.log(`${combo} Registered`);
-                rtrn.push(combo);
-            } else {
-                if (override) {
-                    this.shortcutMap[combo] = callback;
-                    console.log(`[${combo}] Registered`);
-                    rtrn.push(combo);
-                }
-            }
-        });
-        return rtrn;
-    }
+//             if (!(combo in this.shortcutMap)) {
+//                 this.shortcutMap[combo] = callback;
+//                 console.log(`${combo} Registered`);
+//                 rtrn.push(combo);
+//             } else {
+//                 if (override) {
+//                     this.shortcutMap[combo] = callback;
+//                     console.log(`[${combo}] Registered`);
+//                     rtrn.push(combo);
+//                 }
+//             }
+//         });
+//         return rtrn;
+//     }
 
-    /** Unregister a shortcut */
-    unregister(keys: KeyboardKey[]) {
-        const rtrn: string[] = [];
-        const combo = keys.slice().sort().join("+");
-        if (combo in this.shortcutMap) {
-            delete this.shortcutMap[combo];
-            rtrn.push(combo);
-        }
-        return rtrn;
-    }
+//     /** Unregister a shortcut */
+//     unregister(keys: KeyboardKey[]) {
+//         const rtrn: string[] = [];
+//         const combo = keys.slice().sort().join("+");
+//         if (combo in this.shortcutMap) {
+//             delete this.shortcutMap[combo];
+//             rtrn.push(combo);
+//         }
+//         return rtrn;
+//     }
 
-    /** Clear all shortcuts */
-    clear(): void {
-        this.shortcutMap = {};
-    }
+//     /** Clear all shortcuts */
+//     clear(): void {
+//         this.shortcutMap = {};
+//     }
 
-    callTask(combo: string, e: KeyboardEvent) {
-        if (combo in this.shortcutMap) {
-            const cb = this.shortcutMap[combo];
-            if (cb) cb(e);
-            return true;
-        } else return false;
+//     callTask(combo: string, e: KeyboardEvent) {
+//         if (combo in this.shortcutMap) {
+//             const cb = this.shortcutMap[combo];
+//             if (cb) cb(e);
+//             return true;
+//         } else return false;
 
-    }
-}
-export class ShortcutManager {
-    private pressedKeys: Set<string> = new Set<string>();
-    source: ShortcutNode[] = [];
-    CreateLayer() {
-        const layer = new ShortcutNode();
-        this.source.unshift(layer);
-        return layer;
-    }
-    constructor() {
-        this.pressedKeys = new Set();
-        WinManager.event.keydown.on(this._keydown);
-        WinManager.event.keyup.on(this._keyup);
-        window.addEventListener("blur", this._blur);
-    }
-    /** Destroy manager and remove all listeners */
-    destroy(): void {
-        WinManager.event.keydown.off(this._keydown);
-        WinManager.event.keyup.off(this._keyup);
-        window.removeEventListener("blur", this._blur);
-        this.pressedKeys.clear();
-        this.source.forEach(s => s.clear());
-    }
+//     }
+// }
+// export class ShortcutManager {
+//     private pressedKeys: Set<string> = new Set<string>();
+//     source: ShortcutNode[] = [];
+//     CreateLayer() {
+//         const layer = new ShortcutNode();
+//         this.source.unshift(layer);
+//         return layer;
+//     }
+//     constructor() {
+//         this.pressedKeys = new Set();
+//         WinManager.event.keydown.on(this._keydown);
+//         WinManager.event.keyup.on(this._keyup);
+//         window.addEventListener("blur", this._blur);
+//     }
+//     /** Destroy manager and remove all listeners */
+//     destroy(): void {
+//         WinManager.event.keydown.off(this._keydown);
+//         WinManager.event.keyup.off(this._keyup);
+//         window.removeEventListener("blur", this._blur);
+//         this.pressedKeys.clear();
+//         this.source.forEach(s => s.clear());
+//     }
 
-    /** Normalize key combination to string */
-    private static getComboString(keys: Set<string>): string {
-        return [...keys].sort().join("+");
-    }
+//     /** Normalize key combination to string */
+//     private static getComboString(keys: Set<string>): string {
+//         return [...keys].sort().join("+");
+//     }
 
-    // --- PRIVATE EVENT HANDLERS ---
+//     // --- PRIVATE EVENT HANDLERS ---
 
-    private _keydown = (e: KeyboardEvent): void => {
-       // console.log(Array.from(this.pressedKeys.entries()).join('\n') + '\n.................. KEYS ARE DOWN');
-        
-        if (this.pressedKeys.has(e.code)) return;
+//     private _keydown = (e: KeyboardEvent): void => {
+//        // console.log(Array.from(this.pressedKeys.entries()).join('\n') + '\n.................. KEYS ARE DOWN');
 
-        this.pressedKeys.add(e.code);
-        //console.log('down.');
+//         if (this.pressedKeys.has(e.code)) return;
 
-        const combo = ShortcutManager.getComboString(this.pressedKeys);
-        const src = this.source;
-        for (let i = 0, ilen = src.length; i < ilen; i++) {
-            const iItem = src[i];
-            if (iItem.callTask(combo, e)) return;
-        }
-    }
+//         this.pressedKeys.add(e.code);
+//         //console.log('down.');
 
-    private _keyup = (e: KeyboardEvent): void => {
-        this.pressedKeys.delete(e.code);
-        //this.pressedKeys.clear();
-    }
+//         const combo = ShortcutManager.getComboString(this.pressedKeys);
+//         const src = this.source;
+//         for (let i = 0, ilen = src.length; i < ilen; i++) {
+//             const iItem = src[i];
+//             if (iItem.callTask(combo, e)) return;
+//         }
+//     }
 
-    private _blur(): void {
-        this.pressedKeys?.clear();
-    }
-}
+//     private _keyup = (e: KeyboardEvent): void => {
+//         this.pressedKeys.delete(e.code);
+//         //this.pressedKeys.clear();
+//     }
+
+//     private _blur(): void {
+//         this.pressedKeys?.clear();
+//     }
+// }
 
 interface WinNode {
     uc?: Usercontrol,
@@ -149,7 +150,7 @@ export class FocusManager {
 export class WinManager {
     static IS_REPEAT = false;
     static RepeatPauseInMilliSeconds = 1000;
-    static shortcutManage: ShortcutManager;
+    //static shortcutManage: ShortcutManager;
     static isSameKey = <T>(arr1: T[], arr2: T[]): boolean => {
         if (arr1.length !== arr2.length) return false; // lengths must be same
         for (let i = 0; i < arr1.length; i++) {
@@ -162,13 +163,13 @@ export class WinManager {
         const _this = this;
         //.log('======================>WinManager.initEvent');
 
-        this.shortcutManage = new ShortcutManager();
+
         window.addEventListener('keydown', async (e) => {
             if (WinManager.IS_REPEAT || e.code == undefined) return;
             if (e.repeat) WinManager.IS_REPEAT = true;
             await _this.event.keydown.fireAsync([e]);
             //requestAnimationFrame(() => {
-                WinManager.IS_REPEAT = false;
+            WinManager.IS_REPEAT = false;
             //}, WinManager.RepeatPauseInMilliSeconds)
 
         });
@@ -259,8 +260,8 @@ export class WinManager {
             requestAnimationFrame(() => {
                 this.focusMng.focus(element);
             });
+            ShortcutManager.ref.pushFormContext(uc.ucExtends.shortCutContext);
             await uc.ucExtends.Events.activate.fireAsync([]);
-
         }
     }
 

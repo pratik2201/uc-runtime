@@ -1,153 +1,217 @@
-type ActionName =
-  | "accept"
-  | "cancel"
-  | "openCompany"
-  | "nextField"
-  | "prevField";
-  
-type ShortcutDef = {
-  keys: string[];        // ["Control", "A"]
-  action: ActionName;
-  mode?: string;         // optional mode restriction
-};
+// ================= TYPES =================
 
-export class ShortcutNode {
-  private comboMap: Record<string, ShortcutDef> = {};
-  private sequenceMap: Record<string, ShortcutDef> = {};
+import { ShortcutContext } from "./ShortcutCore.js";
 
-  register(def: ShortcutDef) {
-    const key = ShortcutNode.normalize(def.keys);
+type GlobalActionNames =
+    | "NEXT_FIELD_FOCUS"
+    | "PREV_FIELD_FOCUS"
+    | "LEFT_FIELD_FOCUS"
+    | "RIGHT_FIELD_FOCUS";
 
-    if (def.keys.length === 1 || def.keys.includes("Control") || def.keys.includes("Alt")) {
-      this.comboMap[key] = def;
-    } else {
-      this.sequenceMap[key] = def;
-    }
-  }
+type ActionNames = string;
 
-  findCombo(combo: string, mode?: string): ActionName | null {
-    const def = this.comboMap[combo];
-    if (!def) return null;
-    if (def.mode && def.mode !== mode) return null;
-    return def.action;
-  }
+type ModifierKey = "control" | "alt" | "shift" | "meta";
 
-  findSequence(seq: string, mode?: string): ActionName | null {
-    const def = this.sequenceMap[seq];
-    if (!def) return null;
-    if (def.mode && def.mode !== mode) return null;
-    return def.action;
-  }
+type LetterKey =
+    | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j"
+    | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t"
+    | "u" | "v" | "w" | "x" | "y" | "z";
 
-  static normalize(keys: string[] | Set<string>): string {
-    return [...keys].sort().join("+");
-  }
-}
+type NumberKey = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
 
-export class ShortcutContext {
-    node: ShortcutNode = new ShortcutNode();
-    parent?: ShortcutContext;
-    mode: string = "view";
+type FunctionKey =
+    | "f1" | "f2" | "f3" | "f4" | "f5" | "f6"
+    | "f7" | "f8" | "f9" | "f10" | "f11" | "f12";
 
-    private handlers: Record<string, (e: KeyboardEvent) => void> = {};
+type SpecialKey =
+    | "enter"
+    | "escape"
+    | "tab"
+    | "space"
+    | "backspace"
+    | "delete"
+    | "arrowup"
+    | "arrowdown"
+    | "arrowleft"
+    | "arrowright";
 
-    constructor(parent?: ShortcutContext) {
-        this.parent = parent;
-    }
+export type KeyboardKey =
+    | ModifierKey
+    | LetterKey
+    | NumberKey
+    | FunctionKey
+    | SpecialKey;
 
-    registerShortcut(def: ShortcutDef) {
-        this.node.register(def);
-    }
-
-    on(action: ActionName, handler: (e: KeyboardEvent) => void) {
-        this.handlers[action] = handler;
-    }
-
-    dispatch(action: ActionName, e: KeyboardEvent): boolean {
-        if (this.handlers[action]) {
-            this.handlers[action](e);
-            return true;
-        }
-        if (this.parent) {
-            return this.parent.dispatch(action, e);
-        }
-        return false;
-    }
-
-    resolveCombo(combo: string): ActionName | null {
-        const action = this.node.findCombo(combo, this.mode);
-        if (action) return action;
-        return this.parent?.resolveCombo(combo) ?? null;
-    }
-
-    resolveSequence(seq: string): ActionName | null {
-        const action = this.node.findSequence(seq, this.mode);
-        if (action) return action;
-        return this.parent?.resolveSequence(seq) ?? null;
-    }
-}
+// ================= NODE =================
 
 export class ShortcutManager {
-    private pressedKeys = new Set<string>();
-    private sequence: string[] = [];
-    private sequenceTimer: any = null;
+    static ref: ShortcutManager;
 
-    currentContext!: ShortcutContext;
+    private globalCtx: ShortcutContext;
+    private formStack: ShortcutContext[] = [];
+    private menuCtx?: ShortcutContext;
 
-    constructor(root: ShortcutContext) {
-        this.currentContext = root;
+    constructor(globalCtx: ShortcutContext) {
+        this.globalCtx = globalCtx;
+
+        ShortcutManager.ref = this;
 
         window.addEventListener("keydown", this._keydown);
-        window.addEventListener("keyup", this._keyup);
-        window.addEventListener("blur", this._blur);
+    }
+    pushFormContext(ctx: ShortcutContext) {
+        this.formStack.unshift(ctx);
     }
 
-    setContext(ctx: ShortcutContext) {
-        this.currentContext = ctx;
+    popFormContext() {
+        if (this.formStack.length > 0) {
+            this.formStack.shift();
+        }
+    }
+    // 🔹 current active form
+    private getActiveContext() {
+        return this.formStack[0];
+    }
+    get activeCtx(): ShortcutContext | undefined {
+        return this.formStack[0];
+    }
+    // setActiveContext(ctx: ShortcutContext) {
+    //     this.activeCtx = ctx;
+    // }
+
+    openMenu(ctx: ShortcutContext) {
+        this.menuCtx = ctx;
+    }
+
+    closeMenu() {
+        this.menuCtx = undefined;
+    }
+
+    private buildCombo(e: KeyboardEvent): string {
+        const keys: string[] = [];
+
+        if (e.ctrlKey) keys.push("control");
+        if (e.altKey) keys.push("alt");
+        if (e.shiftKey) keys.push("shift");
+
+        const key = e.key.toLowerCase();
+
+        if (!["control", "alt", "shift"].includes(key)) {
+            keys.push(key);
+        }
+
+        return keys.sort().join("+");
     }
 
     private _keydown = (e: KeyboardEvent) => {
-        if (this.pressedKeys.has(e.key)) return;
+        const combo = this.buildCombo(e);
 
-        this.pressedKeys.add(e.key);
-
-        // ---- COMBO ----
-        const combo = ShortcutNode.normalize(this.pressedKeys);
-        const action = this.currentContext.resolveCombo(combo);
-
-        if (action) {
-            this.currentContext.dispatch(action, e);
-            return;
+        // 1. MENU
+        if (this.menuCtx) {
+            const act = this.menuCtx.resolve(combo);
+            if (act) {
+                e.preventDefault();
+                this.menuCtx.dispatch(act, e);
+                return;
+            }
         }
 
-        // ---- SEQUENCE ----
-        this.sequence.push(e.key);
-        const seqStr = this.sequence.join("+");
-
-        const seqAction = this.currentContext.resolveSequence(seqStr);
-
-        if (seqAction) {
-            this.currentContext.dispatch(seqAction, e);
-            this.sequence = [];
-            return;
+        // 2. ACTIVE FORM (TOP OF STACK)
+        const active = this.getActiveContext();
+        if (active) {
+            const act = active.resolve(combo);
+            if (act) {
+                e.preventDefault();
+                active.dispatch(act, e);
+                return;
+            }
         }
 
-        this._resetSequenceTimer();
+        // 3. GLOBAL
+        const act = this.globalCtx.resolve(combo);
+        if (act) {
+            e.preventDefault();
+            this.globalCtx.dispatch(act, e);
+        }
     };
-
-    private _keyup = (e: KeyboardEvent) => {
-        this.pressedKeys.delete(e.key);
-    };
-
-    private _blur = () => {
-        this.pressedKeys.clear();
-        this.sequence = [];
-    };
-
-    private _resetSequenceTimer() {
-        clearTimeout(this.sequenceTimer);
-        this.sequenceTimer = setTimeout(() => {
-            this.sequence = [];
-        }, 600);
-    }
 }
+
+// export class ShortcutManager {
+//     static ref: ShortcutManager;
+
+//     private pressed = new Set<string>();
+//     private contextStack: ShortcutContext[] = [];
+//     // ADD THIS
+
+//     private contexts: ShortcutContext[] = [];
+
+//     setContexts(contexts: ShortcutContext[]) {
+//         this.contexts = contexts;
+//     }
+//     current!: ShortcutContext;
+
+//     constructor(root: ShortcutContext) {
+//         this.contextStack = [root];
+//         this.current = root;
+
+//         ShortcutManager.ref = this;
+
+//         window.addEventListener("keydown", this._keydown);
+//         window.addEventListener("keyup", this._keyup);
+//         window.addEventListener("blur", this._blur);
+//     }
+
+//     push(ctx: ShortcutContext) {
+//         this.contextStack.unshift(ctx);
+//         this.current = ctx;
+//     }
+
+//     pop() {
+//         if (this.contextStack.length > 1) {
+//             this.contextStack.shift();
+//             this.current = this.contextStack[0];
+//         }
+//     }
+
+//     buildCombo = (evt: KeyboardEvent): string => {
+//         const keys: string[] = [];
+
+//         if (evt.ctrlKey) keys.push("control");
+//         if (evt.altKey) keys.push("alt");
+//         if (evt.shiftKey) keys.push("shift");
+
+//         const key = evt.key.toLowerCase();
+//         if (!["control", "shift", "alt"].includes(key)) {
+//             keys.push(key);
+//         }
+
+//         return keys.sort().join("+");
+//     }
+
+//     private _keydown = async (e: KeyboardEvent) => {
+//         const key = e.key?.toLowerCase();
+//         if (!key || key === "unidentified") return;
+
+//         const combo = this.buildCombo(e);
+
+//         // 🔥 PRIORITY LOOP
+//         for (const ctx of this.contexts) {
+//             const action = ctx.resolveCombo(combo);
+
+//             if (action) {
+//                 e.preventDefault();
+//                 const handled = await ctx.dispatch(action, e);
+//                 if (handled) return;
+//             }
+//         }
+
+//         // (optional sequence logic here)
+//     };
+
+//     private _keyup = (evt: KeyboardEvent) => {
+//         this.pressed.delete(evt.key.toLowerCase());
+//     };
+
+//     private _blur = () => {
+//         this.pressed.clear();
+//     };
+// }
