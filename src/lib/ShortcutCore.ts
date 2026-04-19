@@ -1,7 +1,9 @@
 // ShortcutCore.ts
 
+import { KeyboardKey } from "./ShortcutManager.js";
+
 type ShortcutDef = {
-  keys: string[];
+  keys: KeyboardKey[];
   action: string;
 };
 
@@ -27,15 +29,27 @@ export class ShortcutContext {
   parent?: ShortcutContext;
   static globalRef? = new ShortcutContext();
   handlers: Record<string, (e: KeyboardEvent) => void> = {};
-
+  static GetClone(of: ShortcutContext) {
+    const rtrn = new ShortcutContext(of.parent);
+    rtrn.node = of.node;
+    rtrn.handlers = Object.assign({}, of.handlers);
+    return rtrn;
+  }
   constructor(parent?: ShortcutContext) {
     this.parent = parent;
   }
-
+  registerBulk(defList: { [action: string]: KeyboardKey[] }) {
+    for (const [action, keys] of Object.entries(defList)) {
+      this.register({ action: action, keys: keys });
+    }
+  }
   register(def: ShortcutDef) {
     this.node.register(def);
   }
-
+  // removeHandler(action:string) {
+  //   delete this.handlers[action];
+  // }
+    
   on(action: string, handler: (e: KeyboardEvent) => void) {
     this.handlers[action] = handler;
   }

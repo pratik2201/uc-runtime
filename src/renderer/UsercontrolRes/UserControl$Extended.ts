@@ -227,7 +227,7 @@ export class UserControl$Extended {
                 key: ucExt.guid,
                 accessName: param0.accessName
             });
-            if (param0.targetElement) {
+            if (param0.targetElement ) {
                 ucExt.initalComponents.elements = param0.targetElement.children;
                 objectOpt.copyAttr(param0.targetElement, ucExt.wrapperHT);
                 Usercontrol.HiddenSpace.append(ucExt.wrapperHT);
