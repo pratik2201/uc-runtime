@@ -1,4 +1,3 @@
-
 import { Extensions } from "../../lib/Extensions.js";
 import { ShortcutManager } from "../../lib/ShortcutManager.js";
 import { ShortcutContext } from "../../lib/ShortcutCore.js";
@@ -27,13 +26,16 @@ export async function INIT_RENDERER() {
     AssemblyManager.assemblies[k] = _newAssembly;
     _newAssembly.defaultLoadAt = document.body;
     _newAssembly.srcNode = SourceNode.registerSource({
-      key: _newAssembly.cssGuid,
+      objectKey: _newAssembly.ProjectCSS,
       baseType: StyleBaseType.Global,
       assembly: _newAssembly,
       mode: '$',
       accessName: _newAssembly.name as any,
     });
-    _newAssembly.srcNode.pushCSS(_newAssembly.cssGuid, ResourceManage.getContent(_newAssembly.cssGuid), document.body);
+    _newAssembly.srcNode.AddCss(
+      _newAssembly.ProjectCSS,
+      ResourceManage.getContent(_newAssembly.ProjectCSS),
+      document.body);
   }
   WinManager.initEvent();
   console.log('All Done... ');

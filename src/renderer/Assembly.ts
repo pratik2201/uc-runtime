@@ -5,9 +5,9 @@ import { SourceNode } from "../lib/StampGenerator.js";
 export class Assembly {
     name: keyof AssemblyRegistry;
     id?: number;
-    guid: string;
-    cssGuid: ResourceKeyList;
-    ucConfigGuid: ResourceKeyList;
+    ProjectGUID: string;
+    ProjectCSS: ResourceKeyList;
+    ProjectUcConfig: ResourceKeyList;
     srcNode?: SourceNode;
     defaultLoadAt?: HTMLElement; 
 }

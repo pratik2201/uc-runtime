@@ -24,8 +24,8 @@
   },
   "author": "ap",
   "license": "ISC",
-  "devDependencies": {
-    "@types/node": "^20.11.0",
+  "devDependencies": { 
+    "@types/node": "^20.19.39",
     "electron": "^39.1.1",
     "esbuild": "^0.27.2",
     "rimraf": "^6.0.1",

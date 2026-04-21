@@ -73,7 +73,7 @@ export class TemplateNode$Extended {
         tptExt.accessName = tptPathOpt.accessKey;
         tptExt.srcNode = SourceNode.registerSource(
             {
-                key: tptPathOpt.objectKey,
+                objectKey: tptPathOpt.objectKey,
                 accessName: tptExt.accessName,
                 baseType: StyleBaseType.Template,
                 assembly: mainExt.assembly,
@@ -94,18 +94,18 @@ export class TemplateNode$Extended {
         tptExt.parentUc = mainExt.parentUc;
 
         let puc = tptExt.parentUc;
-        let pext = puc.ucExtends;
+        let pucext = puc.ucExtends;
 
-        tptExt.srcNode.config({
+        tptExt.srcNode.addChildAccessInParentNode({
             parentUc: puc,
-            parentSrc: pext.srcNode,
-            wrapper: pext.wrapperHT,
+            parentSrc: pucext.srcNode,
+            wrapper: pucext.wrapperHT,
             key: `${mainExt.guid}@${tptPathOpt.accessKey}`,
             accessName: tptPathOpt.accessKey
         });
 
 
-        tptExt.srcNode.pushCSSByContent(mainExt.guid/*undefined*/, tptPathOpt.cssContents, tptExt.parentUc.ucExtends.self);
+        tptExt.srcNode.AddCss(mainExt.guid, tptPathOpt.cssContents, tptExt.parentUc.ucExtends.self);
         tptExt.parentUc.ucExtends.Events.afterClose.on(({ }) => {
             tptExt.srcNode.release();
         });

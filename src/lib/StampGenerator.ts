@@ -1,4 +1,4 @@
- 
+
 import { CSSSearchAttributeCondition, IKeyStampNode, StyleBaseType, StylerRegs, WRAPPER_TAG_NAME } from "../renderer/StylerRegs.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
 import { Assembly } from "../renderer/Assembly.js";
@@ -42,10 +42,9 @@ class HTMLCodeNode {
     }
 }
 class StyleCodeNode {
-
     originalContent: string;
     styleHT: HTMLStyleElement;
-    counter: number = 0;
+    //counter: number = 0;
     constructor() {
         this.styleHT = document.createElement("style");
         this.styleHT.type = "text/css";
@@ -77,14 +76,14 @@ export class SourceNode {
     counter = 0;
     get templateStamp(): string { return this.styler.KEYS.TEMPLATE; }
     get localStamp(): string { return this.styler.KEYS.LOCAL; }
-    myObjectKey: string = "";
+    objectKey: string = "";
     accessKey: string = '';
     htmlCode: HTMLCodeNode = new HTMLCodeNode();
     styler: StylerRegs;
     onRelease = [] as (() => void)[]
     dataHT: HTMLElement;
     //rootFilePath: string = '';
-    config = ({ parentSrc, parentUc, wrapper, key, accessName }: {
+    addChildAccessInParentNode = ({ parentSrc, parentUc, wrapper, key, accessName }: {
         parentSrc: SourceNode, parentUc: Usercontrol,
         wrapper: HTMLElement, key: string, accessName: string
     }) => {
@@ -95,35 +94,27 @@ export class SourceNode {
     assembly: Assembly;
     //project: ProjectRowR;
     cssObj: { [key: string]: StyleCodeNode } = {};
-    pushCSSByContent(key: string, cssContent: string, localNodeElement?: HTMLElement) {
-        if (cssContent == undefined) return;
+    AddCss(key: string, cssContent: string, localNodeElement?: HTMLElement) {
+        if (cssContent == undefined) {
+            console.warn('cssContent not provided in `SourceNode.pushCSSByContent`');
+            return;
+        }  
         let csnd = this.cssObj[key];
-        cssContent = ucUtil.devEsc(cssContent);
-        let ccontent = this.styler.parseStyleSeperator_sub({
-            data: cssContent, // _assembly: this.assembly,  //  NEW  ADDED 
-            localNodeElement: localNodeElement,
-        })
         if (csnd == undefined) {
+            cssContent = ucUtil.devEsc(cssContent);
+            let ccontent = this.styler.parseStyleSeperator_sub({
+                data: cssContent,
+                localNodeElement: localNodeElement,
+            })
             let newcssCode: StyleCodeNode = new StyleCodeNode();
             newcssCode.originalContent = cssContent;
             newcssCode.content = ccontent;
-            newcssCode.styleHT.setAttribute('a-key', this.myObjectKey);
-            // console.log(this.cssObj);
+            newcssCode.styleHT.setAttribute('a-key', this.objectKey); 
             this.cssObj[key] = newcssCode;
         }
     }
 
-    pushCSS(cssGuid: string, cssContent: string, localNodeElement?: HTMLElement) {
-        if (cssContent == undefined) {
-            console.warn('cssContent not provided in `SourceNode.pushCSS`');
-            return;
-        }
-        this.pushCSSByContent(
-            cssGuid,
-            cssContent,
-            localNodeElement
-        );
-    }
+
     static resourcesHT: HTMLElement;
     static init() {
         this.resourcesHT = document.createElement("programres");
@@ -232,7 +223,6 @@ export class SourceNode {
     loadHTML(setTabindex = true/*callback = (s: string) => s*/) {
         let htCode = this.htmlCode;
         htCode.content = this.styler.parseStyle(htCode.originalContent);
-        //if (callback != undefined) htCode.content = callback(htCode.content);
         this.dataHT = SourceNode.tramsformForm(ucUtil.PHP_REMOVE(htCode.content)["#$"]());
 
         this.styler.nodeName = WRAPPER_TAG_NAME;// this.dataHT.nodeName;
@@ -246,17 +236,15 @@ export class SourceNode {
             this.dataHT.setAttribute('x-tabindex', '-1');
         }
         htCode.content = this.dataHT.outerHTML;
-        htCode.content = ucUtil.PHP_ADD(htCode.content);//["#PbHP_ADD"](); //.replace(/<!--\?(=|php)(.*?)\?-->/gm, '<?$1$2?>');
-
-
+        htCode.content = ucUtil.PHP_ADD(htCode.content);
     }
     release = async () => {
-        const states = await SourceNode.deregisterSource(this.myObjectKey);
+        const states = await SourceNode.deregisterSource(this.objectKey);
         if ((states)) {
 
             if (this.cssObj == undefined) {
                 ///   console.log(['stamp result', states.count]);
-                console.warn([this.myObjectKey, '`cssObj` is undefined']);
+                console.warn([this.objectKey, '`cssObj` is undefined']);
                 return;
             }
             let keys = Object.keys(this.cssObj);
@@ -268,10 +256,10 @@ export class SourceNode {
             this.dataHT =
                 this.htmlCode = this.cssObj = undefined;
 
-            let _styler = SourceNode.childs[this.myObjectKey].styler;
-            if (SourceNode.cacheData[this.myObjectKey] == undefined)
-                SourceNode.cacheData[this.myObjectKey] = Object.assign({}, _styler.KEYS);
-            delete SourceNode.childs[this.myObjectKey];
+            let _styler = SourceNode.childs[this.objectKey].styler;
+            if (SourceNode.cacheData[this.objectKey] == undefined)
+                SourceNode.cacheData[this.objectKey] = Object.assign({}, _styler.KEYS);
+            delete SourceNode.childs[this.objectKey];
         }
     }
     static MODE: STYLER_SELECTOR_TYPE = STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR;
@@ -280,46 +268,38 @@ export class SourceNode {
     static cacheData: {
         [key: string]: IKeyStampNode
     } = {};
-    static registerSource({ key,
+    static registerSource({ objectKey,
         accessName = '', cssKeyStamp,
-        mode = '^', baseType = StyleBaseType.UserControl,
-       /* project,*/ assembly, generateStamp = true }: {
-            key: string, accessName?: string,
+        mode = '^', baseType = StyleBaseType.UserControl, assembly, generateStamp = true }: {
+            objectKey: string, accessName?: string,
             cssKeyStamp?: IKeyStampNode,
             assembly: Assembly,
             baseType?: StyleBaseType,
             mode?: CSSSearchAttributeCondition,
             generateStamp?: boolean, // project: ProjectRowR,
         }): SourceNode {
-        //console.log(key);
-
-        let myObjectKey = key; //this.GetKey(key, alices);
-        let rtrn: SourceNode = SourceNode.childs[myObjectKey];
+         
+        let rtrn: SourceNode = SourceNode.childs[objectKey];
         if (rtrn == undefined) {
-            rtrn = new SourceNode();
-            //rtrn.project = project;
-            rtrn.assembly = assembly;// ?? AssemblyManager.Parse(key)
-            rtrn.myObjectKey = myObjectKey;
+            rtrn = new SourceNode(); 
+            rtrn.assembly = assembly;
+            rtrn.objectKey = objectKey;
             rtrn.accessKey = accessName;
-            SourceNode.childs[myObjectKey] = rtrn;
-            rtrn.styler = new StylerRegs(rtrn, generateStamp, cssKeyStamp ?? SourceNode.cacheData[myObjectKey], baseType, mode);
-            //console.log(SourceNode.childs);
-
+            SourceNode.childs[objectKey] = rtrn;
+            rtrn.styler = new StylerRegs(rtrn, generateStamp, cssKeyStamp ?? SourceNode.cacheData[objectKey], baseType, mode);
+        
         } else rtrn.isNewSource = false;
-        rtrn.counter++;
-        //console.log([rtrn.counter,'open',myObjectKey]);
+        rtrn.counter++; 
         return rtrn;
     }
-    static deregisterSource = async (key: string) => {
-        let result = false;
-        let myObjectKey = key;
-        let rtrn: SourceNode = SourceNode.childs[myObjectKey];
-
+    static deregisterSource = async (objectKey: string) => {
+        let result = false; 
+        let rtrn: SourceNode = SourceNode.childs[objectKey]; 
         if (rtrn != undefined) {
             rtrn.counter--;
             result = (rtrn.counter <= 0);
         }
-        return result; //{ result: result, count: rtrn.counter };
+        return result; 
     }
 }
 export class FilterContent {
@@ -351,52 +331,3 @@ export class FilterContent {
         return; // old one `[${ATTR_OF.UC.UNIQUE_STAMP}='${_guid}']`
     }
 }
-
-// export class StampNode {
-//     static MODE: STYLER_SELECTOR_TYPE = STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR;
-//     static dataHT: HTMLElement;
-//     static GetKey(key: string, alice: string) { return key + "@" + alice; }
-//     static childs: { [key: string]: SourceNode; } = {};
-//     static cacheData: {
-//         [key: string]: IKeyStampNode
-//     } = {};
-
-//     static registerSource({ key,
-//         accessName = '', cssKeyStamp,
-//         mode = '^', baseType = StyleBaseType.UserControl,
-//         cssFilePath = undefined, project, /*root,*/ generateStamp = true }: {
-//             key: string, accessName?: string, /*root?: RootPathRow,*/
-//             cssFilePath?: string,
-//             cssKeyStamp?: IKeyStampNode,
-//             baseType?: StyleBaseType,
-//             mode?: CSSSearchAttributeCondition,
-//             generateStamp?: boolean, project: ProjectRowR,
-//         }): SourceNode {
-//         //console.log(key);
-
-//         let myObjectKey = key; //this.GetKey(key, alices);
-//         let rtrn: SourceNode = SourceNode.childs[myObjectKey];
-//         if (rtrn == undefined) {
-//             rtrn = new SourceNode();
-//             rtrn.project = project;
-//             rtrn.cssFilePaeth = cssFilePath;
-//             rtrn.myObjectKey = myObjectKey;
-//             rtrn.accessKey = accessName;
-//             SourceNode.childs[myObjectKey] = rtrn;
-//             rtrn.styler = new StylerRegs(rtrn, generateStamp, cssKeyStamp ?? SourceNode.cacheData[myObjectKey], baseType, mode);
-//         } else rtrn.isNewSource = false;
-//         rtrn.counter++;
-//         //console.log([rtrn.counter,'open',myObjectKey]);
-//         return rtrn;
-//     }
-//     static deregisterSource = async (key: string) => {
-//         let result = false;
-//         let myObjectKey = key;
-//         let rtrn: SourceNode = SourceNode.childs[myObjectKey];
-//         if (rtrn != undefined) {
-//             rtrn.counter--;
-//             result = (rtrn.counter <= 0);
-//         }
-//         return result; //{ result: result, count: rtrn.counter };
-//     }
-// }

@@ -34,7 +34,7 @@ try { (await import("../main/ResourceManage.ipc.js")).default(); } catch(ex){ co
 
 AssemblyManager.Register({
      name: "uc-runtime",
-     guid: "f1441d07-173e-42ef-8ce0-df5f564c546e",
-     cssGuid: "uc-runtime:f1441d07-173e-42ef-8ce0-df5f564c546e:00000001",
-     ucConfigGuid: "uc-runtime:f1441d07-173e-42ef-8ce0-df5f564c546e:00000002"
+     ProjectGUID: "f1441d07-173e-42ef-8ce0-df5f564c546e",
+     ProjectCSS: "uc-runtime:f1441d07-173e-42ef-8ce0-df5f564c546e:00000001",
+     ProjectUcConfig: "uc-runtime:f1441d07-173e-42ef-8ce0-df5f564c546e:00000002"
 });

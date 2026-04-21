@@ -29,7 +29,7 @@ export class Template {
       v.objectKey = guid + '#' + k;
     }
     return res;
-  } 
+  }
   createTemplate(tptPathOpt: ITemplateNodeMeta): TemplateNode {
     let tnode = new TemplateNode(this);
     let tExt = this.extended;
@@ -41,31 +41,29 @@ export class Template {
     tnode.extended.initializecomponent(cfg, tptPathOpt);
     return tnode;
   }
-  pushTemplateCss(cssCode: string, cssGuid: ResourceKeyList, baseType?: StyleBaseType, mode: CSSSearchAttributeCondition = '*') {
+  AddOuterCSS(cssCode: string, cssGuid: ResourceKeyList, baseType?: StyleBaseType, mode: CSSSearchAttributeCondition = '*') {
     let accessName = `@`;
     let ext = this.extended;
-    //console.log(cssGuid);
 
     let snode = SourceNode.registerSource({
-      key: cssGuid + "@",
+      objectKey: cssGuid + "@",
       accessName: accessName,
       baseType: baseType,
       assembly: AssemblyManager.Parse(cssGuid),
-      //project: ext.cfInfo.projectInfo,
       mode: mode,
       generateStamp: false
     });
-    //snode.styler.selectorHandler.selectorMode = mode;
+    
     let puc = ext.parentUc;
     let pext = puc.ucExtends;
-    snode.config({
+    snode.addChildAccessInParentNode({
       parentUc: puc,
       parentSrc: pext.srcNode,
       wrapper: pext.wrapperHT,
-      key: `${cssGuid /*ext.cfInfo.fullWithoutExt('html')*/}${accessName}`,
+      key: `${cssGuid}${accessName}`,
       accessName: accessName
     });
-    snode.pushCSSByContent(cssGuid /*ext.cfInfo.pathOf.scss*/, cssCode, /*ext.cfInfo.actualdProject,*/ pext.wrapperHT);
+    snode.AddCss(cssGuid  , cssCode,   pext.wrapperHT);
     pext.Events.afterClose.on(({ }) => {
       snode.release();
     });

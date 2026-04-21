@@ -2,6 +2,7 @@
 import { ResourceKeyRegistry, ATTR_OF, GetUniqueId } from "ap-shared-core/core-common.js";
 import { ExtractArguments, ISourceOptions, IUcOptions } from "../common/enumAndMore.js";
 import { UserControl$Extended } from "./UsercontrolRes/UserControl$Extended.js";
+import { IKeyStampNode } from "./StylerRegs.js";
 export type UcDialogResult = "none" | "ok" | 'cancel' | 'close';
 export type ucVisibility = 'inherit' | 'visible' | 'hidden';
 
@@ -11,6 +12,7 @@ export class Usercontrol {
         htmlGuid: undefined as keyof ResourceKeyRegistry,
         cssGuid: undefined as keyof ResourceKeyRegistry,
     }
+    static keys: IKeyStampNode;
     static parse(node: HTMLElement): Usercontrol { return node["#data"](ATTR_OF.BASE_OBJECT); }
     static HiddenSpace: HTMLElement = document.createElement('hspc' + GetUniqueId());
     static UcOptionsStc: IUcOptions;

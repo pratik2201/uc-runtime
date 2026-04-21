@@ -10,7 +10,7 @@ import { Assembly, AssemblyManager } from "../Assembly.js";
 import { CSSVariableScope, CssVariableHandler, StyleBaseType, VariableList } from "../StylerRegs.js";
 import { Usercontrol } from "../Usercontrol.js";
 import { Usercontrol$Event } from "./Usercontrol$Event.js";
-import {   ShortcutManager } from "../../lib/ShortcutManager.js";
+import { ShortcutManager } from "../../lib/ShortcutManager.js";
 import { ShortcutContext } from "../../core.js";
 export type UcDialogResult = "none" | "ok" | 'cancel' | 'close';
 export type ucVisibility = 'inherit' | 'visible' | 'hidden';
@@ -157,6 +157,7 @@ export class UserControl$Extended {
             cssContent = ResourceManage.getContent(cfgObj.cssGuid as any);
         } else {*/
         this.guid = param0.guid;
+
         this.assembly = AssemblyManager.Parse(this.guid);
         htmlContent = param0.htmlContent;
         cssContent = param0.cssContent;
@@ -180,13 +181,14 @@ export class UserControl$Extended {
             ucExt.dialogForm.ucExtends.___META.CONTEXT = param0.context;
         }
         ucExt.assembly = AssemblyManager.Parse(ucExt.guid);
+
         ucExt.guid = param0.guid as never;
+
         ucExt.srcNode = SourceNode.registerSource({
-            key: ucExt.guid,
+            objectKey: ucExt.guid,
             cssKeyStamp: param0.cssKeyStamp,
             accessName: param0.accessName,
-            assembly: ucExt.assembly,
-            //project: ucExt.fileInfo.projectInfo,
+            assembly: ucExt.assembly, 
             baseType: StyleBaseType.UserControl,
             mode: '^',
         });
@@ -206,33 +208,27 @@ export class UserControl$Extended {
         if (!isAlreadyExist)
             ucExt.srcNode.loadHTML();
         ucExt.wrapperHT = ucExt.srcNode.dataHT.cloneNode(true) as HTMLElement;
-
+        let parentSrc = ucExt.assembly.srcNode;
         if (ucExt.isForm) {
             ucExt.PARENT = this.main;
-            ucExt.form = this.main;
-            ucExt.srcNode.config({
-                parentUc: ucExt.PARENT,
-                parentSrc: ucExt.assembly.srcNode,//ucExt.fileInfo.projectInfo.stampSRC,
-                wrapper: ucExt.wrapperHT,
-                key: ucExt.guid,
-                accessName: param0.accessName
-            });
+            ucExt.form = this.main;            
         } else {
             ucExt.form = param0.parentUc.ucExtends.form;
             ucExt.PARENT = param0.parentUc;
-            ucExt.srcNode.config({
-                parentUc: ucExt.PARENT,
-                parentSrc: ucExt.PARENT.ucExtends.srcNode,
-                wrapper: ucExt.wrapperHT,
-                key: ucExt.guid,
-                accessName: param0.accessName
-            });
-            if (param0.targetElement ) {
+            parentSrc = ucExt.PARENT.ucExtends.srcNode; 
+            if (param0.targetElement) {
                 ucExt.initalComponents.elements = param0.targetElement.children;
                 objectOpt.copyAttr(param0.targetElement, ucExt.wrapperHT);
                 Usercontrol.HiddenSpace.append(ucExt.wrapperHT);
             } else Usercontrol.HiddenSpace.append(ucExt.wrapperHT);
         }
+        ucExt.srcNode.addChildAccessInParentNode({
+            parentUc: ucExt.PARENT,
+            parentSrc: parentSrc,
+            wrapper: ucExt.wrapperHT,
+            key: ucExt.guid,
+            accessName: param0.accessName
+        });
         ucExt.initalComponents.targetElement = param0.targetElement;
         let pucExt = ucExt.PARENT.ucExtends;
         ucExt.wrapperHT["#data"](ATTR_OF.BASE_OBJECT, this.main);
@@ -274,7 +270,7 @@ export class UserControl$Extended {
     finalizeInit = (param0: IUcOptions) => {
         let ext = this;
         const cssContent = ext.resource.cssContents;
-        ext.srcNode.pushCSS(
+        ext.srcNode.AddCss(
             ext.guid,
             cssContent,
             ext.self);

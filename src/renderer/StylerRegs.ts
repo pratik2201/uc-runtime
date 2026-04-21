@@ -103,8 +103,7 @@ export class StylerRegs {
   };
   controlXName: string = '';
   static templateID: number = 0;
-  static localID: number = 0;
-  //projectInfo: ProjectRowR = undefined;
+  static localID: number = 0; 
   assembly: Assembly = undefined;
   nodeName: string = WRAPPER_TAG_NAME;
   private _parent: StylerRegs = undefined;
@@ -113,12 +112,7 @@ export class StylerRegs {
   }
   public set parent(value: StylerRegs) {
     this._parent = value;
-    this.KEYS.INTERNAL = 'IK'; //this.KEYS.LOCAL;
-    /*if (this.generateStamp) {
-      this.KEYS.INTERNAL = 'IK'; //this.KEYS.LOCAL;
-    } else {
-      this.KEYS.INTERNAL = 'IK'; //this._parent.KEYS.LOCAL
-    }*/
+    //this.KEYS.INTERNAL = 'IK';      
   }
   children: StylerRegs[] = [];
   alices: string = "";
@@ -126,17 +120,14 @@ export class StylerRegs {
   cssGuid: string = "";
   wrapperHT: HTMLElement = undefined;
   templateHT: HTMLElement = undefined;
-  main: SourceNode;
-  generateStamp = true;
+  main: SourceNode; 
   constructor(main: SourceNode,
     generateStamp: boolean = true,
     cached_keys: IKeyStampNode,
     baseType?: StyleBaseType,
     mode?: CSSSearchAttributeCondition) {
-    this.main = main;
-    this.generateStamp = generateStamp;
-    this.assembly = main.assembly;
-    //this.projectInfo = main.project;
+    this.main = main;  
+    this.assembly = main.assembly; 
     this.baseType = baseType;
     this.opnClsr.ignoreList = [
       { openingChar: `"`, closingChar: `"` },
@@ -144,8 +135,7 @@ export class StylerRegs {
       { openingChar: "`", closingChar: "`" },
 
     ];
-    if (cached_keys == undefined) {
-
+    if (cached_keys == undefined) { 
       StylerRegs.localID++;
       if (generateStamp) {
         StylerRegs.templateID++;
@@ -154,15 +144,12 @@ export class StylerRegs {
       this.KEYS.TEMPLATE = "" + StylerRegs.templateID;
       this.KEYS.LOCAL = "" + StylerRegs.localID;
     } else {
-      this.KEYS = Object.assign({}, cached_keys);
-      console.log(['  ------  CACHE RESTORED ', this.main.myObjectKey]);
-    }
-    //if (this.KEYS.LOCAL == '25') debugger;
-    this.KEYS.INTERNAL = "";
+      this.KEYS = Object.assign({}, cached_keys); 
+    } 
+    this.KEYS.INTERNAL = "IK";
 
-    this.nodeName = WRAPPER_TAG_NAME; //"f" + uniqOpt.randomNo();
-    this.rootAndExcludeHandler = new RootAndExcludeHandler(this);
-    //this.themeCssHandler = new ThemeCssHandler(this);
+    this.nodeName = WRAPPER_TAG_NAME; 
+    this.rootAndExcludeHandler = new RootAndExcludeHandler(this); 
     this.varHandler = new CssVariableHandler(this);
     this.selectorHandler = new SelectorHandler(this, mode);
   }
@@ -198,15 +185,9 @@ export class StylerRegs {
     if (_args.data == undefined) return "";
     let _params = Object.assign(Object.assign({}, StyleSeperatorOptions), _args);
     _params.callCounter++;
-    let _curAssembly = _this.assembly;
-    //let _curProject = _this.projectInfo;
-   // debugger;
+    let _curAssembly = _this.assembly;    
     let rtrn = this.cssResolver.resolveImports(_params.data);
-    //console.log([this.main.myObjectKey]);
-    
-    //console.log(rtrn);
-    
-
+      
     rtrn = this.opnClsr.doTask("{", "}", rtrn,
       (selectorText: string, styleContent: string, count: number): string => {
         let excludeContentList = this.rootAndExcludeHandler.checkRoot(selectorText, styleContent, _params);
@@ -446,7 +427,7 @@ export class RootAndExcludeHandler {
 //               project: prj.project as any,
 //               accessName: '',
 //             });
-//             stpSrc.pushCSS(fspath, prj.project.importMetaURL);
+//             stpSrc.pushCSSByContent(fspath, prj.project.importMetaURL);
 //             _this.main.main.onRelease.push(async () => {
 //               await stpSrc.release();
 //             });

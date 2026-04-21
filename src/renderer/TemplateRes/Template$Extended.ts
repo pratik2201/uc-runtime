@@ -14,32 +14,18 @@ export class Template$Extended {
     main: Template;
     initializebase = (pera: ITptOptions) => {
         StylerRegs.templateID++;
-        this.parentUc = pera.parentUc;
-        let htmlContent: string = undefined;
-        let cssContent: string = undefined;
-        let cfgObj: ICoupleNode = {};
-        /*if (pera.guid != undefined) {
-            this.guid = pera.guid;
-            this.assembly = AssemblyManager.Parse(this.guid);            
-            const cfg = ResourceManage.getContent(this.guid);
-            cfgObj = normalizeJSON(cfg);
-            htmlContent = ResourceManage.getContent(cfgObj.htmlGuid as any);
-            cssContent = ResourceManage.getContent(cfgObj.cssGuid as any);
-        } else {*/
+        this.parentUc = pera.parentUc; 
         this.guid = pera.guid;
         this.assembly = AssemblyManager.Parse(this.guid);
-        htmlContent = pera.htmlContent;
-        cssContent = pera.cssContent;
-        //}
-        /* {
-            console.warn([`no info for template in `, pera]);
-            return;
-        }*/
-        if (this.resource == undefined && htmlContent != undefined && cssContent != undefined) {
-            this.resource = GetTemplateMetaByContent$Renderer(htmlContent, cssContent);
-            Object.assign(this.resource, cfgObj);
+        
+        if (this.resource == undefined && pera.htmlContent != undefined && pera.cssContent != undefined) {
+            this.resource = GetTemplateMetaByContent$Renderer(pera.htmlContent, pera.cssContent);
             this.resource.outerCssContents = this.resource.outerCssContents ?? '';
+            if (this.resource.outerCssContents.trim() != '')
+                this.main.AddOuterCSS(this.resource.outerCssContents, this.guid as any);
         }
+
+
     }
     takeoff = () => {
         delete this.initializebase;
@@ -64,26 +50,21 @@ function extractHtml(htmlcontent: string, bluePrint: ITemplateContent) {
         }
     } else {
         let id = ele.getAttribute('id');
-        bluePrint.templates[id] = {
-            // accessKey: id,
-            // objectKey: undefined,
+        bluePrint.templates[id] = { 
             htmlContents: ucUtil.PHP_ADD(ele.outerHTML),
         };
     }
     let rtrnKeys = Object.keys(bluePrint.templates);
     let isSimpleMode = false;
     if (rtrnKeys.length == 0) {
-        bluePrint.templates["primary"] = {
-            //accessKey: "primary",
-            //objectKey: undefined,
+        bluePrint.templates["primary"] = { 
             htmlContents: ucUtil.PHP_ADD(ele.outerHTML),
         };
         rtrnKeys = ["primary"];
         isSimpleMode = true;
     }
 }
-export function GetTemplateMetaByContent$Renderer(htmlcontent: string, cssContent: string) {
-    //let ele = ucUtil.PHP_REMOVE(htmlcontent)["#$"]() as HTMLElement;
+export function GetTemplateMetaByContent$Renderer(htmlcontent: string, cssContent: string) {     
     let rtrn = new ITemplateContent();
     extractHtml(htmlcontent, rtrn);
     const cssResolver = new CssRuntimeResolver();

@@ -6,8 +6,8 @@
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "bundler",
-    "declarationDir": "dist", 
     "baseUrl": ".",
+    "declarationDir": "dist", 
     "sourceMap": true,
     "allowJs": true,
     "strictNullChecks": false,
@@ -25,9 +25,10 @@
     "emitDeclarationOnly": true,
     "stripInternal": true,
     "skipLibCheck": true,
+    "types": ["node"],
     "paths": {
       "uc-runtime/*": ["./*"]
-    },
+    }
   }
   // "references": [
   //   { "path": "../ap-shared-core" }

@@ -33,7 +33,9 @@ type SpecialKey =
     | "arrowup"
     | "arrowdown"
     | "arrowleft"
-    | "arrowright";
+    | "arrowright"
+    | "pageup"
+    | "pagedown";
 
 export type KeyboardKey =
     | ModifierKey
