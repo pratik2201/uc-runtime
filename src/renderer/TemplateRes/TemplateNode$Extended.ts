@@ -3,7 +3,7 @@ import { ITemplateNodeMeta } from "ap-shared-core/core.js";
 import { ATTR_OF } from "ap-shared-core/core-common.js";
 import { ITptOptions } from "../../core.js";
 import { SourceNode, FilterContent, STYLER_SELECTOR_TYPE } from "../../lib/StampGenerator.js";
-import { VariableList, CSSVariableScope, CssVariableHandler, StyleBaseType } from "../StylerRegs.js";
+import { VariableList, CSSVariableScope, CssVariableHandler, StyleBaseType, IKeyStampNode } from "../StylerRegs.js";
 import { TemplateNode, Template } from "../Template.js";
 import { Usercontrol } from "../Usercontrol.js";
 import { ITransferDataNode } from "../UsercontrolRes/Usercontrol$Event.js";
@@ -58,18 +58,18 @@ export class TemplateNode$Extended {
         // TemplateNode.virtualDoc.body.append(element);
         //console.log(_this.stampRow);
 
-        let ctrls = _ext.srcNode.passElement(element, { skipTopEle: false, groupKey: _ext.srcNode.styler.KEYS.TEMPLATE });
+        let ctrls = SourceNode.passElement(element, _ext.srcNode.styler.KEYS, { skipTopEle: false, groupKey: _ext.srcNode.styler.KEYS.TEMPLATE });
         _ext.Events.onGenerateNode(element, jsonRow, ctrls);
         return element;
     }
-
+    Keys: IKeyStampNode;
     initializecomponent = (
-        _args: ITptOptions,
+        args: ITptOptions,
         tptPathOpt: ITemplateNodeMeta
     ) => {
         let tptExt = this;
         const mainExt = tptExt.template.extended;
-        let param0 = Object.assign(new ITptOptions(), _args);
+        let param0 = Object.assign(new ITptOptions(), args);
         tptExt.accessName = tptPathOpt.accessKey;
         tptExt.srcNode = SourceNode.registerSource(
             {
@@ -78,12 +78,10 @@ export class TemplateNode$Extended {
                 baseType: StyleBaseType.Template,
                 assembly: mainExt.assembly,
                 mode: '^',
-                //project: param0.cfInfo.projectInfo,
                 generateStamp: false
             });
-        let isAlreadyExist = tptExt.srcNode.htmlCode.load(tptPathOpt.htmlContents);
-        if (!isAlreadyExist)
-            tptExt.srcNode.loadHTML(false);
+        this.Keys = tptExt.srcNode.styler.KEYS;
+        tptExt.srcNode.loadHTML(tptPathOpt.htmlContents, false);
 
         let htEle = tptExt.srcNode.dataHT;
 
@@ -93,18 +91,14 @@ export class TemplateNode$Extended {
 
         tptExt.parentUc = mainExt.parentUc;
 
-        let puc = tptExt.parentUc;
-        let pucext = puc.ucExtends;
+        let pucext = tptExt.parentUc.ucExtends;
 
         tptExt.srcNode.addChildAccessInParentNode({
-            parentUc: puc,
             parentSrc: pucext.srcNode,
             wrapper: pucext.wrapperHT,
             key: `${mainExt.guid}@${tptPathOpt.accessKey}`,
             accessName: tptPathOpt.accessKey
         });
-
-
         tptExt.srcNode.AddCss(mainExt.guid, tptPathOpt.cssContents, tptExt.parentUc.ucExtends.self);
         tptExt.parentUc.ucExtends.Events.afterClose.on(({ }) => {
             tptExt.srcNode.release();

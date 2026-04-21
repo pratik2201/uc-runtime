@@ -4,7 +4,7 @@ import { ResourceKeyList, ResourceKeyRegistry } from "../core-main.js";
 import { SourceNode } from "../lib/StampGenerator.js";
 import { AssemblyManager } from "./Assembly.js";
 import { ResourceManage } from "./ResourceManage.js";
-import { CSSSearchAttributeCondition, StyleBaseType } from "./StylerRegs.js";
+import { CSSSearchAttributeCondition, IKeyStampNode, StyleBaseType } from "./StylerRegs.js";
 import { Template$Extended } from "./TemplateRes/Template$Extended.js";
 import { TemplateNode$Extended } from "./TemplateRes/TemplateNode$Extended.js";
 
@@ -41,11 +41,13 @@ export class Template {
     tnode.extended.initializecomponent(cfg, tptPathOpt);
     return tnode;
   }
+  srcNode: SourceNode;
+  Keys: IKeyStampNode;
   AddOuterCSS(cssCode: string, cssGuid: ResourceKeyList, baseType?: StyleBaseType, mode: CSSSearchAttributeCondition = '*') {
     let accessName = `@`;
     let ext = this.extended;
-
-    let snode = SourceNode.registerSource({
+    const _this = this;
+    this.srcNode = SourceNode.registerSource({
       objectKey: cssGuid + "@",
       accessName: accessName,
       baseType: baseType,
@@ -53,19 +55,17 @@ export class Template {
       mode: mode,
       generateStamp: false
     });
-    
-    let puc = ext.parentUc;
-    let pext = puc.ucExtends;
-    snode.addChildAccessInParentNode({
-      parentUc: puc,
+    this.Keys = this.srcNode.styler.KEYS;
+    let pext = ext.parentUc.ucExtends;
+    this.srcNode.addChildAccessInParentNode({
       parentSrc: pext.srcNode,
       wrapper: pext.wrapperHT,
       key: `${cssGuid}${accessName}`,
       accessName: accessName
     });
-    snode.AddCss(cssGuid  , cssCode,   pext.wrapperHT);
+    this.srcNode.AddCss(cssGuid, cssCode, pext.wrapperHT);
     pext.Events.afterClose.on(({ }) => {
-      snode.release();
+      _this.srcNode.release();
     });
   }
   constructor() {

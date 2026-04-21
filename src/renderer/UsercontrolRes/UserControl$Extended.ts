@@ -7,7 +7,7 @@ import { FilterContent, IPassElementOptions, STYLER_SELECTOR_TYPE, SourceNode } 
 import { TabIndexManager } from "../../lib/TabIndexManager.js";
 import { WinManager } from "../../lib/WinManager.js";
 import { Assembly, AssemblyManager } from "../Assembly.js";
-import { CSSVariableScope, CssVariableHandler, StyleBaseType, VariableList } from "../StylerRegs.js";
+import { CSSVariableScope, CssVariableHandler, IKeyStampNode, StyleBaseType, VariableList } from "../StylerRegs.js";
 import { Usercontrol } from "../Usercontrol.js";
 import { Usercontrol$Event } from "./Usercontrol$Event.js";
 import { ShortcutManager } from "../../lib/ShortcutManager.js";
@@ -67,7 +67,7 @@ export class UserControl$Extended {
     isForm = false;
     get formExtends() { return this.form.ucExtends; }
     get self() { return this.wrapperHT; }
-
+    Keys: IKeyStampNode;
     lastFocuedElement: HTMLElement;
     keepVisible_Till_I_Exist = (I: Usercontrol) => {
         let _this = this;
@@ -130,6 +130,7 @@ export class UserControl$Extended {
         }
     };
     cssVarStampKey = '0';
+    private static templatemaker = new TemplateMaker();
     initializecomponent = (param0: IUcOptions): void => {
         let ucExt = this;
         ucExt.mode = param0.mode;
@@ -188,34 +189,26 @@ export class UserControl$Extended {
             objectKey: ucExt.guid,
             cssKeyStamp: param0.cssKeyStamp,
             accessName: param0.accessName,
-            assembly: ucExt.assembly, 
+            assembly: ucExt.assembly,
             baseType: StyleBaseType.UserControl,
             mode: '^',
         });
-        //let htPathToRead = param0.source.htmlFilePath ?? ucExt.fileInfo.pathOf.html;
-        //ucExt.resource = param0.source;
-
-
-        let tmkr = Usercontrol.templateMkr.get(ucExt.guid);
-        if (tmkr == undefined) {
-            let t = new TemplateMaker(/*ucExt.htmlGuid*/);
-            tmkr = t.compileTemplate(ucExt.resource.htmlContents)(param0.source.htmlRow ?? {});
-            Usercontrol.templateMkr.set(ucExt.guid, tmkr);
+        ucExt.Keys = ucExt.srcNode.styler.KEYS;
+        let htmlCache = Usercontrol.templateMkr.get(ucExt.guid);
+        if (htmlCache == undefined) {
+            htmlCache = UserControl$Extended.templatemaker.compileTemplate(ucExt.resource.htmlContents)(param0.source.htmlRow ?? {});
+            Usercontrol.templateMkr.set(ucExt.guid, htmlCache);
         }
-        let isAlreadyExist = ucExt.srcNode.htmlCode.load(
-            tmkr
-        );
-        if (!isAlreadyExist)
-            ucExt.srcNode.loadHTML();
+        ucExt.srcNode.loadHTML(htmlCache);
         ucExt.wrapperHT = ucExt.srcNode.dataHT.cloneNode(true) as HTMLElement;
         let parentSrc = ucExt.assembly.srcNode;
         if (ucExt.isForm) {
             ucExt.PARENT = this.main;
-            ucExt.form = this.main;            
+            ucExt.form = this.main;
         } else {
             ucExt.form = param0.parentUc.ucExtends.form;
             ucExt.PARENT = param0.parentUc;
-            parentSrc = ucExt.PARENT.ucExtends.srcNode; 
+            parentSrc = ucExt.PARENT.ucExtends.srcNode;
             if (param0.targetElement) {
                 ucExt.initalComponents.elements = param0.targetElement.children;
                 objectOpt.copyAttr(param0.targetElement, ucExt.wrapperHT);
@@ -223,7 +216,6 @@ export class UserControl$Extended {
             } else Usercontrol.HiddenSpace.append(ucExt.wrapperHT);
         }
         ucExt.srcNode.addChildAccessInParentNode({
-            parentUc: ucExt.PARENT,
             parentSrc: parentSrc,
             wrapper: ucExt.wrapperHT,
             key: ucExt.guid,
@@ -387,7 +379,7 @@ export class UserControl$Extended {
     };
 
     passElement = (ele: HTMLElement | HTMLElement[], options?: IPassElementOptions): { [xname: string]: HTMLElement | HTMLElement[] } => {
-        return this.srcNode.passElement(ele, options);
+        return SourceNode.passElement(ele,this.srcNode.styler.KEYS, options);
     }
     set caption(text: string) {
         this.designer.setCaption(text);
@@ -437,8 +429,9 @@ export class UserControl$Extended {
         this.Events.afterClose.fireAsync([main]);
         await Usercontrol.HiddenSpace.appendChild(this.wrapperHT);
         await this.srcNode.release();
+         this.wrapperHT.remove();
+           
         requestAnimationFrame(async () => {
-            this.wrapperHT.remove();
             for (const key in main) {
                 main[key] = undefined;
             }
