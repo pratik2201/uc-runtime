@@ -111,8 +111,10 @@ export class ShortcutManager {
         if (this.menuCtx) {
             const act = this.menuCtx.resolve(combo);
             if (act) {
-                e.preventDefault();
                 this.menuCtx.dispatch(act, e);
+                /*if (handled === true) {
+                    e.preventDefault();
+                }*/
                 return;
             }
         }
@@ -122,8 +124,8 @@ export class ShortcutManager {
         if (active) {
             const act = active.resolve(combo);
             if (act) {
-                e.preventDefault();
                 active.dispatch(act, e);
+              //  e.preventDefault();
                 return;
             }
         }
@@ -131,8 +133,8 @@ export class ShortcutManager {
         // 3. GLOBAL
         const act = this.globalCtx.resolve(combo);
         if (act) {
-            e.preventDefault();
             this.globalCtx.dispatch(act, e);
+            //e.preventDefault();
         }
     };
 }

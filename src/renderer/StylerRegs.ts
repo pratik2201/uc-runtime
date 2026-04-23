@@ -93,6 +93,7 @@ export class StylerRegs {
     );
     return ocHandler.parse({ openingChar: '{', closingChar: '}' }, csscontent);
   }
+  
   baseType: StyleBaseType = StyleBaseType.UserControl;
 
   KEYS: IKeyStampNode = {

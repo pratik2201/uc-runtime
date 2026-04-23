@@ -2,7 +2,7 @@
 import { KeyboardKey } from 'ap-shared-core/core-common.js';
 import { WinManager } from "./WinManager.js";
 import { ucUtil } from "ap-shared-core/core.js";
-import {   ShortcutManager } from './ShortcutManager.js';
+import { ShortcutManager } from './ShortcutManager.js';
 import { ShortcutContext } from './ShortcutCore.js';
 interface TabIndexRow {
     container: HTMLElement;
@@ -120,10 +120,10 @@ class TabIndexManager {
         let htEle: HTMLElement | undefined;
         let tIndex: number;
         // this.gainNode.connect(this.audioCtx.destination);
- 
+
         let keyDownTimer = null;
         let keyIsDown = false;
-         
+
         ShortcutContext.globalRef.register({
             action: 'NEXT_FIELD_FOCUS',
             keys: ['enter']
@@ -161,7 +161,7 @@ class TabIndexManager {
                 await this.movePrev(_EVENT_target as HTMLElement, ev);
             }
             this.status = 'none';
-            ev.preventDefault(); 
+            ev.preventDefault();
             this.breakTheLoop = false;
         });
         ShortcutContext.globalRef.on('PREV_FIELD_FOCUS', async (ev) => {
@@ -206,7 +206,7 @@ class TabIndexManager {
                     ev.preventDefault();
                     break;
             }
-            
+
             this.breakTheLoop = false;
         });
         ShortcutContext.globalRef.on('LEFT_ITEM_FOCUS', async (ev) => {

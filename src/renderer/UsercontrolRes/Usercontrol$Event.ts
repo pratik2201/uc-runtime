@@ -39,6 +39,7 @@ export class Usercontrol$Event {
     // @ts-ignore
     beforeClose = new CommonEvent<(args: { prevent?: boolean }) => void>();
     afterClose = new CommonEvent<(uc?: Usercontrol) => void>();
+    afterHide = new CommonEvent<(uc?: Usercontrol) => void>();
     onDestruction = new CommonEvent<({ }) => void>();
 
     captionChanged = new CommonEvent<(newCaptionText: string) => void>();

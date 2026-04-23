@@ -67,6 +67,7 @@ export class TemplateNode$Extended {
         args: ITptOptions,
         tptPathOpt: ITemplateNodeMeta
     ) => {
+
         let tptExt = this;
         const mainExt = tptExt.template.extended;
         let param0 = Object.assign(new ITptOptions(), args);
@@ -74,35 +75,35 @@ export class TemplateNode$Extended {
         tptExt.srcNode = SourceNode.registerSource(
             {
                 objectKey: tptPathOpt.objectKey,
-                accessName: tptExt.accessName,
                 baseType: StyleBaseType.Template,
                 assembly: mainExt.assembly,
                 mode: '^',
                 generateStamp: false
             });
         this.Keys = tptExt.srcNode.styler.KEYS;
+        tptExt.parentUc = mainExt.parentUc;
+        let pucext = tptExt.parentUc.ucExtends;
+        tptExt.srcNode.addChildAccessInParentNode({
+            parentSrc: pucext.srcNode,
+            wrapper: pucext.wrapperHT,
+            key: mainExt.guid,
+            accessName: tptPathOpt.accessKey
+        });
+        tptExt.srcNode.AddCss(mainExt.guid, tptPathOpt.cssContents, pucext.self);
+        //if (pucext.distructOnClose) {
+            pucext.Events.afterClose.on(({ }) => {
+                tptExt.srcNode.release();
+            });
+        //}
+
         tptExt.srcNode.loadHTML(tptPathOpt.htmlContents, false);
-
         let htEle = tptExt.srcNode.dataHT;
-
         Array.from(tptExt.srcNode.dataHT.attributes)
             .filter((s) => s.nodeName.toLowerCase().startsWith("x.temp-"))
             .forEach((s) => htEle.removeAttribute(s.nodeName));
 
-        tptExt.parentUc = mainExt.parentUc;
 
-        let pucext = tptExt.parentUc.ucExtends;
 
-        tptExt.srcNode.addChildAccessInParentNode({
-            parentSrc: pucext.srcNode,
-            wrapper: pucext.wrapperHT,
-            key: `${mainExt.guid}@${tptPathOpt.accessKey}`,
-            accessName: tptPathOpt.accessKey
-        });
-        tptExt.srcNode.AddCss(mainExt.guid, tptPathOpt.cssContents, tptExt.parentUc.ucExtends.self);
-        tptExt.parentUc.ucExtends.Events.afterClose.on(({ }) => {
-            tptExt.srcNode.release();
-        });
 
         tptExt.Events.onDataExport = (data) =>
             param0.parentUc.ucExtends.Events.onDataExport(data);

@@ -30,7 +30,7 @@ export async function INIT_RENDERER() {
       baseType: StyleBaseType.Global,
       assembly: _newAssembly,
       mode: '$',
-      accessName: _newAssembly.name as any,
+      //accessName: _newAssembly.name as any,
     });
     _newAssembly.srcNode.AddCss(
       _newAssembly.ProjectCSS,

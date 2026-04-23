@@ -44,12 +44,10 @@ export class Template {
   srcNode: SourceNode;
   Keys: IKeyStampNode;
   AddOuterCSS(cssCode: string, cssGuid: ResourceKeyList, baseType?: StyleBaseType, mode: CSSSearchAttributeCondition = '*') {
-    let accessName = `@`;
     let ext = this.extended;
     const _this = this;
     this.srcNode = SourceNode.registerSource({
-      objectKey: cssGuid + "@",
-      accessName: accessName,
+      objectKey: cssGuid,
       baseType: baseType,
       assembly: AssemblyManager.Parse(cssGuid),
       mode: mode,
@@ -60,13 +58,15 @@ export class Template {
     this.srcNode.addChildAccessInParentNode({
       parentSrc: pext.srcNode,
       wrapper: pext.wrapperHT,
-      key: `${cssGuid}${accessName}`,
-      accessName: accessName
+      key: cssGuid,
+      accessName: ''
     });
-    this.srcNode.AddCss(cssGuid, cssCode, pext.wrapperHT);
-    pext.Events.afterClose.on(({ }) => {
-      _this.srcNode.release();
-    });
+    this.srcNode.AddCss(cssGuid, cssCode, pext.wrapperHT); 
+    if (pext.distructOnClose) {
+      pext.Events.afterClose.on(({ }) => {
+        _this.srcNode.release();
+      });
+    }
   }
   constructor() {
     this.extended = new Template$Extended(this);

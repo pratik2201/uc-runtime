@@ -62,6 +62,7 @@ class StyleCodeNode {
             this.styleHT.type = "text/css";
             this.styleHT.setAttribute("rel", 'stylesheet');
         }
+
         this.styleHT.innerHTML = this._content;
         //console.log(SourceNode.resourcesHT);
 
@@ -97,6 +98,7 @@ export class SourceNode {
             console.warn('cssContent not provided in `SourceNode.AddCss`');
             return;
         }
+        //if (key.includes('000000147')) debugger;
         let csnd = this.cssObj[key];
         if (csnd == undefined) {
             cssContent = ucUtil.devEsc(cssContent);
@@ -109,6 +111,9 @@ export class SourceNode {
             newcssCode.content = ccontent;
             newcssCode.styleHT.setAttribute('a-key', this.objectKey);
             this.cssObj[key] = newcssCode;
+        } else {
+            // console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *************************');
+
         }
     }
 
@@ -268,9 +273,11 @@ export class SourceNode {
         [key: string]: IKeyStampNode
     } = {};
     static registerSource({ objectKey,
-        accessName = '', cssKeyStamp,
+        //accessName = '', 
+        cssKeyStamp,
         mode = '^', baseType = StyleBaseType.UserControl, assembly, generateStamp = true }: {
-            objectKey: string, accessName?: string,
+            objectKey: string,
+            //accessName?: string,
             cssKeyStamp?: IKeyStampNode,
             assembly: Assembly,
             baseType?: StyleBaseType,
@@ -283,12 +290,15 @@ export class SourceNode {
             rtrn = new SourceNode();
             rtrn.assembly = assembly;
             rtrn.objectKey = objectKey;
-            rtrn.accessKey = accessName;
+            //rtrn.accessKey = accessName;
             SourceNode.cssSource[objectKey] = rtrn;
             rtrn.styler = new StylerRegs(rtrn, generateStamp, cssKeyStamp ?? SourceNode.cacheData[objectKey], baseType, mode);
 
         }
         rtrn.counter++;
+        for (const [k, v] of Object.entries(rtrn.cssObj)) {
+            v.styleHT.setAttribute('counter', '' + rtrn.counter);
+        }
         return rtrn;
     }
     static deregisterHTML = async (objectKey: string) => {
@@ -296,6 +306,9 @@ export class SourceNode {
         let rtrn: SourceNode = SourceNode.cssSource[objectKey];
         if (rtrn != undefined) {
             rtrn.counter--;
+            for (const [k, v] of Object.entries(rtrn.cssObj)) {
+                v.styleHT.setAttribute('counter', '' + rtrn.counter);
+            }
             result = (rtrn.counter <= 0);
         }
         return result;

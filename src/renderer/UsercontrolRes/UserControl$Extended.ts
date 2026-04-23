@@ -110,22 +110,20 @@ export class UserControl$Extended {
     };
 
     setCssVariable = (varList: VariableList, scope: CSSVariableScope) => {
-        let styler = this.srcNode.styler;
         switch (scope) {
-            case 'global': CssVariableHandler.SetCSSVarValue(varList, '' + styler.KEYS.LOCAL, "g"); break;
-            case 'local': CssVariableHandler.SetCSSVarValue(varList, styler.KEYS.LOCAL, "l", this.self); break;
-            case 'internal': CssVariableHandler.SetCSSVarValue(varList, styler.KEYS.INTERNAL, "i", this.self); break; // StylerRegs.internalKey
+            case 'global': CssVariableHandler.SetCSSVarValue(varList, '' + this.Keys.LOCAL, "g"); break;
+            case 'local': CssVariableHandler.SetCSSVarValue(varList, this.Keys.LOCAL, "l", this.self); break;
+            case 'internal': CssVariableHandler.SetCSSVarValue(varList, this.Keys.INTERNAL, "i", this.self); break; // StylerRegs.internalKey
         }
     };
     getCssVariable = (key: string, scope: CSSVariableScope): string => {
-        let styler = this.srcNode.styler;
         switch (scope) {
             case 'global': return document.body.style.getPropertyValue(
-                CssVariableHandler.GetCombinedCSSVarName(key, '' + styler.KEYS.ROOT, "g"));
+                CssVariableHandler.GetCombinedCSSVarName(key, '' + this.Keys.ROOT, "g"));
             case 'local': return this.self.style.getPropertyValue(
-                CssVariableHandler.GetCombinedCSSVarName(key, styler.KEYS.LOCAL, "l"));
+                CssVariableHandler.GetCombinedCSSVarName(key, this.Keys.LOCAL, "l"));
             case 'internal': return this.self.style.getPropertyValue(
-                CssVariableHandler.GetCombinedCSSVarName(key, styler.KEYS.INTERNAL, "i"));  // StylerRegs.internalKey
+                CssVariableHandler.GetCombinedCSSVarName(key, this.Keys.INTERNAL, "i"));  // StylerRegs.internalKey
             default: return '';
         }
     };
@@ -134,37 +132,11 @@ export class UserControl$Extended {
     initializecomponent = (param0: IUcOptions): void => {
         let ucExt = this;
         ucExt.mode = param0.mode;
-        // if (param0.guid != undefined) {
-        //     ucExt.guid = param0.guid;
-        //     const cfg = ResourceManage.getContent(this.guid);
-        //     const cfgObj: ICoupleNode = normalizeJSON(cfg);
-        //     //const content = ResourceManage.getContent(param0.guid as never) as ;
-        //     ucExt.resource = new IUsercontrolContent();
-        //     ucExt.resource.htmlContents = ResourceManage.getContent(cfgObj.htmlGuid as any);
-        //     ucExt.resource.cssContents = ResourceManage.getContent(cfgObj.cssGuid as any);
-        //     /*const jsn = normalizeJSON(content);
-        //     Object.assign(ucExt.resource, jsn);*/
-        // }
-
-        let htmlContent: string = undefined;
-        let cssContent: string = undefined;
-        let cfgObj: ICoupleNode = {};
-        /*if (pera.guid != undefined) {
-            this.guid = pera.guid;
-            this.assembly = AssemblyManager.Parse(this.guid);            
-            const cfg = ResourceManage.getContent(this.guid);
-            cfgObj = normalizeJSON(cfg);
-            htmlContent = ResourceManage.getContent(cfgObj.htmlGuid as any);
-            cssContent = ResourceManage.getContent(cfgObj.cssGuid as any);
-        } else {*/
         this.guid = param0.guid;
-
         this.assembly = AssemblyManager.Parse(this.guid);
-        htmlContent = param0.htmlContent;
-        cssContent = param0.cssContent;
         ucExt.resource = new IUsercontrolContent();
-        ucExt.resource.htmlContents = param0.htmlContent; //ResourceManage.getContent(cfgObj.htmlGuid as any);
-        ucExt.resource.cssContents = param0.cssContent; // ResourceManage.getContent(cfgObj.cssGuid as any);
+        ucExt.resource.htmlContents = param0.htmlContent;
+        ucExt.resource.cssContents = param0.cssContent;
         ucExt.resource.htmlRow = {};
 
         if (param0.events.beforeInitlize != undefined) param0.events.beforeInitlize(this.main);
@@ -184,24 +156,25 @@ export class UserControl$Extended {
         ucExt.assembly = AssemblyManager.Parse(ucExt.guid);
 
         ucExt.guid = param0.guid as never;
-
-        ucExt.srcNode = SourceNode.registerSource({
-            objectKey: ucExt.guid,
-            cssKeyStamp: param0.cssKeyStamp,
-            accessName: param0.accessName,
-            assembly: ucExt.assembly,
-            baseType: StyleBaseType.UserControl,
-            mode: '^',
-        });
-        ucExt.Keys = ucExt.srcNode.styler.KEYS;
         let htmlCache = Usercontrol.templateMkr.get(ucExt.guid);
         if (htmlCache == undefined) {
             htmlCache = UserControl$Extended.templatemaker.compileTemplate(ucExt.resource.htmlContents)(param0.source.htmlRow ?? {});
             Usercontrol.templateMkr.set(ucExt.guid, htmlCache);
         }
+
+        ucExt.srcNode = SourceNode.registerSource({
+            objectKey: ucExt.guid,
+            assembly: ucExt.assembly,
+            cssKeyStamp: param0.cssKeyStamp,
+            baseType: StyleBaseType.UserControl,
+            mode: '^',
+        });
+        ucExt.Keys = ucExt.srcNode.styler.KEYS;
+        let parentSrc = ucExt.assembly.srcNode;
+
+
         ucExt.srcNode.loadHTML(htmlCache);
         ucExt.wrapperHT = ucExt.srcNode.dataHT.cloneNode(true) as HTMLElement;
-        let parentSrc = ucExt.assembly.srcNode;
         if (ucExt.isForm) {
             ucExt.PARENT = this.main;
             ucExt.form = this.main;
@@ -347,9 +320,9 @@ export class UserControl$Extended {
         } else {
             TabIndexManager.focusTo(defaultFocusAt);
         }
-        return new Promise(async (resolve: (v: UcDialogResult) => void) => {
-            _extends.dialogResolver = resolve;
-        });
+        // return new Promise(async (resolve: (v: UcDialogResult) => void) => {
+        //     _extends.dialogResolver = resolve;
+        // });
     };
     _windowstate: UcStates = 'normal';
     get windowstate() { return this._windowstate; };
@@ -364,22 +337,10 @@ export class UserControl$Extended {
     }
     Events: Usercontrol$Event;
 
-    distructOnClose = true;
-    close = async () => {
-        let _ext = this;
-        let res = { prevent: false };
-        await _ext.Events.beforeClose.fireAsync([res]); // _ext.Events.beforeHide
-        if (!res.prevent) {
-            if (_ext.distructOnClose)
-                this.destruct();
-            else
-                this.hide();
-        }
-        if (_ext.dialogResolver != undefined) _ext.dialogResolver(_ext.DialogResult);
-    };
+    
 
     passElement = (ele: HTMLElement | HTMLElement[], options?: IPassElementOptions): { [xname: string]: HTMLElement | HTMLElement[] } => {
-        return SourceNode.passElement(ele,this.srcNode.styler.KEYS, options);
+        return SourceNode.passElement(ele, this.Keys, options);
     }
     set caption(text: string) {
         this.designer.setCaption(text);
@@ -396,7 +357,7 @@ export class UserControl$Extended {
             let childs: { [key: string]: HTMLElement | HTMLElement[] } = {};
             let uExt = this;
             let fromElement = uExt.wrapperHT;
-            let uniqStamp = uExt.srcNode.localStamp;
+            let uniqStamp = uExt.Keys.LOCAL;
 
             let eleAr: HTMLElement[] = [];
             if (SourceNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
@@ -411,14 +372,29 @@ export class UserControl$Extended {
             return childs;
         }
     }
+    distructOnClose = true;
+    close = async () => {
+        let _ext = this;
+        let res = { prevent: false };
+        await _ext.Events.beforeClose.fireAsync([res]); // _ext.Events.beforeHide
+        if (!res.prevent) {
+            if (_ext.distructOnClose)
+                this.destruct();
+            else
+                this.hide();
+        }
+        if (_ext.dialogResolver != undefined) _ext.dialogResolver(_ext.DialogResult);
+    };
     private hide = async () => {
         let _ext = this;
         let res = { prevent: false };
         _ext.visibility = 'hidden';
         if (_ext.isDialogBox)
             await WinManager.pop(this.main);
+        await _ext.Events.afterHide.fireAsync([this.main]);
         Usercontrol.HiddenSpace.appendChild(_ext.wrapperHT);
-        await _ext.Events.afterClose.fireAsync([this.main]);
+        //debugger;
+        // await this.srcNode.release();
 
     }
     private destruct = async (): Promise<boolean> => {
@@ -429,8 +405,8 @@ export class UserControl$Extended {
         this.Events.afterClose.fireAsync([main]);
         await Usercontrol.HiddenSpace.appendChild(this.wrapperHT);
         await this.srcNode.release();
-         this.wrapperHT.remove();
-           
+        this.wrapperHT.remove();
+
         requestAnimationFrame(async () => {
             for (const key in main) {
                 main[key] = undefined;
