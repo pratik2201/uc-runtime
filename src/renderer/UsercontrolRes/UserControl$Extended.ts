@@ -274,8 +274,8 @@ export class UserControl$Extended {
 
         if (_extend.dialogForm == undefined)
             _extend.dialogForm = _extend.isForm ? this.main : _extend.PARENT.ucExtends.dialogForm;
-        _extend.Events.loaded.fire();
         _extend.visibility = 'visible';
+        _extend.Events.loaded.fire();
         if (defaultFocusAt)
             TabIndexManager.focusTo(defaultFocusAt);
     }
@@ -311,6 +311,7 @@ export class UserControl$Extended {
         if (_extends.dialogForm == undefined)
             _extends.dialogForm = this.main;
 
+        _extends.visibility = 'visible';
         _extends.Events.loaded.fireAsync();
 
         ShortcutManager.ref.pushFormContext(_extends.shortCutContext);
