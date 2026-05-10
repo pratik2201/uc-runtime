@@ -822,7 +822,7 @@ export class CssVariableHandler {
             case "g": uniqId = '' + this.main.KEYS.ROOT; break;
             case "t":
               uniqId = _main.KEYS.TEMPLATE;
-              tarEle = _main.wrapperHT;
+              //tarEle = _main.wrapperHT;
               break;
             case "i":
               uniqId = _main.KEYS.INTERNAL; //StylerRegs.internalKey;
@@ -830,7 +830,7 @@ export class CssVariableHandler {
               break;
             case "l":
               uniqId = _main.KEYS.LOCAL;
-              tarEle = _main.wrapperHT;
+              //tarEle = _main.wrapperHT;
               break;
             default: return match;
           }

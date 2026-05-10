@@ -338,7 +338,7 @@ export class UserControl$Extended {
     }
     Events: Usercontrol$Event;
 
-    
+
 
     passElement = (ele: HTMLElement | HTMLElement[], options?: IPassElementOptions): { [xname: string]: HTMLElement | HTMLElement[] } => {
         return SourceNode.passElement(ele, this.Keys, options);
@@ -380,9 +380,9 @@ export class UserControl$Extended {
         await _ext.Events.beforeClose.fireAsync([res]); // _ext.Events.beforeHide
         if (!res.prevent) {
             if (_ext.distructOnClose)
-                this.destruct();
+                await this.destruct();
             else
-                this.hide();
+                await this.hide();
         }
         if (_ext.dialogResolver != undefined) _ext.dialogResolver(_ext.DialogResult);
     };
