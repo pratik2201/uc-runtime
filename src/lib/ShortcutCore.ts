@@ -10,7 +10,7 @@ type ShortcutDef = {
 };
 
 class ShortcutNode {
-    map: Record<string, string> = {};
+  map: Record<string, string> = {};
 
   register(def: ShortcutDef) {
     const key = this.normalize(def.keys);
@@ -18,12 +18,12 @@ class ShortcutNode {
     if (def.uc != undefined) {
       def.uc.ucExtends.Events.beforeClose.on(async () => {
         if (this.map[key] === def.action) {
-          
+
           console.log(def.action);
           console.log('deleted....');
-          
+
           delete this.map[key];
-          
+
         }
       });
     }
@@ -52,8 +52,7 @@ export class ShortcutContext {
   constructor(parent?: ShortcutContext) {
     this.parent = parent;
     /*setInterval(() => {
-      console.log(this.node.map);
-      
+      console.log(this.node.map); 
     },2000);*/
   }
   uc: Usercontrol;

@@ -260,7 +260,7 @@ export class WinManager {
             requestAnimationFrame(() => {
                 this.focusMng.focus(element);
             });
-            console.log([uc]);
+            //console.log([uc]);
             
             ShortcutManager.ref.pushFormContext(uc.ucExtends.shortCutContext);
             await uc.ucExtends.Events.activate.fireAsync([]);

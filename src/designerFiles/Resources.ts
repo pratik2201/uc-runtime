@@ -1,3 +1,4 @@
+
 import { UserResource, ResourceStorage, Assembly, AssemblyManager } from "../core-main.js";
 
 declare module "uc-runtime/src/core-main" {
@@ -38,3 +39,5 @@ AssemblyManager.Register({
      ProjectCSS: "uc-runtime:f1441d07-173e-42ef-8ce0-df5f564c546e:00000001",
      ProjectUcConfig: "uc-runtime:f1441d07-173e-42ef-8ce0-df5f564c546e:00000002"
 });
+
+

@@ -145,6 +145,7 @@ class TabIndexManager {
             keys: ['arrowleft']
         });
         ShortcutContext.globalRef.on('NEXT_FIELD_FOCUS', async (ev) => {
+            if (ev.defaultPrevented) return;
             let _EVENT_target = ev.target;
             if (Object.getPrototypeOf(_EVENT_target).constructor.name == HTMLTextAreaElement.name) {
                 let ele = _EVENT_target as HTMLTextAreaElement;
@@ -165,6 +166,7 @@ class TabIndexManager {
             this.breakTheLoop = false;
         });
         ShortcutContext.globalRef.on('PREV_FIELD_FOCUS', async (ev) => {
+            if (ev.defaultPrevented) return;
             const _EVENT_target = ev.target;
             let constructorName = Object.getPrototypeOf(_EVENT_target).constructor.name;
 
@@ -210,6 +212,7 @@ class TabIndexManager {
             this.breakTheLoop = false;
         });
         ShortcutContext.globalRef.on('LEFT_ITEM_FOCUS', async (ev) => {
+              if (ev.defaultPrevented) return;
             htEle = ev.target as HTMLElement;
             tIndex = this.getTindex(htEle);
             if (tIndex != null) {
@@ -222,6 +225,7 @@ class TabIndexManager {
             ev.preventDefault();
         });
         ShortcutContext.globalRef.on('RIGHT_ITEM_FOCUS', async (ev) => {
+              if (ev.defaultPrevented) return;
             htEle = ev.target as HTMLElement;
             tIndex = this.getTindex(htEle);
             if (tIndex != null) {
