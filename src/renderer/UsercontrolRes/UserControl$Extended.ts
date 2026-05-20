@@ -1,7 +1,5 @@
-import { ResourceKeyList } from "ap-shared-core/core-common.js";
-import { TemplateMaker } from "ap-shared-core/core-common.js";
-import { ICoupleNode, IUsercontrolContent } from "ap-shared-core/core.js";
-import { ATTR_OF } from "ap-shared-core/core-common.js";
+import { ATTR_OF, ResourceKeyList, TemplateMaker } from "ap-shared-core/core-common.js";
+import { IUsercontrolContent } from "ap-shared-core/core.js";
 import { IUcOptions, UCGenerateMode, UcStates, WhatToDoWithTargetElement, objectOpt } from "../../common/enumAndMore.js";
 import { FilterContent, IPassElementOptions, STYLER_SELECTOR_TYPE, SourceNode } from "../../lib/StampGenerator.js";
 import { TabIndexManager } from "../../lib/TabIndexManager.js";
@@ -10,8 +8,6 @@ import { Assembly, AssemblyManager } from "../Assembly.js";
 import { CSSVariableScope, CssVariableHandler, IKeyStampNode, StyleBaseType, VariableList } from "../StylerRegs.js";
 import { Usercontrol } from "../Usercontrol.js";
 import { Usercontrol$Event } from "./Usercontrol$Event.js";
-import { ShortcutManager } from "../../lib/ShortcutManager.js";
-import { ShortcutContext } from "../../core.js";
 export type UcDialogResult = "none" | "ok" | 'cancel' | 'close';
 export type ucVisibility = 'inherit' | 'visible' | 'hidden';
 export interface ITransferDataNode {
@@ -30,7 +26,7 @@ export class UserControl$Extended {
     constructor() {
 
     }
-    shortCutContext: ShortcutContext;
+    //shortCutContext: ShortcutContext;
     private main: Usercontrol;
     init(main: Usercontrol) {
         this.main = main;
@@ -97,7 +93,6 @@ export class UserControl$Extended {
             if (!this.wrapperHT.contains(newStage)) return false;
             let initCompo = this.initalComponents;
             let arL = Array.from(initCompo?.elements ?? []);
-            let ctrls: HTMLElement[] = [];
             for (let index = 0, len = arL.length; index < len; index++) {
                 const node = arL[index] as HTMLElement;
                 if (!node.contains(newStage)) {
@@ -143,11 +138,11 @@ export class UserControl$Extended {
         ucExt.isForm = (param0.parentUc == undefined);
         if (ucExt.isForm) {
             ucExt.dialogForm = this.main;
-            ucExt.shortCutContext = new ShortcutContext(ShortcutContext.globalRef);
+            //ucExt.shortCutContext = new ShortcutContext(ShortcutContext.globalRef);
             ucExt.show = () => { throw new Error('Parent Free Usercontrol SHOULD be CALL by `showDialog` \n ' + ucExt.guid) };
         } else {
             ucExt.dialogForm = param0.parentUc.ucExtends.dialogForm;
-            ucExt.shortCutContext = ucExt.dialogForm.ucExtends.shortCutContext;
+            //ucExt.shortCutContext = ucExt.dialogForm.ucExtends.shortCutContext;
             ucExt.showDialog = () => { throw new Error('with Parent Usercontrol SHOULD be CALL by `show` \n ' + ucExt.guid) };
         }
         if (ucExt.isForm) {
@@ -228,6 +223,8 @@ export class UserControl$Extended {
             ucExt.dialogForm = pucExt.dialogForm;
         ucExt.initalComponents.stageHT = ucExt.wrapperHT;
         ucExt.srcNode.setWrapper(ucExt.wrapperHT);
+
+        Usercontrol.Event.onReady.fireAsync([this.main]);
     }
     controls: { [xname: string]: HTMLElement | HTMLElement[] };
     resizerObserver: ResizeObserver;
@@ -287,7 +284,6 @@ export class UserControl$Extended {
         defaultFocusAt?: HTMLElement
     } = {}) => {
         let _extends = this;
-        let alreadyLoadedBefore = _extends.isDialogBox;
         _extends.isDialogBox = true;
         let _parentExt = _extends.PARENT.ucExtends;
         let _oldParentVisibleValue = _parentExt.keepVisible;
@@ -314,16 +310,13 @@ export class UserControl$Extended {
         _extends.visibility = 'visible';
         _extends.Events.loaded.fireAsync();
 
-        ShortcutManager.ref.pushFormContext(_extends.shortCutContext);
+        
 
         if (!defaultFocusAt) {
             TabIndexManager.moveNext(_extends.self, undefined);
         } else {
             TabIndexManager.focusTo(defaultFocusAt);
         }
-        // return new Promise(async (resolve: (v: UcDialogResult) => void) => {
-        //     _extends.dialogResolver = resolve;
-        // });
     };
     _windowstate: UcStates = 'normal';
     get windowstate() { return this._windowstate; };
@@ -388,7 +381,6 @@ export class UserControl$Extended {
     };
     private hide = async () => {
         let _ext = this;
-        let res = { prevent: false };
         _ext.visibility = 'hidden';
         if (_ext.isDialogBox)
             await WinManager.pop(this.main);

@@ -7,14 +7,15 @@ export { VariableList, IKeyStampNode, StyleBaseType } from "./renderer/StylerReg
 export { SourceNode, STYLER_SELECTOR_TYPE, } from "./lib/StampGenerator.js";
 export { Template, TemplateNode } from "./renderer/Template.js";
 export { Usercontrol } from "./renderer/Usercontrol.js";
+export { UserControl$Extended } from "./renderer/UsercontrolRes/UserControl$Extended.js";
 export { ResourceManage } from "./renderer/ResourceManage.js";
 export { TabIndexManager, TabContainerClearNode } from "./lib/TabIndexManager.js";
 export { CommonEvent } from "./global/commonEvent.js";
 export { IpcRendererHelper } from "./renderer/ipc/IpcRendererHelper.js";
 export { WinManager  } from "./lib/WinManager.js";
 export { KeyboardKeyEnum } from "ap-shared-core/core-common.js";
-export { KeyboardKey, ShortcutManager } from "./lib/ShortcutManager.js";
-export { ShortcutContext } from "./lib/ShortcutCore.js";
+// export { KeyboardKey, ShortcutManager } from "./lib/ShortcutManager.js";
+// export { ShortcutContext } from "./lib/ShortcutCore.js";
 
 //export type { KeyboardKey } from "ap-shared-core/core-common.js";
 export { PreloadFullFill } from "./common/ipc/enumAndMore.js";

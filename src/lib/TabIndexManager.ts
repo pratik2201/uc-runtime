@@ -1,9 +1,6 @@
 
-import { KeyboardKey } from 'ap-shared-core/core-common.js';
-import { WinManager } from "./WinManager.js";
 import { ucUtil } from "ap-shared-core/core.js";
-import { ShortcutManager } from './ShortcutManager.js';
-import { ShortcutContext } from './ShortcutCore.js';
+import { WinManager } from "./WinManager.js";
 interface TabIndexRow {
     container: HTMLElement;
     element: HTMLElement;
@@ -106,56 +103,13 @@ class TabIndexManager {
         onContainerTopEnter: [] as TabContainerClearNode[],
         onContainerBottomLeave: [] as TabContainerClearNode[],
         onContainerBottomEnter: [] as TabContainerClearNode[],
+ 
 
-        //onContainerClear:new CommonEvent<(element:HTMLElement)=>{}>()
-
-    }
-    static status: TabStatus = 'none';
-    private static isInited = false;
-
-    static init(/*mainHT: HTMLElement*/) {
-        /*this.mainHT = mainHT;*/
-        if (this.isInited) return;
-        this.isInited = true;
-        let htEle: HTMLElement | undefined;
-        let tIndex: number;
-        // this.gainNode.connect(this.audioCtx.destination);
-
-        let keyDownTimer = null;
-        let keyIsDown = false;
-
-        ShortcutContext.globalRef.register({
-            action: 'NEXT_FIELD_FOCUS',
-            keys: ['enter']
-        });
-        ShortcutContext.globalRef.register({
-            action: 'NEXT_FIELD_FOCUS',
-            keys: ['tab']
-        });
-        ShortcutContext.globalRef.register({
-            action: 'PREV_FIELD_FOCUS',
-            keys: ['backspace']
-        });
-        ShortcutContext.globalRef.register({
-            action: 'RIGHT_ITEM_FOCUS',
-            keys: ['arrowright']
-        });
-        ShortcutContext.globalRef.register({
-            action: 'LEFT_ITEM_FOCUS',
-            keys: ['arrowleft']
-        });
-        ShortcutContext.globalRef.on('NEXT_FIELD_FOCUS', async (ev) => {
+        NAVIGATE_NEXT_FIELD_FOCUS: async (ev: KeyboardEvent) => {
             if (ev.defaultPrevented) return;
             let _EVENT_target = ev.target;
-            if (Object.getPrototypeOf(_EVENT_target).constructor.name == HTMLTextAreaElement.name) {
-                let ele = _EVENT_target as HTMLTextAreaElement;
-                let _val = ele.value;
-                if (_val != '' && _val == ucUtil._getSelectedValuee(ele)) {
-                } else {
-                    if (!_val.endsWith('\n')) return;
-                    else ele.value = _val.slice(0, -1);
-                }
-            }
+
+           
             if (!ev.shiftKey) {
                 await this.moveNext(_EVENT_target as HTMLElement, ev);
             } else {
@@ -164,8 +118,8 @@ class TabIndexManager {
             this.status = 'none';
             ev.preventDefault();
             this.breakTheLoop = false;
-        });
-        ShortcutContext.globalRef.on('PREV_FIELD_FOCUS', async (ev) => {
+        },
+        NAVIGATE_PREV_FIELD_FOCUS: async (ev: KeyboardEvent) => {
             if (ev.defaultPrevented) return;
             const _EVENT_target = ev.target;
             let constructorName = Object.getPrototypeOf(_EVENT_target).constructor.name;
@@ -210,11 +164,11 @@ class TabIndexManager {
             }
 
             this.breakTheLoop = false;
-        });
-        ShortcutContext.globalRef.on('LEFT_ITEM_FOCUS', async (ev) => {
-              if (ev.defaultPrevented) return;
-            htEle = ev.target as HTMLElement;
-            tIndex = this.getTindex(htEle);
+        },
+        NAVIGATE_LEFT_ITEM_FOCUS: async (ev: KeyboardEvent) => {
+            if (ev.defaultPrevented) return;
+            const htEle = ev.target as HTMLElement;
+            const tIndex = this.getTindex(htEle);
             if (tIndex != null) {
                 if (!this.FOCUSABLE_ELEMENTS.includes(htEle.nodeName) && htEle.contentEditable != "true") {
                     await this.movePrev(htEle, ev);
@@ -223,11 +177,11 @@ class TabIndexManager {
             }
             this.breakTheLoop = false;
             ev.preventDefault();
-        });
-        ShortcutContext.globalRef.on('RIGHT_ITEM_FOCUS', async (ev) => {
-              if (ev.defaultPrevented) return;
-            htEle = ev.target as HTMLElement;
-            tIndex = this.getTindex(htEle);
+        },
+        NAVIGATE_RIGHT_ITEM_FOCUS: async (ev: KeyboardEvent) => {
+            if (ev.defaultPrevented) return;
+            const htEle = ev.target as HTMLElement;
+            const tIndex = this.getTindex(htEle);
             if (tIndex != null) {
                 if (!this.FOCUSABLE_ELEMENTS.includes(htEle.nodeName) && htEle.contentEditable != "true") {
                     await this.moveNext(htEle, ev);
@@ -236,92 +190,42 @@ class TabIndexManager {
             }
             this.breakTheLoop = false;
             ev.preventDefault();
+        }
+    }
+    static status: TabStatus = 'none';
+    private static isInited = false;
+
+    static init(/*mainHT: HTMLElement*/) {
+        /*this.mainHT = mainHT;*/
+        if (this.isInited) return;
+        this.isInited = true;
+        let htEle: HTMLElement | undefined;
+        let tIndex: number;
+        // this.gainNode.connect(this.audioCtx.destination);
+
+        let keyDownTimer = null;
+        let keyIsDown = false;
+
+       
+
+        WinManager.event.keydown.on(async (ev: KeyboardEvent) => {
+            switch (ev.code) {
+                /*case 'Backspace':
+                    await TabIndexManager.Events.NAVIGATE_PREV_FIELD_FOCUS(ev);
+                    break;
+                case 'Enter':
+                case 'NumpadEnter':*/
+                case 'Tab':
+                    await TabIndexManager.Events.NAVIGATE_NEXT_FIELD_FOCUS(ev);
+                    break;
+                /*case 'ArrowLeft':
+                    await TabIndexManager.Events.NAVIGATE_LEFT_ITEM_FOCUS(ev);
+                    break;
+                case 'ArrowRight':
+                    await TabIndexManager.Events.NAVIGATE_RIGHT_ITEM_FOCUS(ev);
+                    break;*/
+            }
         });
-        // WinManager.event.keydown.on(async (ev: KeyboardEvent) => {
-        //     //console.log(ev.code);
-        //     if (ev.defaultPrevented) {
-        //         ev.stopImmediatePropagation();
-        //         ev.preventDefault();
-        //         ev.stopPropagation();
-        //         return;
-        //     }
-        //     let _EVENT_target = ev.target;
-        //     let _EVENT_keyCode = ev.code;
-        //     let _EVENT_shiftKey = ev.shiftKey;
-        //     let code = _EVENT_keyCode as KeyboardKey;
-
-        //     switch (code) {
-        //         // case 'Backspace':
-        //         //     let constructorName = Object.getPrototypeOf(_EVENT_target).constructor.name;
-
-        //         //     switch (constructorName) {
-        //         //         case HTMLTextAreaElement.name:
-        //         //         case HTMLInputElement.name:
-        //         //             let ele = _EVENT_target as HTMLTextAreaElement & HTMLInputElement;
-        //         //             let _val = ele.value;
-        //         //             switch (ele.type) {
-        //         //                 case undefined:  //  HTMLTextAreaElement
-        //         //                 case "text":
-        //         //                 case "password":
-        //         //                 case "email":
-        //         //                 case "search":
-        //         //                 case "tel":
-        //         //                 case "url":
-        //         //                 case "number":
-        //         //                 case "date":
-        //         //                 case "datetime-local":
-        //         //                 case "month":
-        //         //                 case "week":
-        //         //                 case "time":
-        //         //                     if (_val == '' || _val == ucUtil._getSelectedValuee(ele)) {
-        //         //                         await this.movePrev(_EVENT_target as HTMLElement, ev);
-        //         //                         this.status = 'none';
-        //         //                         ev.preventDefault();
-        //         //                     }
-        //         //                     break;
-        //         //                 default:
-        //         //                     await this.movePrev(_EVENT_target as HTMLElement, ev);
-        //         //                     this.status = 'none';
-        //         //                     ev.preventDefault();
-        //         //                     break;
-        //         //             }
-
-        //         //             break;
-        //         //         default:
-        //         //             await this.movePrev(_EVENT_target as HTMLElement, ev);
-        //         //             this.status = 'none';
-        //         //             ev.preventDefault();
-        //         //             break;
-        //         //     }
-        //         //     break;
-        //         /*case 'Enter':
-        //         case 'NumpadEnter':
-        //             if (Object.getPrototypeOf(_EVENT_target).constructor.name == HTMLTextAreaElement.name) {
-        //                 let ele = _EVENT_target as HTMLTextAreaElement;
-        //                 let _val = ele.value;
-        //                 if (_val != '' && _val == ucUtil._getSelectedValuee(ele)) {
-        //                 } else {
-        //                     if (!_val.endsWith('\n')) break;
-        //                     else ele.value = _val.slice(0, -1);
-        //                 }
-        //             }
-        //         case 'Tab':
-        //             if (!_EVENT_shiftKey) {
-        //                 await this.moveNext(_EVENT_target as HTMLElement, ev);
-        //             } else {
-        //                 await this.movePrev(_EVENT_target as HTMLElement, ev);
-        //             }
-        //             this.status = 'none';
-        //             ev.preventDefault();
-        //             break;*/
-        //         case 'ArrowLeft':
-
-        //             break;
-        //         case 'ArrowRight':
-
-        //             break;
-        //     }
-        // });
     }
 
 

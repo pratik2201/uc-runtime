@@ -1,3 +1,144 @@
+// ================= TYPES =================
+
+import { ShortcutContext } from "./ShortcutCore.js";
+
+type GlobalActionNames =
+    | "NEXT_FIELD_FOCUS"
+    | "PREV_FIELD_FOCUS"
+    | "LEFT_FIELD_FOCUS"
+    | "RIGHT_FIELD_FOCUS";
+
+type ActionNames = string;
+
+type ModifierKey = "control" | "alt" | "shift" | "meta";
+
+type LetterKey =
+    | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j"
+    | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t"
+    | "u" | "v" | "w" | "x" | "y" | "z";
+
+type NumberKey = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
+
+type FunctionKey =
+    | "f1" | "f2" | "f3" | "f4" | "f5" | "f6"
+    | "f7" | "f8" | "f9" | "f10" | "f11" | "f12";
+
+type SpecialKey =
+    | "enter"
+    | "escape"
+    | "tab"
+    | "space"
+    | "backspace"
+    | "delete"
+    | "arrowup"
+    | "arrowdown"
+    | "arrowleft"
+    | "arrowright"
+    | "pageup"
+    | "pagedown";
+
+export type KeyboardKey =
+    | ModifierKey
+    | LetterKey
+    | NumberKey
+    | FunctionKey
+    | SpecialKey;
+
+// ================= NODE =================
+
+export class ShortcutManager {
+    static ref: ShortcutManager;
+
+    private globalCtx: ShortcutContext;
+    // private formStack: ShortcutContext[] = [];
+    private menuCtx?: ShortcutContext;
+    private formStack: ShortcutContext;
+    constructor(globalCtx: ShortcutContext) {
+        this.globalCtx = globalCtx;
+
+        ShortcutManager.ref = this;
+
+        window.addEventListener("keydown", this._keydown);
+    }
+    pushFormContext(ctx: ShortcutContext) {
+        this.formStack = ctx;
+        //this.formStack.unshift(ctx);
+    } 
+    /*popFormContext() {
+        if (this.formStack.length > 0) {
+            this.formStack.shift();
+        }
+    }*/
+    // 🔹 current active form
+    private getActiveContext() {
+        return this.formStack;//[0];
+    }
+    get activeCtx(): ShortcutContext | undefined {
+        return this.formStack;//[0];
+    }
+
+    openMenu(ctx: ShortcutContext) {
+        this.menuCtx = ctx;
+    }
+
+    closeMenu() {
+        this.menuCtx = undefined;
+    }
+
+    private buildCombo(e: KeyboardEvent): string {
+        const keys: string[] = [];
+
+        if (e.ctrlKey) keys.push("control");
+        if (e.altKey) keys.push("alt");
+        if (e.shiftKey) keys.push("shift");
+
+        const key = e.key.toLowerCase();
+
+        if (!["control", "alt", "shift"].includes(key)) {
+            keys.push(key);
+        }
+
+        return keys.sort().join("+");
+    }
+
+    private _keydown = (e: KeyboardEvent) => {
+        const combo = this.buildCombo(e);
+        //console.log('-e-');
+
+        // 1. MENU
+        if (this.menuCtx) {
+            const act = this.menuCtx.resolve(combo);
+            if (act) {
+                this.menuCtx.dispatch(act, e);
+                /*if (handled === true) {
+                    e.preventDefault();
+                }*/
+                return;
+            }
+        }
+
+        // 2. ACTIVE FORM (TOP OF STACK)
+        const active = this.formStack;//.getActiveContext();
+        if (active) {
+            const act = active.resolve(combo);
+            if (act) {
+                active.dispatch(act, e);
+                //  e.preventDefault();
+                return;
+            }
+        }
+
+        // 3. GLOBAL
+        const act = this.globalCtx.resolve(combo);
+        if (act) {
+            this.globalCtx.dispatch(act, e);
+            //e.preventDefault();
+        }
+    };
+}
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
 type GlobalActionNames =  
     | "NEXT_FIELD_FOCUS"
     | "PREV_FIELD_FOCUS"

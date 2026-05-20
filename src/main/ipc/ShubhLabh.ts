@@ -1,6 +1,4 @@
 import { Extensions } from "../../lib/Extensions.js";
-import { ShortcutManager } from "../../lib/ShortcutManager.js";
-import { ShortcutContext } from "../../lib/ShortcutCore.js";
 import { SourceNode } from "../../lib/StampGenerator.js";
 import { TabIndexManager } from "../../lib/TabIndexManager.js";
 import { WinManager } from "../../lib/WinManager.js";
@@ -9,13 +7,14 @@ import { IpcRendererHelper } from "../../renderer/ipc/IpcRendererHelper.js";
 import { ResourceManage } from "../../renderer/ResourceManage.js";
 import { StyleBaseType } from "../../renderer/StylerRegs.js";
 let isExecuted = false;
+
 export async function INIT_RENDERER() {
   if (isExecuted) return;
-  ShortcutManager.ref = new ShortcutManager(ShortcutContext.globalRef);
+  
   isExecuted = true;
   IpcRendererHelper.init(window);
 
-  TabIndexManager.init();
+  //TabIndexManager.init();
   Extensions.init();
   SourceNode.init();
   const _assembiles = IpcRendererHelper.assemblies;
