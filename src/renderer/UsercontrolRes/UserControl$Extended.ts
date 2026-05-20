@@ -393,9 +393,12 @@ export class UserControl$Extended {
     private destruct = async (): Promise<boolean> => {
         let main = this.main;
         await this.Events.onDestruction.fireAsync();
+       
+        this.Events.afterClose.fireAsync([main]);
+       
         if (this.isDialogBox)
             await WinManager.pop(main);
-        this.Events.afterClose.fireAsync([main]);
+       
         await Usercontrol.HiddenSpace.appendChild(this.wrapperHT);
         await this.srcNode.release();
         this.wrapperHT.remove();
