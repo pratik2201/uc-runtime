@@ -310,13 +310,16 @@ export class UserControl$Extended {
         _extends.visibility = 'visible';
         _extends.Events.loaded.fireAsync();
 
-        
+
 
         if (!defaultFocusAt) {
             TabIndexManager.moveNext(_extends.self, undefined);
         } else {
             TabIndexManager.focusTo(defaultFocusAt);
         }
+        return new Promise(async (resolve: (v: UcDialogResult) => void) => {
+            _extends.dialogResolver = resolve;
+        });
     };
     _windowstate: UcStates = 'normal';
     get windowstate() { return this._windowstate; };
@@ -386,6 +389,7 @@ export class UserControl$Extended {
             await WinManager.pop(this.main);
         await _ext.Events.afterHide.fireAsync([this.main]);
         Usercontrol.HiddenSpace.appendChild(_ext.wrapperHT);
+        if (_ext.dialogResolver != undefined) _ext.dialogResolver(_ext.DialogResult);
         //debugger;
         // await this.srcNode.release();
 
@@ -393,12 +397,12 @@ export class UserControl$Extended {
     private destruct = async (): Promise<boolean> => {
         let main = this.main;
         await this.Events.onDestruction.fireAsync();
-       
+
         this.Events.afterClose.fireAsync([main]);
-       
+
         if (this.isDialogBox)
             await WinManager.pop(main);
-       
+
         await Usercontrol.HiddenSpace.appendChild(this.wrapperHT);
         await this.srcNode.release();
         this.wrapperHT.remove();

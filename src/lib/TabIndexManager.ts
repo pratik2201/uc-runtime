@@ -95,7 +95,10 @@ class TabIndexManager {
         TabIndexManager.breakTheLoop = false;
         this.Events.onContainerBottomLeave["#RemoveMultiple"](callback);
     }
-
+    
+    static isDirectClose(child: HTMLElement, container: HTMLElement): boolean {
+        return container == child.parentElement.closest(`[x-tabindex]`);
+    }
     constructor() { }
     static Events = {
 
@@ -103,13 +106,13 @@ class TabIndexManager {
         onContainerTopEnter: [] as TabContainerClearNode[],
         onContainerBottomLeave: [] as TabContainerClearNode[],
         onContainerBottomEnter: [] as TabContainerClearNode[],
- 
+
 
         NAVIGATE_NEXT_FIELD_FOCUS: async (ev: KeyboardEvent) => {
             if (ev.defaultPrevented) return;
             let _EVENT_target = ev.target;
 
-           
+
             if (!ev.shiftKey) {
                 await this.moveNext(_EVENT_target as HTMLElement, ev);
             } else {
@@ -170,27 +173,66 @@ class TabIndexManager {
             const htEle = ev.target as HTMLElement;
             const tIndex = this.getTindex(htEle);
             if (tIndex != null) {
-                if (!this.FOCUSABLE_ELEMENTS.includes(htEle.nodeName) && htEle.contentEditable != "true") {
+                if (!this.ElementAvailability.FOCUSABLE_ELEMENTS.includes(htEle.nodeName) && htEle.contentEditable != "true") {
                     await this.movePrev(htEle, ev);
                     ev.preventDefault();
                 }
             }
             this.breakTheLoop = false;
-            ev.preventDefault();
+            //ev.preventDefault();
         },
         NAVIGATE_RIGHT_ITEM_FOCUS: async (ev: KeyboardEvent) => {
             if (ev.defaultPrevented) return;
             const htEle = ev.target as HTMLElement;
             const tIndex = this.getTindex(htEle);
             if (tIndex != null) {
-                if (!this.FOCUSABLE_ELEMENTS.includes(htEle.nodeName) && htEle.contentEditable != "true") {
+                if (!this.ElementAvailability.FOCUSABLE_ELEMENTS.includes(htEle.nodeName) && htEle.contentEditable != "true") {
                     await this.moveNext(htEle, ev);
                     ev.preventDefault();
                 }
             }
             this.breakTheLoop = false;
-            ev.preventDefault();
+            //ev.preventDefault();
+        },
+
+    }
+    static ElementAvailability = {
+        isVisualyAppeared: (hte: HTMLElement) => {
+            if (hte == undefined) return false;
+            let isVisible = true;
+            isVisible = ucUtil.currentStyles(hte).visibility == 'visible';
+            return hte.offsetWidth > 0 && hte.offsetHeight > 0 && isVisible && hte.closest('[inert]') == null            
+        },
+        /**
+         * add nodeName of HTMLElement in this array
+         */
+        FOCUSABLE_ELEMENTS: ["A", "BUTTON", "INPUT", "SELECT", "TEXTAREA"],
+        async IS_FOCUSABLE_ELEMENT(element: HTMLElement) {
+            return (this.FOCUSABLE_ELEMENTS.includes(element.nodeName) ||
+                element.contentEditable == 'true')
+        },
+        hasTabStop: (element: HTMLElement) => {
+            if (element.hasAttribute('x-tabstop')) {
+                const tabStop = element.getAttribute('x-tabstop');
+                return (tabStop === `true` || tabStop == '1');
+            }
+            return false;
         }
+    }
+    private static isFocusableElement = async (hte: HTMLElement) => {
+        const abailability = this.ElementAvailability;
+        let isVisaulyAppeared = abailability.isVisualyAppeared(hte);
+        if (!isVisaulyAppeared) return false;
+
+        let element = hte as HTMLInputElement;
+        let isPrimaryInputElements = await abailability.IS_FOCUSABLE_ELEMENT(element);
+        if (!isPrimaryInputElements) {
+            if (abailability.hasTabStop(element)) {
+                element.tabIndex = -1;
+                isPrimaryInputElements = true;
+            }
+        }
+        return !element.disabled && isPrimaryInputElements;
     }
     static status: TabStatus = 'none';
     private static isInited = false;
@@ -206,7 +248,7 @@ class TabIndexManager {
         let keyDownTimer = null;
         let keyIsDown = false;
 
-       
+
 
         WinManager.event.keydown.on(async (ev: KeyboardEvent) => {
             switch (ev.code) {
@@ -248,7 +290,7 @@ class TabIndexManager {
             } else {
                 let parent = this.getDirectParent(target);
                 let ele = this.getDirectElement(parent, tIndex) ?? this.getAnyPreviousBefore(parent, tIndex);
-                if (this.isFocusableElement(ele)) {   // IF PREVIOUS ELEMENT IS TEXTBOX
+                if ((await this.isFocusableElement(ele))) {   // IF PREVIOUS ELEMENT IS TEXTBOX
                     this.focusTo(ele);
                 } else {
                     if (ele !== undefined)
@@ -273,7 +315,7 @@ class TabIndexManager {
                 let _obj = evt.find(s => s.target == target);
                 if (_obj != undefined) if (_obj.callback() === true) return;*/
 
-                if (this.isFocusableElement(childLastElement)) {  //  IF LAST ELEMENT IS TEXTBOX
+                if ((await this.isFocusableElement(childLastElement))) {  //  IF LAST ELEMENT IS TEXTBOX
                     this.focusTo(childLastElement);
                 } else {     //  MOVE TO PREVIOUS WITH CHECK
                     await this.movePrev(childLastElement, ev);
@@ -389,7 +431,7 @@ class TabIndexManager {
         if (!target.isConnected) return;
         let tIndex = parseInt(target.getAttribute('x-tabindex'));
         if (tIndex == null) return;
-        if (!this.isVisaulyAppeared(target))
+        if (!this.ElementAvailability.isVisualyAppeared(target))
             goAhead = true;
 
         if (goAhead && (await this._HELLO_KON(target, ev, this.Events.onContainerBottomLeave))) return;
@@ -401,7 +443,7 @@ class TabIndexManager {
             let _obj = evt.find(s => s.target == childFirstElement);
             if (_obj != undefined) if (_obj.callback() === true) return;*/
 
-            if (this.isFocusableElement(childFirstElement)) { // IF FIRST CHILD IS TEXTBOX
+            if ((await this.isFocusableElement(childFirstElement))) { // IF FIRST CHILD IS TEXTBOX
                 this.focusTo(childFirstElement);
             } else {   // GO TO NEXT TAB-INDEX
                 await this.moveNext(childFirstElement, ev);
@@ -413,7 +455,7 @@ class TabIndexManager {
             // debugger;
             let ele = this.getDirectElement(parent, tIndex) ?? this.getAnyNextAfter(parent, tIndex);
             if ((await this._HELLO_KON(ele, ev, this.Events.onContainerTopEnter))) return;
-            if (this.isFocusableElement(ele)) {   // IF NEXT ELEMENT IS TEXTBOX
+            if ((await this.isFocusableElement(ele))) {   // IF NEXT ELEMENT IS TEXTBOX
                 this.focusTo(ele);
             } else {    // IF NEXT ELEMENT HAS CHILD ELEMENT
                 if (ele != undefined) { // IF NEXT ELEMENT EXIST      
@@ -460,37 +502,9 @@ class TabIndexManager {
         return target.parentElement?.closest("[x-tabindex]");
     }
 
-    static FOCUSABLE_ELEMENTS: string[] = ["A",
-        "BUTTON", "INPUT", "SELECT", "TEXTAREA", /*"OPTION", "OPTGROUP", "FIELDSET",
-        "SUMMARY", "IFRAME", "AREA", "AUDIO", "VIDEO", "EMBED", "OBJECT"*/
-    ];
-    static isVisaulyAppeared(hte: HTMLElement) {
-        if (hte == undefined) return false;
-        let isVisible = true;
-        isVisible = ucUtil.currentStyles(hte).visibility == 'visible';
-        return hte.offsetWidth > 0 && hte.offsetHeight > 0 && isVisible && hte.closest('[inert]') == null//;;!hte.hasAttribute('inert');
-    }
-    static isFocusableElement(hte: HTMLElement): boolean {
-        let isVisaulyAppeared = this.isVisaulyAppeared(hte);
-        if (!isVisaulyAppeared) return false;
-        let element = hte as HTMLInputElement;
-        let isPrimaryInputElements = (this.FOCUSABLE_ELEMENTS.includes(element.nodeName) /*!= null*/ ||
-            element.contentEditable == 'true');
-        if (!isPrimaryInputElements) {
-            if (element.hasAttribute('x-tabstop')) {
-                const tabStop = element.getAttribute('x-tabstop');
-                if (tabStop === `true` || tabStop == '1') {
-                    element.tabIndex = -1;
-                    isPrimaryInputElements = true;
-                }
-            }
-        }
-        return !element.disabled && isPrimaryInputElements;
-    }
 
-    static isDirectClose(child: HTMLElement, container: HTMLElement): boolean {
-        return container == child.parentElement.closest(`[x-tabindex]`);
-    }
+
+
 }
 
 const elementState = Object.freeze({

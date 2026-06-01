@@ -18,6 +18,9 @@ export class Usercontrol {
     static HiddenSpace: HTMLElement = document.createElement('hspc' + GetUniqueId());
     static Event = {
         onReady: new CommonEvent<(uc: Usercontrol) => void>(),
+        onElementParser: (e: HTMLElement) => {
+            
+        },
         //onUserControlExtended: new CommonEvent()
     }
     static UcOptionsStc: IUcOptions;
