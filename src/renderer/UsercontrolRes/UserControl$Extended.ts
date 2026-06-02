@@ -32,22 +32,22 @@ export class UserControl$Extended {
         this.main = main;
         this.Events = new Usercontrol$Event(main);
     }
-    get Context() { return this.dialogForm?.ucExtends.___META.CONTEXT; }
+    /*get Context() { return this.dialogForm?.ucExtends.___META.CONTEXT; }
     set SetContext(context) {
         let df = this.dialogForm.ucExtends;
         df.___META.CONTEXT = context;
         df.Events.contextChange.fire([]);
 
-    }
+    }*/
     DialogResult = undefined as UcDialogResult;
     mode = 'client' as UCGenerateMode;
-    ___META = {
+    /*___META = {
         CONTEXT: undefined,
         PREV_CREATED_ID: undefined,
         PREV_UPDATED_ID: undefined,
         SELECTED_ID: undefined,
         CLOSE_ON_SAVE: undefined as boolean,
-    };
+    };*/
     form: Usercontrol;
     dialogForm: Usercontrol;
     PARENT: Usercontrol;
@@ -145,9 +145,9 @@ export class UserControl$Extended {
             //ucExt.shortCutContext = ucExt.dialogForm.ucExtends.shortCutContext;
             ucExt.showDialog = () => { throw new Error('with Parent Usercontrol SHOULD be CALL by `show` \n ' + ucExt.guid) };
         }
-        if (ucExt.isForm) {
+        /*if (ucExt.isForm) {
             ucExt.dialogForm.ucExtends.___META.CONTEXT = param0.context;
-        }
+        }*/
         ucExt.assembly = AssemblyManager.Parse(ucExt.guid);
 
         ucExt.guid = param0.guid as never;
@@ -224,7 +224,7 @@ export class UserControl$Extended {
         ucExt.initalComponents.stageHT = ucExt.wrapperHT;
         ucExt.srcNode.setWrapper(ucExt.wrapperHT);
 
-        Usercontrol.Event.onReady.fireAsync([this.main]);
+        Usercontrol.Event.onReady.fireAsync([this.main,param0]);
     }
     controls: { [xname: string]: HTMLElement | HTMLElement[] };
     resizerObserver: ResizeObserver;

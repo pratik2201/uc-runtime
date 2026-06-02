@@ -27,11 +27,11 @@ export default function () {
     main.On('getContent', (event, key: string) => {
         event.returnValue = ResourceStorage.getContent(key); 
     });
-    main.On('getByName', (event, name: keyof ResourceNamedRegistry) => {
-        event.returnValue = ResourceStorage.getByName(name); 
+    main.On('getByName', (event, name) => {
+        event.returnValue = ResourceStorage.getByName(name as never); 
     });
-    main.On('getContentByName', (event, name: keyof ResourceNamedRegistry) => { 
-        event.returnValue = ResourceStorage.getContentByName(name); 
+    main.On('getContentByName', (event, name) => { 
+        event.returnValue = ResourceStorage.getContentByName(name as never); 
     });
     main.On('keys', (event) => {
         event.returnValue = ResourceStorage.keys();

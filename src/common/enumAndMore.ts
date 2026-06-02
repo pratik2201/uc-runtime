@@ -133,7 +133,7 @@ export interface IUcOptions {
   source?: IUsercontrolContent;
   parentUc?: Usercontrol;
   accessName?: string,
-  context?: any,
+  //context?: any,
   events?: {
     beforeFinalize?: (uc: Usercontrol) => void;
     beforeInitlize?: (uc: Usercontrol) => void;

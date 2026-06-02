@@ -17,7 +17,7 @@ export class Usercontrol {
     static parse(node: HTMLElement): Usercontrol { return node["#data"](ATTR_OF.BASE_OBJECT); }
     static HiddenSpace: HTMLElement = document.createElement('hspc' + GetUniqueId());
     static Event = {
-        onReady: new CommonEvent<(uc: Usercontrol) => void>(),
+        onReady: new CommonEvent<(uc: Usercontrol,options:IUcOptions) => void>(),
         onElementParser: (e: HTMLElement) => {
             
         },
