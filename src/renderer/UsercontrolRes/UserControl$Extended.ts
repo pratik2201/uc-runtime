@@ -224,7 +224,7 @@ export class UserControl$Extended {
         ucExt.initalComponents.stageHT = ucExt.wrapperHT;
         ucExt.srcNode.setWrapper(ucExt.wrapperHT);
 
-        Usercontrol.Event.onReady.fireAsync([this.main,param0]);
+        Usercontrol.Event.onReady.fireAsync([this.main, param0]);
     }
     controls: { [xname: string]: HTMLElement | HTMLElement[] };
     resizerObserver: ResizeObserver;
@@ -252,7 +252,7 @@ export class UserControl$Extended {
         return (ext.isForm || ext.visibility != 'inherit') ?
             ext.visibility : ext.PARENT.ucExtends.visibility;
     }
-    show = ({ at = undefined, defaultFocusAt = undefined, decision = 'append' }:
+    show = async ({ at = undefined, defaultFocusAt = undefined, decision = 'append' }:
         { at?: HTMLElement, defaultFocusAt?: HTMLElement, decision?: WhatToDoWithTargetElement, visibility?: ucVisibility } = {}) => {
         let _extend = this;
         let _element = _extend.initalComponents.targetElement;
@@ -272,9 +272,9 @@ export class UserControl$Extended {
         if (_extend.dialogForm == undefined)
             _extend.dialogForm = _extend.isForm ? this.main : _extend.PARENT.ucExtends.dialogForm;
         _extend.visibility = 'visible';
-        _extend.Events.loaded.fire();
+        await _extend.Events.loaded.fireAsync();
         if (defaultFocusAt)
-            TabIndexManager.focusTo(defaultFocusAt);
+            await TabIndexManager.focusTo(defaultFocusAt);
     }
 
     dialogResolver: (value: UcDialogResult) => void;
@@ -308,14 +308,14 @@ export class UserControl$Extended {
             _extends.dialogForm = this.main;
 
         _extends.visibility = 'visible';
-        _extends.Events.loaded.fireAsync();
+        await _extends.Events.loaded.fireAsync();
 
 
 
         if (!defaultFocusAt) {
-            TabIndexManager.moveNext(_extends.self, undefined);
+            await TabIndexManager.moveNext(_extends.self, undefined);
         } else {
-            TabIndexManager.focusTo(defaultFocusAt);
+            await TabIndexManager.focusTo(defaultFocusAt);
         }
         return new Promise(async (resolve: (v: UcDialogResult) => void) => {
             _extends.dialogResolver = resolve;

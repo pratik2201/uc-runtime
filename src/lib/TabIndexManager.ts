@@ -1,54 +1,19 @@
 
 import { ucUtil } from "ap-shared-core/core.js";
-import { WinManager } from "./WinManager.js";
+import { WinManager } from "./WinManager.js"; 
+import { CommonEvent } from "../core.js";
 interface TabIndexRow {
     container: HTMLElement;
     element: HTMLElement;
     tIndex: number;
 }
 type TabStatus = 'backword' | 'forward' | 'none';
-class ErrorSound {
-    static audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-    static gainNode = (() => {
-        const gain = ErrorSound.audioCtx.createGain();
-        gain.connect(ErrorSound.audioCtx.destination);
-        return gain;
-    })();
 
-    static playErrorBeep() {
-        if (ErrorSound.audioCtx.state === 'suspended') {
-            ErrorSound.audioCtx.resume();
-        }
-
-        const osc = ErrorSound.audioCtx.createOscillator();
-        const gain = ErrorSound.audioCtx.createGain();
-
-        osc.type = 'square';                 // Sharp, attention-catching
-        osc.frequency.value = 140;           // Low pitch
-        gain.gain.setValueAtTime(0.35, ErrorSound.audioCtx.currentTime);
-
-        // Optional fade-out (smooth ending)
-        gain.gain.exponentialRampToValueAtTime(
-            0.001,
-            ErrorSound.audioCtx.currentTime + 0.12
-        );
-
-        osc.connect(gain);
-        gain.connect(ErrorSound.gainNode);
-
-        osc.start(ErrorSound.audioCtx.currentTime);
-        osc.stop(ErrorSound.audioCtx.currentTime + 0.15); // ~150ms
-
-        osc.onended = () => {
-            osc.disconnect();
-            gain.disconnect();
-        };
-    }
-}
 
 export interface TabContainerClearNode { target: HTMLElement, callback: (e: KeyboardEvent) => Promise<boolean | void> }
 class TabIndexManager {
-    static beep() { ErrorSound.playErrorBeep(); }
+
+    //static beep() { AudioManage.playErrorBeep(); }
 
     static stopFurther(e: Event, breakTheLoop: boolean = false) {
         if (e == undefined) return;
@@ -85,7 +50,10 @@ class TabIndexManager {
         let prevActEle = undefined;
         do {
             await this.moveNext(activeElement, undefined);
-            if (TabIndexManager.breakTheLoop) { this.beep(); break; }
+            if (TabIndexManager.breakTheLoop) {
+                await this.Events.onBreakTheLoop.fireAsync([document.activeElement as HTMLElement]);
+                break;
+            }
             if (activeElement === document.activeElement) TabIndexManager.breakTheLoop = true;
             activeElement = document.activeElement as HTMLElement;
             if (activeElement === stopAt || prevActEle == activeElement) TabIndexManager.breakTheLoop = true;
@@ -95,19 +63,17 @@ class TabIndexManager {
         TabIndexManager.breakTheLoop = false;
         this.Events.onContainerBottomLeave["#RemoveMultiple"](callback);
     }
-    
+
     static isDirectClose(child: HTMLElement, container: HTMLElement): boolean {
         return container == child.parentElement.closest(`[x-tabindex]`);
     }
     constructor() { }
     static Events = {
-
         onContainerTopLeave: [] as TabContainerClearNode[],
         onContainerTopEnter: [] as TabContainerClearNode[],
         onContainerBottomLeave: [] as TabContainerClearNode[],
         onContainerBottomEnter: [] as TabContainerClearNode[],
-
-
+        onBreakTheLoop: new CommonEvent<(htmlEle: HTMLElement) => void>(),
         NAVIGATE_NEXT_FIELD_FOCUS: async (ev: KeyboardEvent) => {
             if (ev.defaultPrevented) return;
             let _EVENT_target = ev.target;
@@ -201,7 +167,7 @@ class TabIndexManager {
             if (hte == undefined) return false;
             let isVisible = true;
             isVisible = ucUtil.currentStyles(hte).visibility == 'visible';
-            return hte.offsetWidth > 0 && hte.offsetHeight > 0 && isVisible && hte.closest('[inert]') == null            
+            return hte.offsetWidth > 0 && hte.offsetHeight > 0 && isVisible && hte.closest('[inert]') == null
         },
         /**
          * add nodeName of HTMLElement in this array
@@ -291,7 +257,7 @@ class TabIndexManager {
                 let parent = this.getDirectParent(target);
                 let ele = this.getDirectElement(parent, tIndex) ?? this.getAnyPreviousBefore(parent, tIndex);
                 if ((await this.isFocusableElement(ele))) {   // IF PREVIOUS ELEMENT IS TEXTBOX
-                    this.focusTo(ele);
+                    await this.focusTo(ele);
                 } else {
                     if (ele !== undefined)
                         await this.movePrev(ele, ev);
@@ -316,7 +282,7 @@ class TabIndexManager {
                 if (_obj != undefined) if (_obj.callback() === true) return;*/
 
                 if ((await this.isFocusableElement(childLastElement))) {  //  IF LAST ELEMENT IS TEXTBOX
-                    this.focusTo(childLastElement);
+                    await this.focusTo(childLastElement);
                 } else {     //  MOVE TO PREVIOUS WITH CHECK
                     await this.movePrev(childLastElement, ev);
                 }
@@ -444,7 +410,7 @@ class TabIndexManager {
             if (_obj != undefined) if (_obj.callback() === true) return;*/
 
             if ((await this.isFocusableElement(childFirstElement))) { // IF FIRST CHILD IS TEXTBOX
-                this.focusTo(childFirstElement);
+                await this.focusTo(childFirstElement);
             } else {   // GO TO NEXT TAB-INDEX
                 await this.moveNext(childFirstElement, ev);
             }
@@ -456,7 +422,7 @@ class TabIndexManager {
             let ele = this.getDirectElement(parent, tIndex) ?? this.getAnyNextAfter(parent, tIndex);
             if ((await this._HELLO_KON(ele, ev, this.Events.onContainerTopEnter))) return;
             if ((await this.isFocusableElement(ele))) {   // IF NEXT ELEMENT IS TEXTBOX
-                this.focusTo(ele);
+                await this.focusTo(ele);
             } else {    // IF NEXT ELEMENT HAS CHILD ELEMENT
                 if (ele != undefined) { // IF NEXT ELEMENT EXIST      
 
@@ -479,12 +445,11 @@ class TabIndexManager {
         return ar[0] as HTMLElement;
     }
 
-    static focusTo(htele: HTMLElement) {
+    static async focusTo(htele: HTMLElement) {
         this.status = 'none';
         if (this.breakTheLoop) {
-            if (this.music)
-                this.beep();
-            this.music = this.breakTheLoop = this.SKIP_CONTAINER_EVENTS = false;
+            await this.Events.onBreakTheLoop.fireAsync([htele as HTMLElement]);
+            this.breakTheLoop = this.SKIP_CONTAINER_EVENTS = false;
             return;
         }
         htele.focus();
