@@ -1,7 +1,7 @@
 
 import { ucUtil } from "ap-shared-core/core.js";
-import { WinManager } from "./WinManager.js"; 
-import { CommonEvent } from "../core.js";
+import { WinManager } from "./WinManager.js";
+import { CommonEvent, Usercontrol } from "../core.js";
 interface TabIndexRow {
     container: HTMLElement;
     element: HTMLElement;
@@ -67,6 +67,17 @@ class TabIndexManager {
     static isDirectClose(child: HTMLElement, container: HTMLElement): boolean {
         return container == child.parentElement.closest(`[x-tabindex]`);
     }
+    static MakeEvent(containers: TabContainerClearNode[], node: TabContainerClearNode, uc?: Usercontrol) {
+        containers.push(node);
+        if (uc != undefined) {
+            uc.ucExtends.Events.afterClose.on(async () => {
+                const findex = containers.findIndex(s => s === node);
+                if (findex >= 0)
+                    containers.splice(findex, 1);
+            });
+        }
+    }
+
     constructor() { }
     static Events = {
         onContainerTopLeave: [] as TabContainerClearNode[],
