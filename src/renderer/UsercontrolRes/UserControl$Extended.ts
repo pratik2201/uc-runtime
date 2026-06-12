@@ -124,7 +124,7 @@ export class UserControl$Extended {
     };
     cssVarStampKey = '0';
     private static templatemaker = new TemplateMaker();
-    initializecomponent = (param0: IUcOptions): void => {
+    initializecomponent = async (param0: IUcOptions) => {
         let ucExt = this;
         ucExt.mode = param0.mode;
         this.guid = param0.guid;
@@ -211,9 +211,9 @@ export class UserControl$Extended {
                 }
             }
         }
-        ucExt.Events.onDestruction.on(() => {
+        ucExt.Events.onDestruction.on(async () => {
             for (let i = ucExt.dependant.length - 1; i >= 0; i--) {
-                ucExt.dependant[i]?.ucExtends.destruct();
+                await ucExt.dependant[i]?.ucExtends.destruct();
             }
             pucExt.dependant[ucExt.parentDependantIndex] = undefined;
         });
@@ -224,7 +224,7 @@ export class UserControl$Extended {
         ucExt.initalComponents.stageHT = ucExt.wrapperHT;
         ucExt.srcNode.setWrapper(ucExt.wrapperHT);
 
-        Usercontrol.Event.onReady.fireAsync([this.main, param0]);
+        await Usercontrol.Event.onReady.fireAsync([this.main, param0]);
     }
     controls: { [xname: string]: HTMLElement | HTMLElement[] };
     resizerObserver: ResizeObserver;
