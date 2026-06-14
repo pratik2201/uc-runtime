@@ -85,21 +85,19 @@ class TabIndexManager {
         onContainerBottomLeave: [] as TabContainerClearNode[],
         onContainerBottomEnter: [] as TabContainerClearNode[],
         onBreakTheLoop: new CommonEvent<(htmlEle: HTMLElement) => void>(),
-        NAVIGATE_NEXT_FIELD_FOCUS: async (ev: KeyboardEvent) => {
+        NAVIGATE_NEXT_FIELD_FOCUS: async (ev: Event, uc: Usercontrol) => {
             if (ev.defaultPrevented) return;
             let _EVENT_target = ev.target;
-
-
-            if (!ev.shiftKey) {
-                await this.moveNext(_EVENT_target as HTMLElement, ev);
+            if (!(ev as KeyboardEvent)?.shiftKey) {
+                await this.moveNext(_EVENT_target as HTMLElement, ev as any);
             } else {
-                await this.movePrev(_EVENT_target as HTMLElement, ev);
+                await this.movePrev(_EVENT_target as HTMLElement, ev as any);
             }
             this.status = 'none';
             ev.preventDefault();
             this.breakTheLoop = false;
         },
-        NAVIGATE_PREV_FIELD_FOCUS: async (ev: KeyboardEvent) => {
+        NAVIGATE_PREV_FIELD_FOCUS: async (ev: Event, uc: Usercontrol) => {
             if (ev.defaultPrevented) return;
             const _EVENT_target = ev.target;
             let constructorName = Object.getPrototypeOf(_EVENT_target).constructor.name;
@@ -124,20 +122,20 @@ class TabIndexManager {
                         case "week":
                         case "time":
                             if (_val == '' || _val == ucUtil._getSelectedValuee(ele)) {
-                                await this.movePrev(_EVENT_target as HTMLElement, ev);
+                                await this.movePrev(_EVENT_target as HTMLElement, ev as any);
                                 this.status = 'none';
                                 ev.preventDefault();
                             }
                             break;
                         default:
-                            await this.movePrev(_EVENT_target as HTMLElement, ev);
+                            await this.movePrev(_EVENT_target as HTMLElement, ev as any);
                             this.status = 'none';
                             ev.preventDefault();
                             break;
                     }
                     break;
                 default:
-                    await this.movePrev(_EVENT_target as HTMLElement, ev);
+                    await this.movePrev(_EVENT_target as HTMLElement, ev as any);
                     this.status = 'none';
                     ev.preventDefault();
                     break;
@@ -145,26 +143,26 @@ class TabIndexManager {
 
             this.breakTheLoop = false;
         },
-        NAVIGATE_LEFT_ITEM_FOCUS: async (ev: KeyboardEvent) => {
+        NAVIGATE_LEFT_ITEM_FOCUS: async (ev: Event, uc: Usercontrol) => {
             if (ev.defaultPrevented) return;
             const htEle = ev.target as HTMLElement;
             const tIndex = this.getTindex(htEle);
             if (tIndex != null) {
                 if (!this.ElementAvailability.FOCUSABLE_ELEMENTS.includes(htEle.nodeName) && htEle.contentEditable != "true") {
-                    await this.movePrev(htEle, ev);
+                    await this.movePrev(htEle, ev as any);
                     ev.preventDefault();
                 }
             }
             this.breakTheLoop = false;
             //ev.preventDefault();
         },
-        NAVIGATE_RIGHT_ITEM_FOCUS: async (ev: KeyboardEvent) => {
+        NAVIGATE_RIGHT_ITEM_FOCUS: async (ev: Event, uc: Usercontrol) => {
             if (ev.defaultPrevented) return;
             const htEle = ev.target as HTMLElement;
             const tIndex = this.getTindex(htEle);
             if (tIndex != null) {
                 if (!this.ElementAvailability.FOCUSABLE_ELEMENTS.includes(htEle.nodeName) && htEle.contentEditable != "true") {
-                    await this.moveNext(htEle, ev);
+                    await this.moveNext(htEle, ev as any);
                     ev.preventDefault();
                 }
             }
@@ -235,7 +233,7 @@ class TabIndexManager {
                 case 'Enter':
                 case 'NumpadEnter':*/
                 case 'Tab':
-                    await TabIndexManager.Events.NAVIGATE_NEXT_FIELD_FOCUS(ev);
+                    await TabIndexManager.Events.NAVIGATE_NEXT_FIELD_FOCUS(ev, undefined);
                     break;
                 /*case 'ArrowLeft':
                     await TabIndexManager.Events.NAVIGATE_LEFT_ITEM_FOCUS(ev);
