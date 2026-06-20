@@ -137,19 +137,19 @@ export class TemplateNode {
 //       default: return '';
 //     }
 //   },
-//   generateContent: (jsonRow: {}, preDefinedContent?: string): string => {
+//   generateContent: async (jsonRow: {}, preDefinedContent?: string): string => {
 //     let _this = this.extended;
 //     let dta = preDefinedContent ?? _this.srcNode.htmlCode.content;
-//     dta = _this.Events.beforeGenerateContent(dta, jsonRow);
+//     dta =await _this.Events.beforeGenerateContent(dta, jsonRow);
 //     //dta = _this.regsMng.parse(jsonRow, dta);
 //     dta = _this.tmaker.compileTemplate(dta)(jsonRow);
-//     dta = _this.Events.onGenerateContent(dta, jsonRow);
+//     dta = await _this.Events.onGenerateContent(dta, jsonRow);
 //     return dta;
 //   },
 //   tmaker: new TemplateMaker(/*import.meta.url*/),
 //   generateNode: (jsonRow: any): HTMLElement => {
 //     let _ext = this.extended;
-//     let dta = _ext.generateContent(jsonRow) as string;
+//     let dta = await _ext.generateContent(jsonRow) as string;
 
 //     let element = dta["#$"]();
 
@@ -157,7 +157,7 @@ export class TemplateNode {
 //     //console.log(_this.stampRow);
 
 //     let ctrls = _ext.srcNode.passElement(element, { skipTopEle: false, groupKey: _ext.srcNode.styler.KEYS.TEMPLATE });
-//     _ext.Events.onGenerateNode(element, jsonRow, ctrls);
+//     await _ext.Events.onGenerateNode(element, jsonRow, ctrls);
 //     return element;
 //   },
 
@@ -216,10 +216,10 @@ export class TemplateNode {
 //   },
 //   sampleNode: undefined as HTMLElement,
 //   Events: {
-//     //onGettingContent: (jsonRow: any) => { return this.extended.stampRow.content; },
+//     //onGettingContent:async (jsonRow: any) => { return this.extended.stampRow.content; },
 //     beforeGenerateContent: (content: string, jsonRow: any) => content,
-//     onGenerateContent: (content: string, jsonRow: any) => content,
-//     onGenerateNode: (mainNode: HTMLElement, jsonRow: any, ctrls?: { [key: string]: HTMLElement | HTMLElement[] }) => { },
+//     onGenerateContent:async (content: string, jsonRow: any) => content,
+//     onGenerateNode:async (mainNode: HTMLElement, jsonRow: any, ctrls?: { [key: string]: HTMLElement | HTMLElement[] }) => { },
 
 //     onDataExport: (data: ITransferDataNode) => {
 //       return false;

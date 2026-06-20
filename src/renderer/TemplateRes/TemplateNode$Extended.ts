@@ -40,18 +40,18 @@ export class TemplateNode$Extended {
             default: return '';
         }
     };
-    generateContent = (jsonRow: {}, preDefinedContent?: string): string => {
+    generateContent = async (jsonRow: {}, preDefinedContent?: string) => {
         let _this = this;
         let dta = preDefinedContent ?? _this.srcNode.htmlCode.content;
-        dta = _this.Events.beforeGenerateContent(dta, jsonRow);
+        dta = await _this.Events.beforeGenerateContent(dta, jsonRow);
         dta = _this.tmaker.compileTemplate(dta)(jsonRow);
-        dta = _this.Events.onGenerateContent(dta, jsonRow);
+        dta = await _this.Events.onGenerateContent(dta, jsonRow);
         return dta;
     }
     tmaker = new TemplateMaker();
-    generateNode = (jsonRow: any): HTMLElement => {
+    generateNode = async (jsonRow: any):Promise<HTMLElement> => {
         let _ext = this;
-        let dta = _ext.generateContent(jsonRow) as string;
+        let dta = await _ext.generateContent(jsonRow) as string;
 
         let element = dta["#$"]();
 
@@ -59,7 +59,7 @@ export class TemplateNode$Extended {
         //console.log(_this.stampRow);
 
         let ctrls = SourceNode.passElement(element, _ext.srcNode.styler.KEYS, { skipTopEle: false, groupKey: _ext.srcNode.styler.KEYS.TEMPLATE });
-        _ext.Events.onGenerateNode(element, jsonRow, ctrls);
+        await _ext.Events.onGenerateNode(element, jsonRow, ctrls);
         return element;
     }
     Keys: IKeyStampNode;
@@ -91,9 +91,9 @@ export class TemplateNode$Extended {
         });
         tptExt.srcNode.AddCss(mainExt.guid, tptPathOpt.cssContents, pucext.self);
         //if (pucext.distructOnClose) {
-            pucext.Events.afterClose.on(({ }) => {
-                tptExt.srcNode.release();
-            });
+        pucext.Events.afterClose.on(async ({ }) => {
+            await tptExt.srcNode.release();
+        });
         //}
 
         tptExt.srcNode.loadHTML(tptPathOpt.htmlContents, false);
@@ -114,9 +114,9 @@ export class TemplateNode$Extended {
     sampleNode: HTMLElement;
     Events = {
         //onGettingContent: (jsonRow: any) => { return this.stampRow.content; },
-        beforeGenerateContent: (content: string, jsonRow: any) => content,
-        onGenerateContent: (content: string, jsonRow: any) => content,
-        onGenerateNode: (mainNode: HTMLElement, jsonRow: any, ctrls?: { [key: string]: HTMLElement | HTMLElement[] }) => { },
+        beforeGenerateContent: async (content: string, jsonRow: any) => content,
+        onGenerateContent: async (content: string, jsonRow: any) => content,
+        onGenerateNode: async (mainNode: HTMLElement, jsonRow: any, ctrls?: { [key: string]: HTMLElement | HTMLElement[] }) => { },
 
         onDataExport: (data: ITransferDataNode) => {
             return false;

@@ -2,6 +2,7 @@
 import { ucUtil } from "ap-shared-core/core.js";
 import { WinManager } from "./WinManager.js";
 import { CommonEvent, Usercontrol } from "../core.js";
+import { GetUniqueId } from "ap-shared-core/core-common.js";
 interface TabIndexRow {
     container: HTMLElement;
     element: HTMLElement;
@@ -80,11 +81,16 @@ class TabIndexManager {
 
     constructor() { }
     static Events = {
+
         onContainerTopLeave: [] as TabContainerClearNode[],
         onContainerTopEnter: [] as TabContainerClearNode[],
         onContainerBottomLeave: [] as TabContainerClearNode[],
         onContainerBottomEnter: [] as TabContainerClearNode[],
         onBreakTheLoop: new CommonEvent<(htmlEle: HTMLElement) => void>(),
+        TAB_FOCUS: async (htele: HTMLElement,e?:Event) => {
+            htele.focus();
+            ucUtil.selectAllText(htele);
+        },
         NAVIGATE_NEXT_FIELD_FOCUS: async (ev: Event, uc: Usercontrol) => {
             if (ev.defaultPrevented) return;
             let _EVENT_target = ev.target;
@@ -266,7 +272,7 @@ class TabIndexManager {
                 let parent = this.getDirectParent(target);
                 let ele = this.getDirectElement(parent, tIndex) ?? this.getAnyPreviousBefore(parent, tIndex);
                 if ((await this.isFocusableElement(ele))) {   // IF PREVIOUS ELEMENT IS TEXTBOX
-                    await this.focusTo(ele);
+                    await this.focusTo(ele,ev);
                 } else {
                     if (ele !== undefined)
                         await this.movePrev(ele, ev);
@@ -291,7 +297,7 @@ class TabIndexManager {
                 if (_obj != undefined) if (_obj.callback() === true) return;*/
 
                 if ((await this.isFocusableElement(childLastElement))) {  //  IF LAST ELEMENT IS TEXTBOX
-                    await this.focusTo(childLastElement);
+                    await this.focusTo(childLastElement,ev);
                 } else {     //  MOVE TO PREVIOUS WITH CHECK
                     await this.movePrev(childLastElement, ev);
                 }
@@ -419,7 +425,7 @@ class TabIndexManager {
             if (_obj != undefined) if (_obj.callback() === true) return;*/
 
             if ((await this.isFocusableElement(childFirstElement))) { // IF FIRST CHILD IS TEXTBOX
-                await this.focusTo(childFirstElement);
+                await this.focusTo(childFirstElement,ev);
             } else {   // GO TO NEXT TAB-INDEX
                 await this.moveNext(childFirstElement, ev);
             }
@@ -431,7 +437,7 @@ class TabIndexManager {
             let ele = this.getDirectElement(parent, tIndex) ?? this.getAnyNextAfter(parent, tIndex);
             if ((await this._HELLO_KON(ele, ev, this.Events.onContainerTopEnter))) return;
             if ((await this.isFocusableElement(ele))) {   // IF NEXT ELEMENT IS TEXTBOX
-                await this.focusTo(ele);
+                await this.focusTo(ele,ev);
             } else {    // IF NEXT ELEMENT HAS CHILD ELEMENT
                 if (ele != undefined) { // IF NEXT ELEMENT EXIST      
 
@@ -453,16 +459,16 @@ class TabIndexManager {
         ar = ar.filter(s => container === this.getClosest(s)) as HTMLElement[];
         return ar[0] as HTMLElement;
     }
+    //static BLUR_KEYS = 'blur_' + GetUniqueId();
 
-    static async focusTo(htele: HTMLElement) {
+    static async focusTo(htele: HTMLElement,e?:Event) {
         this.status = 'none';
         if (this.breakTheLoop) {
             await this.Events.onBreakTheLoop.fireAsync([htele as HTMLElement]);
             this.breakTheLoop = this.SKIP_CONTAINER_EVENTS = false;
             return;
         }
-        htele.focus();
-        ucUtil.selectAllText(htele);
+        await this.Events.TAB_FOCUS(htele,e);
     }
 
     static getTindex(target: HTMLElement): number | null {

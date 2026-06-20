@@ -260,11 +260,11 @@ export class UserControl$Extended {
         if (_element) {
             switch (decision) {
                 case 'append':
-                    _element.append(_extend.wrapperHT);
+                    await _element.append(_extend.wrapperHT);
                     break;
                 default:
-                    _element.after(_extend.wrapperHT);
-                    _element.remove();
+                    await _element.after(_extend.wrapperHT);
+                    await _element.remove();
                     break;
             }
         }
@@ -274,7 +274,7 @@ export class UserControl$Extended {
         _extend.visibility = 'visible';
         await _extend.Events.loaded.fireAsync();
         if (defaultFocusAt)
-            await TabIndexManager.focusTo(defaultFocusAt);
+            await TabIndexManager.focusTo(defaultFocusAt, undefined);
     }
 
     dialogResolver: (value: UcDialogResult) => void;
@@ -315,7 +315,7 @@ export class UserControl$Extended {
         if (!defaultFocusAt) {
             await TabIndexManager.moveNext(_extends.self, undefined);
         } else {
-            await TabIndexManager.focusTo(defaultFocusAt);
+            await TabIndexManager.focusTo(defaultFocusAt, undefined);
         }
         return new Promise(async (resolve: (v: UcDialogResult) => void) => {
             _extends.dialogResolver = resolve;
