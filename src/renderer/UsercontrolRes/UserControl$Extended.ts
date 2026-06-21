@@ -255,6 +255,7 @@ export class UserControl$Extended {
     show = async ({ at = undefined, defaultFocusAt = undefined, decision = 'append' }:
         { at?: HTMLElement, defaultFocusAt?: HTMLElement, decision?: WhatToDoWithTargetElement, visibility?: ucVisibility } = {}) => {
         let _extend = this;
+        
         let _element = _extend.initalComponents.targetElement;
         _element = at ?? _element;
         if (_element) {
