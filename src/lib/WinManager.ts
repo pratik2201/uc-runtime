@@ -1,7 +1,7 @@
 import { GetUniqueId, KeyboardKey } from 'ap-shared-core/core-common.js';
 import { CommonEvent } from "../global/commonEvent.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
-import { TabIndexManager } from "./TabIndexManager.js"; 
+import { TabIndexManager } from "./TabIndexManager.js";
 
 interface WinNode {
     uc?: Usercontrol,
@@ -14,37 +14,37 @@ export class FocusManager {
         onFatch: new CommonEvent<(ele: HTMLElement) => void>(),
         onFocus: new CommonEvent<(ele: HTMLElement) => void>(),
     }
-    fetch(ele: HTMLElement) {
+    fetch = async (ele: HTMLElement) => {
         this.currentElement = undefined;
         //console.log(ele);
 
         this.currentElement = ele ?? document.activeElement as HTMLElement;
-        this.Event.onFatch.fire([this.currentElement]);
+        this.Event.onFatch.fireAsync([this.currentElement]);
         //this.currentElement.fireEvent('blur');
     }
     /**
      * 
      * @param containerElement if last focused element not insde `contaierElement` than direct focus to `containerElement`
      */
-    focus(containerElement?: HTMLElement) {
+    focus = async (containerElement?: HTMLElement) => {
         if (containerElement != undefined && !containerElement.contains(this.currentElement)) {
             if (containerElement.hasAttribute('tabindex')) {
                 containerElement.focus();
             } else {
-                TabIndexManager.moveNext(containerElement, undefined);
+                await TabIndexManager.moveNext(containerElement, undefined);
             }
         } else {
             if (this.currentElement == undefined) return;
             this.currentElement.focus();
         }
 
-        this.Event.onFocus.fire([this.currentElement]);
+        await this.Event.onFocus.fireAsync([this.currentElement]);
     }
 }
 
 export class WinManager {
     static IS_REPEAT = false;
-    static RepeatPauseInMilliSeconds = 1000; 
+    static RepeatPauseInMilliSeconds = 1000;
     static isSameKey = <T>(arr1: T[], arr2: T[]): boolean => {
         if (arr1.length !== arr2.length) return false; // lengths must be same
         for (let i = 0; i < arr1.length; i++) {
@@ -105,7 +105,7 @@ export class WinManager {
                 if (prevNode.contains(activeElement))
                     wn.lastFocusedAt = activeElement as any;
                 wn.display = prevNode.style.display;
-                let doStyleDisplay = form.ucExtends.Events.beforeUnFreez.fire([wn?.uc]);
+                let doStyleDisplay = await form.ucExtends.Events.beforeUnFreez.fireAsync([wn?.uc]);
                 await this.setfreez(true, wn/*, doStyleDisplay*/);
             }
 
@@ -114,7 +114,7 @@ export class WinManager {
     }
 
     static pop = async (form: Usercontrol) => {
-        form?.ucExtends.Events.deactivate.fireAsync([]);
+        await form?.ucExtends.Events.deactivate.fireAsync([]);
         const freezedHT = form.ucExtends.wrapperHT.previousElementSibling as HTMLElement;
         if (freezedHT != undefined) {
             const wn = WinManager.getNode(freezedHT);
@@ -140,10 +140,10 @@ export class WinManager {
         const element = uc.ucExtends.wrapperHT;
         if (freez) {
             this.event.onFreez(uc);
-            this.focusMng.fetch(uc.ucExtends.lastFocuedElement);
+            await this.focusMng.fetch(uc.ucExtends.lastFocuedElement);
             wnode.lastFocusedAt = this.focusMng.currentElement;
             wnode.display = element.style.display;
-            uc.ucExtends.Events.deactivate.fireAsync([]);
+            await uc.ucExtends.Events.deactivate.fireAsync([]);
             await this.FreezThese(true, element);
             if (!uc.ucExtends.keepVisible) element.style.display = 'none';
         } else {
@@ -151,9 +151,9 @@ export class WinManager {
             await this.FreezThese(false, element);
             element.style.display = wnode.display;
             this.focusMng.currentElement = wnode.lastFocusedAt;
-            requestAnimationFrame(() => {
-                this.focusMng.focus(element);
-            }); 
+            //requestAnimationFrame(() => {
+            await this.focusMng.focus(element);
+            //});
             //ShortcutManager.ref.pushFo/rmContext(uc.ucExtends.shortCutContext);
             await uc.ucExtends.Events.activate.fireAsync([]);
         }
@@ -195,4 +195,3 @@ export class WinManager {
     }
 
 }
- 

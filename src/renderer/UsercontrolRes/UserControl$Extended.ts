@@ -255,7 +255,7 @@ export class UserControl$Extended {
     show = async ({ at = undefined, defaultFocusAt = undefined, decision = 'append' }:
         { at?: HTMLElement, defaultFocusAt?: HTMLElement, decision?: WhatToDoWithTargetElement, visibility?: ucVisibility } = {}) => {
         let _extend = this;
-        
+
         let _element = _extend.initalComponents.targetElement;
         _element = at ?? _element;
         if (_element) {
@@ -390,7 +390,7 @@ export class UserControl$Extended {
             await WinManager.pop(this.main);
         await _ext.Events.afterHide.fireAsync([this.main]);
         Usercontrol.HiddenSpace.appendChild(_ext.wrapperHT);
-        if (_ext.dialogResolver != undefined) _ext.dialogResolver(_ext.DialogResult);
+        //if (_ext.dialogResolver != undefined) _ext.dialogResolver(_ext.DialogResult);
         //debugger;
         // await this.srcNode.release();
 

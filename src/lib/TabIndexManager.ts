@@ -396,11 +396,10 @@ class TabIndexManager {
             if (nd.target != undefined && ele == nd.target) {
                 //TabIndexManager.breakTheLoop = true;
                 res = await nd.callback(e) === true;
-
+                return true;
                 break;
             }
         }
-
         return res;
     }
 
@@ -462,13 +461,14 @@ class TabIndexManager {
     //static BLUR_KEYS = 'blur_' + GetUniqueId();
 
     static async focusTo(htele: HTMLElement,e?:Event) {
-        this.status = 'none';
+       
         if (this.breakTheLoop) {
             await this.Events.onBreakTheLoop.fireAsync([htele as HTMLElement]);
             this.breakTheLoop = this.SKIP_CONTAINER_EVENTS = false;
             return;
         }
-        await this.Events.TAB_FOCUS(htele,e);
+        await this.Events.TAB_FOCUS(htele, e);
+         this.status = 'none';
     }
 
     static getTindex(target: HTMLElement): number | null {
