@@ -41,7 +41,7 @@ class TabIndexManager {
         this._breakTheLoop = value;
 
     }
-    static continueusMove = async (container: HTMLElement, { startAt = undefined, stopAt = undefined }: { startAt?: HTMLElement, stopAt?: HTMLElement }) => {
+    /*static continueusMove = async (container: HTMLElement, { startAt = undefined, stopAt = undefined }: { startAt?: HTMLElement, stopAt?: HTMLElement }) => {
         TabIndexManager.breakTheLoop = false;
         let callback: TabContainerClearNode = {
             target: container, callback: async () => { TabIndexManager.breakTheLoop = true; return true; }
@@ -63,7 +63,7 @@ class TabIndexManager {
 
         TabIndexManager.breakTheLoop = false;
         this.Events.onContainerBottomLeave["#RemoveMultiple"](callback);
-    }
+    }*/
 
     static isDirectClose(child: HTMLElement, container: HTMLElement): boolean {
         return container == child.parentElement.closest(`[x-tabindex]`);
@@ -478,7 +478,6 @@ class TabIndexManager {
     }
 
     static getClosest(target: HTMLElement | Element): HTMLElement | null {
-        //if (target.parentElement == undefined) debugger;
         return target.parentElement?.closest("[x-tabindex]");
     }
 

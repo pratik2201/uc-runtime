@@ -23,6 +23,7 @@ export const TransferDataNode: ITransferDataNode = {
 };
 
 export class UserControl$Extended {
+    static dialogStack: Record<string, Usercontrol[]> = {};
     constructor() {
 
     }
@@ -291,15 +292,27 @@ export class UserControl$Extended {
         _parentExt.keepVisible = keepCurrentVisible;
         const ele = at ?? _extends.initalComponents.targetElement ?? _extends.assembly.defaultLoadAt;
 
+        const stack = UserControl$Extended.dialogStack[this.guid] ?? [];
+        UserControl$Extended.dialogStack[this.guid] = stack;
 
-        if (ele != document.body && ele?.previousElementSibling != null) {
-            const puc = Usercontrol.parse(ele.previousElementSibling as HTMLElement);
-            if (puc != undefined)
-                puc.ucExtends.lastFocuedElement = document.activeElement as HTMLElement;
-        }
+
         if (ele) {
             ele.append(_extends.wrapperHT);
+
+            if (_extends.wrapperHT.previousElementSibling != null) {
+                const puc = Usercontrol.parse(_extends.wrapperHT.previousElementSibling as HTMLElement);
+                if (puc != undefined)
+                    puc.ucExtends.lastFocuedElement = document.activeElement as HTMLElement;
+            }
             await WinManager.push(this.main);
+           // console.log([this.keepVisible]);
+            for (let index = 0; index < stack.length; index++) {
+                const ucOld = stack[index];
+               // console.log(ucOld.ucExtends.keepVisible);
+
+                if (!ucOld.ucExtends.keepVisible) ucOld.ucExtends.self.style.display = 'none';
+            }
+            stack.push(this.main);
         }
         _extends.Events.afterClose.on(() => {
             _extends.PARENT.ucExtends.keepVisible = _oldParentVisibleValue;
@@ -386,31 +399,35 @@ export class UserControl$Extended {
     private hide = async () => {
         let _ext = this;
         _ext.visibility = 'hidden';
-        if (_ext.isDialogBox)
-            await WinManager.pop(this.main);
+        if (_ext.isDialogBox) {
+            const _main = this.main;
+            await WinManager.pop(_main);
+            const stack = UserControl$Extended.dialogStack[this.guid] ?? [];
+            const fIndex = stack.findIndex(s => s === _main);
+            if (fIndex != -1) stack.splice(fIndex, 1);
+        }
         await _ext.Events.afterHide.fireAsync([this.main]);
         Usercontrol.HiddenSpace.appendChild(_ext.wrapperHT);
-        //if (_ext.dialogResolver != undefined) _ext.dialogResolver(_ext.DialogResult);
-        //debugger;
-        // await this.srcNode.release();
-
     }
     private destruct = async (): Promise<boolean> => {
-        let main = this.main;
+        const _main = this.main;
         await this.Events.onDestruction.fireAsync();
 
-        this.Events.afterClose.fireAsync([main]);
+        this.Events.afterClose.fireAsync([_main]);
 
-        if (this.isDialogBox)
-            await WinManager.pop(main);
-
+        if (this.isDialogBox) {
+            await WinManager.pop(_main);
+            const stack = UserControl$Extended.dialogStack[this.guid] ?? [];
+            const fIndex = stack.findIndex(s => s === _main);
+            if (fIndex != -1) stack.splice(fIndex, 1);
+        }
         await Usercontrol.HiddenSpace.appendChild(this.wrapperHT);
         await this.srcNode.release();
         this.wrapperHT.remove();
 
         requestAnimationFrame(async () => {
-            for (const key in main) {
-                main[key] = undefined;
+            for (const key in _main) {
+                _main[key] = undefined;
             }
         });
         return false;

@@ -29,15 +29,14 @@ export class FocusManager {
     focus = async (containerElement?: HTMLElement) => {
         if (containerElement != undefined && !containerElement.contains(this.currentElement)) {
             if (containerElement.hasAttribute('tabindex')) {
-                containerElement.focus();
+                await TabIndexManager.focusTo(containerElement);
             } else {
                 await TabIndexManager.moveNext(containerElement, undefined);
             }
         } else {
             if (this.currentElement == undefined) return;
-            this.currentElement.focus();
+            await TabIndexManager.focusTo(this.currentElement);
         }
-
         await this.Event.onFocus.fireAsync([this.currentElement]);
     }
 }
@@ -74,14 +73,16 @@ export class WinManager {
         });
     }
     static event = {
-        onFreez: (uc: Usercontrol) => {
+        // onFreez: (uc: Usercontrol) => {
 
-        },
-        onUnFreez: (uc: Usercontrol) => {
+        // },
+        // onUnFreez: (uc: Usercontrol) => {
 
-        },
-        keydown: new CommonEvent<(e: KeyboardEvent) => void>(),
-        keyup: new CommonEvent<(e: KeyboardEvent) => void>(),
+        // },
+        onFreez: new CommonEvent<(uc: Usercontrol) => Promise<void>>(),
+        onUnFreez: new CommonEvent<(uc: Usercontrol) => Promise<void>>(),
+        keydown: new CommonEvent<(e: KeyboardEvent) => Promise<void>>(),
+        keyup: new CommonEvent<(e: KeyboardEvent) => Promise<void>>(),
 
     }
     static ACCESS_KEY = 'WinManager_' + GetUniqueId();
@@ -105,7 +106,7 @@ export class WinManager {
                 if (prevNode.contains(activeElement))
                     wn.lastFocusedAt = activeElement as any;
                 wn.display = prevNode.style.display;
-                let doStyleDisplay = await form.ucExtends.Events.beforeUnFreez.fireAsync([wn?.uc]);
+                await form.ucExtends.Events.beforeUnFreez.fireAsync([wn?.uc]);
                 await this.setfreez(true, wn/*, doStyleDisplay*/);
             }
 
@@ -139,22 +140,20 @@ export class WinManager {
         const uc = wnode.uc;
         const element = uc.ucExtends.wrapperHT;
         if (freez) {
-            this.event.onFreez(uc);
+            await this.event.onFreez.fireAsync([uc]);
             await this.focusMng.fetch(uc.ucExtends.lastFocuedElement);
             wnode.lastFocusedAt = this.focusMng.currentElement;
             wnode.display = element.style.display;
+
             await uc.ucExtends.Events.deactivate.fireAsync([]);
             await this.FreezThese(true, element);
-            if (!uc.ucExtends.keepVisible) element.style.display = 'none';
+            //if (!uc.ucExtends.keepVisible) element.style.display = 'none';
         } else {
-            this.event.onUnFreez(uc);
+            await this.event.onUnFreez.fireAsync([uc]);
             await this.FreezThese(false, element);
             element.style.display = wnode.display;
             this.focusMng.currentElement = wnode.lastFocusedAt;
-            //requestAnimationFrame(() => {
             await this.focusMng.focus(element);
-            //});
-            //ShortcutManager.ref.pushFo/rmContext(uc.ucExtends.shortCutContext);
             await uc.ucExtends.Events.activate.fireAsync([]);
         }
     }
