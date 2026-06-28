@@ -288,8 +288,6 @@ export class UserControl$Extended {
         let _extends = this;
         _extends.isDialogBox = true;
         let _parentExt = _extends.PARENT.ucExtends;
-        let _oldParentVisibleValue = _parentExt.keepVisible;
-        _parentExt.keepVisible = keepCurrentVisible;
         const ele = at ?? _extends.initalComponents.targetElement ?? _extends.assembly.defaultLoadAt;
 
         const stack = UserControl$Extended.dialogStack[this.guid] ?? [];
@@ -305,18 +303,14 @@ export class UserControl$Extended {
                     puc.ucExtends.lastFocuedElement = document.activeElement as HTMLElement;
             }
             await WinManager.push(this.main);
-           // console.log([this.keepVisible]);
             for (let index = 0; index < stack.length; index++) {
                 const ucOld = stack[index];
-               // console.log(ucOld.ucExtends.keepVisible);
-
-                if (!ucOld.ucExtends.keepVisible) ucOld.ucExtends.self.style.display = 'none';
+                if (!ucOld.ucExtends.keepVisible)
+                    ucOld.ucExtends.self.style.display = 'none';
             }
             stack.push(this.main);
         }
-        _extends.Events.afterClose.on(() => {
-            _extends.PARENT.ucExtends.keepVisible = _oldParentVisibleValue;
-        });
+    
 
         if (_extends.dialogForm == undefined)
             _extends.dialogForm = this.main;

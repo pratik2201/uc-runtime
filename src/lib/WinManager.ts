@@ -147,7 +147,6 @@ export class WinManager {
 
             await uc.ucExtends.Events.deactivate.fireAsync([]);
             await this.FreezThese(true, element);
-            //if (!uc.ucExtends.keepVisible) element.style.display = 'none';
         } else {
             await this.event.onUnFreez.fireAsync([uc]);
             await this.FreezThese(false, element);
