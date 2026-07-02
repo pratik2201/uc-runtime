@@ -1,7 +1,7 @@
 
 import { GetUniqueId } from "ap-shared-core/core-common.js";
 import { Usercontrol } from "../renderer/Usercontrol.js";
- 
+
 
 
 interface EventRecord {
@@ -70,8 +70,8 @@ export class CommonEvent<F extends (...arg: any) => void> {
     removeByStamp(stamp: string): void {
         let fIndex: number = this._eventList.findIndex(s => s.stamp === stamp);
         if (fIndex != -1) {
-           // arrayOpt.removeAt(this._eventList, fIndex);
-            this._eventList.splice(fIndex,1);
+            // arrayOpt.removeAt(this._eventList, fIndex);
+            this._eventList.splice(fIndex, 1);
             this.Events.onChangeEventList();
         }
     }
@@ -88,10 +88,12 @@ export class CommonEvent<F extends (...arg: any) => void> {
     get length(): number {
         return this._eventList.length;
     }
+    isFree = true;
     /**
      * @returns `true` if any of callback from list returned `true` 
      */
-    fire(args: Parameter<F> | void): boolean {
+    fire = (args: Parameter<F> | void): boolean => {
+        this.isFree = false;
         let elist = this._eventList;
         let handeled = false;
         for (let i = 0, len = elist.length; i < len; i++) {
@@ -100,9 +102,11 @@ export class CommonEvent<F extends (...arg: any) => void> {
             if (rval === true) { handeled = true; break; }
         }
         this.Events.afterFireCallbacks();
+        this.isFree = true;
         return handeled;
     }
     async fireAsync(args: Parameter<F> | void): Promise<boolean> {
+        this.isFree = false;
         let elist = this._eventList;
         let handeled = false;
         for (let i = 0, len = elist.length; i < len; i++) {
@@ -111,6 +115,7 @@ export class CommonEvent<F extends (...arg: any) => void> {
             if (rval === true) { handeled = true; break; }
         }
         this.Events.afterFireCallbacks();
+        this.isFree = true;
         return handeled;
     }
     fireWithResult(

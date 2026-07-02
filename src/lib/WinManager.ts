@@ -58,17 +58,18 @@ export class WinManager {
 
 
         window.addEventListener('keydown', async (e) => {
-            if (WinManager.IS_REPEAT || e.code == undefined) return;
-            if (e.repeat) WinManager.IS_REPEAT = true;
+            if (e.repeat && !_this.event.keydown.isFree) { e.preventDefault(); return; }
+            //if (WinManager.IS_REPEAT || e.code == undefined) return;
+           // if (e.repeat) WinManager.IS_REPEAT = true;
             await _this.event.keydown.fireAsync([e]);
             //requestAnimationFrame(() => {
-            WinManager.IS_REPEAT = false;
+            //WinManager.IS_REPEAT = false;
             //}, WinManager.RepeatPauseInMilliSeconds)
 
         });
         window.addEventListener('keyup', async (e) => {
-            WinManager.IS_REPEAT = false;
-            if (e.code == undefined) return;
+           // WinManager.IS_REPEAT = false;
+          //  if (e.code == undefined) return;
             await _this.event.keyup.fireAsync([e]);
         });
     }

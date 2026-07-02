@@ -222,33 +222,18 @@ class TabIndexManager {
         /*this.mainHT = mainHT;*/
         if (this.isInited) return;
         this.isInited = true;
-        let htEle: HTMLElement | undefined;
-        let tIndex: number;
-        // this.gainNode.connect(this.audioCtx.destination);
-
-        let keyDownTimer = null;
-        let keyIsDown = false;
 
 
 
         WinManager.event.keydown.on(async (ev: KeyboardEvent) => {
-            switch (ev.code) {
-                /*case 'Backspace':
-                    await TabIndexManager.Events.NAVIGATE_PREV_FIELD_FOCUS(ev);
-                    break;
-                case 'Enter':
-                case 'NumpadEnter':*/
+            switch (ev.code) {               
                 case 'Tab':
                     await TabIndexManager.Events.NAVIGATE_NEXT_FIELD_FOCUS(ev, undefined);
-                    break;
-                /*case 'ArrowLeft':
-                    await TabIndexManager.Events.NAVIGATE_LEFT_ITEM_FOCUS(ev);
-                    break;
-                case 'ArrowRight':
-                    await TabIndexManager.Events.NAVIGATE_RIGHT_ITEM_FOCUS(ev);
-                    break;*/
+                    break;               
             }
         });
+
+
     }
 
 
