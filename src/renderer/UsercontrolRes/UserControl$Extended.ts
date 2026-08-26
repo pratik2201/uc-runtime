@@ -129,6 +129,8 @@ export class UserControl$Extended {
         let ucExt = this;
         ucExt.mode = param0.mode;
         this.guid = param0.guid;
+        console.log(this.main);
+        
         this.assembly = AssemblyManager.Parse(this.guid);
         ucExt.resource = new IUsercontrolContent();
         ucExt.resource.htmlContents = param0.htmlContent;

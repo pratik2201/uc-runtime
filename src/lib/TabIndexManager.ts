@@ -38,7 +38,6 @@ class TabIndexManager {
         return this._breakTheLoop;
     }
     public static set breakTheLoop(value) {
-        console.log(['breakTheLoop',value]);
         
         this._breakTheLoop = value;
 
