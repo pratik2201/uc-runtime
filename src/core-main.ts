@@ -4,7 +4,7 @@ export {
   AssemblyList, AssemblyRegistry, ResourceKeyList, ResourceKeyRegistry, ResourceNamedList,
   ResourceNamedRegistry, UserResource
 } from "ap-shared-core/core-common.js";
-export { ResourceStorage } from "./main/ResourceStorage.js";
+export { ResourceStorage, UpdateResourcePath } from "./main/ResourceStorage.js";
 export { Assembly, AssemblyManager } from "./renderer/Assembly.js";
 
 export { IpcMainGroup, IpcMainHelper } from "./main/ipc/IpcMainHelper.js";

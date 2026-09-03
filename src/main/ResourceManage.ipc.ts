@@ -3,6 +3,7 @@
 import { IpcMainGroup } from "./ipc/IpcMainHelper.js";
 import { ResourceStorage } from "./ResourceStorage.js"; 
 import { encryptResource, decryptResource } from "ap-shared-core/core-main.js";
+import { resolve } from "path";
 
 export default function () {
     const main = IpcMainGroup('ucbuilder/src/renderer/ResourceManage'); 
@@ -16,6 +17,7 @@ export default function () {
         event.returnValue = ResourceStorage.register(res);
     });
     main.On('bulkRegister', (event, list: BuildResource[]) => {
+        
         event.returnValue = ResourceStorage.bulkRegister(list);
     });
     main.On('has', (event, key: string) => {
@@ -25,6 +27,7 @@ export default function () {
         event.returnValue = ResourceStorage.get(key);
     });
     main.On('getContent', (event, key: string) => {
+       
         event.returnValue = ResourceStorage.getContent(key); 
     });
     main.On('getByName', (event, name) => {

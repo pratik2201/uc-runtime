@@ -1,5 +1,7 @@
 import { AssemblyRegistry, ResourceKeyList, ResourceKeyRegistry, AssemblyList } from "ap-shared-core/core-common.js";
 import { SourceNode } from "../lib/StampGenerator.js";
+import { existsSync } from "fs";
+import { join } from "path";
 
 
 export class Assembly {
@@ -9,7 +11,8 @@ export class Assembly {
     ProjectCSS: ResourceKeyList;
     ProjectUcConfig: ResourceKeyList;
     srcNode?: SourceNode;
-    defaultLoadAt?: HTMLElement; 
+    ResourceStorageDir?: string;
+    defaultLoadAt?: HTMLElement;
 }
 export class AssemblyManager {
     static AKey = '9795E46A-A93F-4DC3-B6D6-F2696FA0CEC5';
@@ -19,15 +22,12 @@ export class AssemblyManager {
 
     static Register(row: Assembly) {
         if (!(row.name in this.assemblies)) {
-            row.id = this.counter++;
+            row.id = this.counter++;            
             this.assemblies[row.name] = row as never;
         }
     }
     static Parse(guid: ResourceKeyList) {
-        if (guid == undefined) {
-            debugger;
-            return;
-        }
+        if (guid == undefined) { debugger; return; }
         const k = (guid as string).split(':', 1)?.shift() as AssemblyList;
         return this.assemblies[k] as Assembly;
     }

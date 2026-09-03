@@ -1,0 +1,1 @@
+{"imports":{},"scopes":{"./":{"core.js":"./dist/core.js","core-main.js":"./dist/core-main.js","package.json":"./package.json","designerFiles/Resources.js":"./dist/designerFiles/Resources.js"}}}

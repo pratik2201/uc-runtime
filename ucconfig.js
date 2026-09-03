@@ -8,8 +8,9 @@ export default UcDefaultConfig({
         outputFileExt: ".js",
         designerDir: "designerFiles",
         srcDir: "src",
-        outDir: "dist",
+        outDir: "dist", 
         ResourceStorageFile: "designerFiles/Resources.ts",
+        ResourceStorageDir: "dist/main/files",
         baseCssPath: "styles.scss",
         devtools: true,
         removeMenu: true,
@@ -17,7 +18,7 @@ export default UcDefaultConfig({
     browser: {
         resolveProjects: ["uc-dev"],
         importmap: {
-            "core.js":"dist/core.js",
+            "core.js": "dist/core.js",
             "core-main.js": "dist/core-main.js",
             "package.json": "package.json",
             "designerFiles/Resources.js": "dist/designerFiles/Resources.js"

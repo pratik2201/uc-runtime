@@ -1,6 +1,6 @@
  
 import type  { BrowserWindow, IpcMainEvent } from "electron";
-import fs from "node:fs";
+import fs, { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { IPC_GET_KEY, IPC_REGISTER_KEY, UC_ACCESS_KEY } from "../../common/ipc/enumAndMore.js";
@@ -77,7 +77,7 @@ export class IpcMainHelper {
     static async init(/*resourceFile: Promise<any>*/) {
         //await resourceFile;
 
-        console.log(['MAIN', AssemblyManager.AKey]);
+        //console.log(['MAIN', AssemblyManager.AKey]);
 
         const { ipcMain } = await import("electron");
 
@@ -132,6 +132,7 @@ export class IpcMainHelper {
     }
     static async loadContent(htmlContent: string, win: BrowserWindow, options?: Electron.LoadURLOptions) {
         console.log('configManage inited.');
+        
         htmlContent = injectImportMap(htmlContent, ResourceStorage.RuntimeProps['importmap']);
         await this._load("data:text/html;charset=utf-8," + encodeURIComponent(htmlContent), win, options);
     }
@@ -148,20 +149,21 @@ export class IpcMainHelper {
         win: BrowserWindow,
         options: Electron.LoadURLOptions = {}
     ) {
-        let basePath: string;
+       // const fldata = fs.readFileSync(join(process.resourcesPath, 'app.asar/dist/main/files/sharepnl_000000000.res'),'binary');
+       // fs.writeFileSync(join(process.resourcesPath, "APSample.txt"), fldata, 'binary');
+        
+        let basePath: string;        
         const { app } = await import('electron');
        // console.log(app.isPackaged);
-
+        
         if (app.isPackaged) {
             // packaged → resources/app.asar
             basePath = join(process.resourcesPath, "app.asar");
         } else {
             // dev → project root
             basePath = process.cwd();
-        }
-
-        const baseURL = pathToFileURL(basePath + "/").href;
-
+        } 
+        const baseURL = pathToFileURL(basePath + "/").href; 
         options.baseURLForDataURL ??= baseURL;
        // console.log(options.baseURLForDataURL);
 

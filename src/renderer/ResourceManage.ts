@@ -33,7 +33,8 @@ export class ResourceManage {
      * @param CHECK_RESOURCE_PATH_IS_CORRECT_OR_NOT this is for check the alias path is correct (in case other resource already bound this alias)
      * @returns 
      */
-    static getContent = <K extends keyof ResourceKeyRegistry>(key: K,CHECK_RESOURCE_PATH_IS_CORRECT_OR_NOT?:ResourceKeyRegistry[K]) => {
+    static getContent = <K extends keyof ResourceKeyRegistry>(key: K, CHECK_RESOURCE_PATH_IS_CORRECT_OR_NOT?: ResourceKeyRegistry[K]) => {
+        
         return this.renderer.sendSync('getContent', [key]) as string;
     }
 
