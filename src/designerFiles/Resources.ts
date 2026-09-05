@@ -32,7 +32,7 @@ const Resources:UserResource[] = [
 ];
 ResourceStorage.bulkRegister(Resources);
 
-export async function loadAssembly(prePath: string = "") {
+export async function loadForNodeOnly(prePathForSubProjects: string = "") {
 
     AssemblyManager.Register(UpdateResourcePath({
          name: "uc-runtime",
@@ -40,7 +40,7 @@ export async function loadAssembly(prePath: string = "") {
          ProjectCSS: "uc-runtime:f1441d07-173e-42ef-8ce0-df5f564c546e:00000001",
          ProjectUcConfig: "uc-runtime:f1441d07-173e-42ef-8ce0-df5f564c546e:00000002",
          ResourceStorageDir: "dist/main/files",
-    }, prePath));
+    }, prePathForSubProjects));
 
     ResourceStorage.RuntimeProps['importmap'] = ResourceStorage.RuntimeProps['importmap'] ?? ResourceStorage.getContent("uc-runtime:f1441d07-173e-42ef-8ce0-df5f564c546e:00000000");
     

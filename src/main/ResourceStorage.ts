@@ -1,6 +1,6 @@
 import { BuildResource, normalizeJSON, ResourceNamedRegistry, safeStringify } from "ap-shared-core/core-common.js";
 import { decryptResource } from "ap-shared-core/core-main.js";
-import { existsSync, readFileSync } from "fs";
+import { existsSync, readFileSync, writeFileSync } from "fs";
 import { join, resolve } from "path";
 import { Assembly, AssemblyManager } from "uc-runtime/src/core-main";
 
@@ -10,23 +10,15 @@ declare module "ap-shared-core/core-common.js" {
     assembly?: Assembly;
   }
 }
-export function UpdateResourcePath(row: Assembly,prePath: string = "") {
-  let projPath = '';
-  row.ResourceStorageDir = join(prePath, row.ResourceStorageDir);
-  let pth = resolve(row.ResourceStorageDir);
-  if (existsSync(pth)) {
-    row.ResourceStorageDir = pth;
-  } else {
-    pth = resolve('node_modules', row.name, row.ResourceStorageDir);
-    if (existsSync(pth))
-      row.ResourceStorageDir = pth;
-  } 
-  // let fpath = join(process.resourcesPath, row.ResourceStorageDir);
-  // if (!existsSync(fpath)) {
-  //   fpath = join(process.resourcesPath, 'node_modules', row.name, row.ResourceStorageDir);
-  //   if (existsSync(fpath))
-  //     row.ResourceStorageDir = fpath;
-  // } else row.ResourceStorageDir = fpath;
+export function UpdateResourcePath(row: Assembly, prePath: string = "") {
+  if (process?.resourcesPath.endsWith('node_modules\\electron\\dist\\resources')) { // electron project and not packaged
+    row.ResourceStorageDir = resolve(join(prePath, row.ResourceStorageDir));
+  } else row.ResourceStorageDir = resolve(join(process.resourcesPath, 'app.asar', prePath, row.ResourceStorageDir));
+  if (!existsSync(row.ResourceStorageDir)) {
+    console.log('================>> RESOURCE NOT FOUND');
+    console.log(resolve(''));
+  }
+
   return row;
 }
 
@@ -45,7 +37,7 @@ function getCache(key: string, res: BuildResource) {
       const resId = guidR?.pop();
       res.assembly = AssemblyManager.assemblies[projName];
       if (res.content == undefined) {
-        const resPath = resolve(  res.assembly.ResourceStorageDir, `${projName}_${resId}.res`);
+        const resPath = resolve(res.assembly.ResourceStorageDir, `${projName}_${resId}.res`);
         res.content = readFileSync(resPath, 'utf-8');
       }
     }
