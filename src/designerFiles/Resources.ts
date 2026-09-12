@@ -1,10 +1,8 @@
 
 import { UserResource, ResourceStorage,UpdateResourcePath, Assembly, AssemblyManager } from "../core-main.js";
+ 
 
-import fs from "fs";
-import path from "path";
-
-declare module "uc-runtime/src/core-main" {
+declare module "uc-runtime/core-main.js" {
    export interface ResourceNamedRegistry{
       
    }

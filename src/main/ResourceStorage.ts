@@ -2,14 +2,10 @@ import { BuildResource, normalizeJSON, ResourceNamedRegistry, safeStringify } fr
 import { decryptResource } from "ap-shared-core/core-main.js";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import { join, resolve } from "path";
-import { Assembly, AssemblyManager } from "uc-runtime/src/core-main";
+import { Assembly, AssemblyManager } from "uc-runtime/core-main.js";
 
 
-declare module "ap-shared-core/core-common.js" {
-  export interface BuildResource {
-    assembly?: Assembly;
-  }
-}
+
 export function UpdateResourcePath(row: Assembly, prePath: string = "") {
   if (process?.resourcesPath.endsWith('node_modules\\electron\\dist\\resources')) { // electron project and not packaged
     row.ResourceStorageDir = resolve(join(prePath, row.ResourceStorageDir));

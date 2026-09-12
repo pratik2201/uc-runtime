@@ -22,7 +22,7 @@ export class Template$Extended {
             this.resource = GetTemplateMetaByContent$Renderer(pera.htmlContent, pera.cssContent);
             this.resource.outerCssContents = this.resource.outerCssContents ?? '';
             if (this.resource.outerCssContents.trim() != '')
-                this.main.AddOuterCSS(this.resource.outerCssContents, this.guid as any);
+                this.main.AddOuterCSS(this.resource.outerCssContents, this.guid as never);
         }
 
 

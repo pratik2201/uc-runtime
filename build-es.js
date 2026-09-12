@@ -4,13 +4,14 @@ const mainConfig = {
   platform: "node",
   format: "esm",
   target: "node18",
-  external: ["electron"/*, "ap-shared-core"*/],
+  external: ["electron"],
   treeShaking: true,
   sourcemap: true 
 };
 await build({
   entryPoints: ["src/designerFiles/Resources.ts", "src/core-main.ts"],
   outdir: "dist",
+  
   ...mainConfig,
 });
 await build({
