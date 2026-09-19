@@ -378,9 +378,11 @@ class TabIndexManager {
     static SKIP_CONTAINER_EVENTS = false;
     static _HELLO_KON = async (ele: HTMLElement, e: KeyboardEvent, cnt: TabContainerClearNode[]): Promise<boolean> => {
         let res = false;
+        if (!this.isFocusableElement(ele)) return false;
         if (TabIndexManager.breakTheLoop || TabIndexManager.SKIP_CONTAINER_EVENTS) return true;
         for (let i = 0, len = cnt.length; i < len; i++) {
             let nd = cnt[i];
+            
             if (nd.target != undefined && ele == nd.target) {
                 //TabIndexManager.breakTheLoop = true;
                 res = await nd.callback(e) === true;
