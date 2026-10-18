@@ -10,7 +10,7 @@ let isExecuted = false;
 
 export async function INIT_RENDERER() {
   if (isExecuted) return;
-  
+  debugger;
   isExecuted = true;
   IpcRendererHelper.init(window);
 
