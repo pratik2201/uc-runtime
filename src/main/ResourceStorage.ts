@@ -26,18 +26,20 @@ function getCache(key: string, res: BuildResource) {
   if (res == undefined) return null;
   if (cache.has(key)) return cache.get(key);
   else {
-    if (res.assembly == undefined) {
+    if (res['assembly'] == undefined) {
       const guid = res.guid;
       const guidR = (guid as string).split(':');
       const projName = guidR?.shift();
       const resId = guidR?.pop();
-      res.assembly = AssemblyManager.assemblies[projName];
+      res['assembly'] = AssemblyManager.assemblies[projName];
       if (res.content == undefined) {
-        const resPath = resolve(res.assembly.ResourceStorageDir, `${projName}_${resId}.res`);
-        res.content = readFileSync(resPath, 'utf-8');
+         res.runtimePath = resolve(res['assembly'].ResourceStorageDir, `${projName}_${resId}.res`);
+         try {
+          res.content = readFileSync(res.runtimePath, 'utf-8');
+        }catch{}
       }
     }
-    if (res.content == undefined) return undefined;
+    if (res.content == undefined) return;
     let v = res.encrypt ? decryptResource(res.content) : res.content;
     v = safeStringify(v);
     cache.set(key, v);
@@ -88,7 +90,7 @@ export class ResourceStorage {
   static getByName(name: keyof ResourceNamedRegistry) {
     let v = Array.from(this.map.values()).find(s => s.name == name);
     if (v != undefined) {
-      v = JSON.parse(JSON.stringify(v));
+      //v = JSON.parse(JSON.stringify(v));
       v.content = getCache(name, v);
     }
     return v;
