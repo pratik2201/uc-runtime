@@ -157,10 +157,10 @@ export class SourceNode {
     static clearUcStyleClasses(ele: HTMLElement) {
         ele.classList.remove(...(Array.from(ele.classList)).filter(s => s.startsWith(ATTR_OF.UC.ALLC)));
     }
-    static passElement = <A = HTMLElement | HTMLElement[]>(ele: A, key: IKeyStampNode, options?: IPassElementOptions): { [xname: string]: HTMLElement | HTMLElement[] } => {
+    static passElement = <A = HTMLElement | HTMLElement[]>(ele: A, key: IKeyStampNode, options?: IPassElementOptions): { [xname: string]: HTMLInputElement | HTMLInputElement[] } => {
         options = Object.assign(Object.assign({}, PassElementOptions), options);
         let stamplist: string[] = [];
-        let rtrn: { [xname: string]: HTMLElement } = {};
+        let rtrn: { [xname: string]: HTMLInputElement } = {};
         let xnameAtrr = undefined;
         let _CLASSES: string[] = [];
         let h: HTMLElement;

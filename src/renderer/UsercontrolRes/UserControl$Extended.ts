@@ -130,12 +130,12 @@ export class UserControl$Extended {
         ucExt.mode = param0.mode;
         this.guid = param0.guid;
         console.log(this.main);
-        
+
         this.assembly = AssemblyManager.Parse(this.guid);
         ucExt.resource = new IUsercontrolContent();
         ucExt.resource.htmlContents = param0.htmlContent;
         ucExt.resource.cssContents = param0.cssContent;
-        ucExt.resource.htmlRow = {};
+        ucExt.resource.htmlRow = param0.source?.htmlRow ?? {};
 
         if (param0.events.beforeInitlize != undefined) param0.events.beforeInitlize(this.main);
         ucExt.isForm = (param0.parentUc == undefined);
@@ -154,7 +154,7 @@ export class UserControl$Extended {
         ucExt.assembly = AssemblyManager.Parse(ucExt.guid);
 
         ucExt.guid = param0.guid as never;
-        let htmlCache = Usercontrol.templateMkr.get(ucExt.guid);
+        let htmlCache = param0.source?.ignoreCache ? undefined : Usercontrol.templateMkr.get(ucExt.guid);
         if (htmlCache == undefined) {
             htmlCache = UserControl$Extended.templatemaker.compileTemplate(ucExt.resource.htmlContents)(param0.source.htmlRow ?? {});
             Usercontrol.templateMkr.set(ucExt.guid, htmlCache);
@@ -199,7 +199,7 @@ export class UserControl$Extended {
             ucExt.parentDependantIndex = pucExt.dependant.length;
             pucExt.dependant.push(this.main);
         }
-        ucExt.controls = ucExt.passElement(ucExt.wrapperHT, { skipTopEle: true }); //.children
+        ucExt.controls = ucExt.passElement(ucExt.wrapperHT, { skipTopEle: true }) as any; //.children
         let sizeChangeEvt = ucExt.Events.sizeChanged;
         sizeChangeEvt.Events.onChangeEventList = () => {
             if (ucExt.resizerObserver == undefined) {
@@ -229,7 +229,7 @@ export class UserControl$Extended {
 
         await Usercontrol.Event.onReady.fireAsync([this.main, param0]);
     }
-    controls: { [xname: string]: HTMLElement | HTMLElement[] };
+    controls: { [xname: string]: HTMLInputElement };
     resizerObserver: ResizeObserver;
 
     finalizeInit = (param0: IUcOptions) => {
@@ -312,7 +312,7 @@ export class UserControl$Extended {
             }
             stack.push(this.main);
         }
-    
+
 
         if (_extends.dialogForm == undefined)
             _extends.dialogForm = this.main;
@@ -346,7 +346,7 @@ export class UserControl$Extended {
 
 
 
-    passElement = (ele: HTMLElement | HTMLElement[], options?: IPassElementOptions): { [xname: string]: HTMLElement | HTMLElement[] } => {
+    passElement = (ele: HTMLElement | HTMLElement[], options?: IPassElementOptions): { [xname: string]: HTMLInputElement | HTMLInputElement[] } => {
         return SourceNode.passElement(ele, this.Keys, options);
     }
     set caption(text: string) {
