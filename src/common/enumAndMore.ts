@@ -135,7 +135,7 @@ export interface IUcOptions {
   accessName?: string,
   //context?: any,
   events?: {
-    beforeFinalize?: (uc: Usercontrol) => void;
+    beforeFinalize?:  (uc: Usercontrol) => Promise<void>;
     beforeInitlize?: (uc: Usercontrol) => void;
     afterInitlize?: (uc: Usercontrol) => void;
   };

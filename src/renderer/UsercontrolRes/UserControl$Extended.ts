@@ -170,7 +170,9 @@ export class UserControl$Extended {
         ucExt.Keys = ucExt.srcNode.styler.KEYS;
         let parentSrc = ucExt.assembly.srcNode;
 
-
+        if (param0.source?.ignoreCache) 
+            ucExt.srcNode.htmlCode.hasContent = false;
+        
         ucExt.srcNode.loadHTML(htmlCache);
         ucExt.wrapperHT = ucExt.srcNode.dataHT.cloneNode(true) as HTMLElement;
         if (ucExt.isForm) {
