@@ -9,6 +9,7 @@ export class IpcPreload {
 
         if (IpcPreload.IS_INITED) return;
         const fullFill = {
+            
             url: {
                 fileURLToPath: (u) => fileURLToPath(u),
                 pathToFileURL: (p) => {
