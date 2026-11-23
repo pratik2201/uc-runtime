@@ -74,15 +74,16 @@ export class UserControl$Extended {
             _this.keepVisible = vopt;
         });
     }
-    find = (skey: string) => {
-        let ar = skey.split(',');
+    find = (skey: string, inElement?: HTMLElement) => {
         let _this = this;
+        inElement = inElement ?? _this.self;
+        let ar = skey.split(',');
         let uniqStamp = _this.srcNode.localStamp;
         ar = ar.map((s) => {
             s = FilterContent.select_inline_filter(s, uniqStamp);
             return s;
         });
-        let nodeList = _this.self.querySelectorAll(ar.join(","));
+        let nodeList = inElement.querySelectorAll(ar.join(","));
         return Array.from(nodeList) as HTMLElement[];
     };
 
