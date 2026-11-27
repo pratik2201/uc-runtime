@@ -90,16 +90,17 @@ export class ResourceStorage {
   static getByName(name: keyof ResourceNamedRegistry) {
     let v = Array.from(this.map.values()).find(s => s.name == name);
     if (v != undefined) {
-      //v = JSON.parse(JSON.stringify(v));
-      v.content = getCache(name, v);
+      //v = JSON.parse(JSON.stringify(v));      
+      v.content = getCache(v.guid, v);
     }
     return v;
     //return this.map.values().find(s => s.name == name) ?? null;
   }
 
   static getContentByName(name: keyof ResourceNamedRegistry) {
+   
     let v = Array.from(this.map.values()).find(s => s.name == name);//?.content ?? null;
-    return getCache(name, v);//this.map.values().find(s => s.name == name)?.content ?? null;
+    return getCache(v.guid, v);//this.map.values().find(s => s.name == name)?.content ?? null;
   }
 
   static keys() {

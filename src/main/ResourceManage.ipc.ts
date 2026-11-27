@@ -27,7 +27,6 @@ export default function () {
         event.returnValue = ResourceStorage.get(key);
     });
     main.On('getContent', (event, key: string) => {
-       
         event.returnValue = ResourceStorage.getContent(key); 
     });
     main.On('getByName', (event, name) => {
